@@ -1,0 +1,81 @@
+-////////////////////////////////////////////////// HTML //////////////////////////////////////////////////
+-//Begin HTML
+doctype html
+html
+    //Built by: Me
+    //ETI Labs
+    //Copyright 2016  - IBM
+    head
+        title #{title}
+        meta(name="viewport" content="initial-scale=1.0, user-scalable=no")
+        link(rel="icon" href="/imgs/favicon.ico" sizes="16x16")
+        link(rel="icon" href="/imgs/favicon-32.png" sizes="32x32")
+        link(rel="icon" href="/imgs/favicon-96.png" sizes="96x96")
+        link(rel="stylesheet" href="/css/font-awesome-4.5.0/css/font-awesome.min.css")
+        //link(type="text/css" rel="stylesheet" href="/css/main.min.css?v=" + bag.csshash)
+        link(type="text/css" rel="stylesheet" href="/css/main.css?v=" + bag.csshash)
+        script(src='/js/util/jquery-2.2.4.min.js?v=' + bag.jshash)
+        script(src='/js/util/jquery-ui-1.11.4/jquery-ui.min.js')
+        script(src='/js/util/jquery.ui.touch-punch.min.js')
+        script(src='/js/funk.js?v=' + bag.jshash)
+        script(src='/js/blockchain.js?v=' + bag.jshash)
+        script(src='/js/ui_building.js?v=' + bag.jshash)
+        script(type='text/javascript').
+            var bag = !{JSON.stringify(bag)};						//throw json over to JS
+            console.log('bag', bag);
+            $(document).ready(function () {
+                $(".colorInput").click(function () {	//do not remove! no idea why but this helps safari open the color picker
+                    console.log('...');
+                });
+            });
+        block custom_header
+
+        body
+            #rightEverything
+                #tint
+                #navPanel
+                    block navpanel
+                div#myModal.modal.fade
+                    div.modal-dialog
+                        div.modal-content
+                            div.modal-header
+                                button(type="button")#closeModal.close
+                                    //data-dismiss="modal".close#disableStoryMode
+                                    span(aria-hidden="true") ×
+                                    span.sr-only 关闭
+                                h4.modal-title 新建
+                            div.modal-body
+                            div.modal-footer
+                                button#addInputXl(type="button").btn.btn-default
+                                    i.icon.icon-plus-sign
+                                button#addInputCdz(type="button").btn.btn-default
+                                    i.icon.icon-plus-sign
+                                button(type="button",data-dismiss="modal").btn.btn-default 关闭
+                                button#saveData(type="button").btn.btn-primary 保存
+                div#myMapCol.modal.fade
+                    div.modal-dialog
+                        div.modal-content
+                            div.modal-header
+                                //button(type="button")#closeMap.close
+                                    //data-dismiss="modal".close#disableStoryMode
+                                    //span(aria-hidden="true") ×
+                                    //span.sr-only 关闭
+                                h4.modal-title map
+                            div.modal-body
+                            div.modal-footer
+                                //button(type="button",data-dismiss="modal").btn.btn-default 关闭
+                                //button#getPoint(type="button").btn.btn-primary 保存
+                //div#myInfo.alert.alert-warning.alert-dismissable
+                //    button(type="button",data-dismiss="alert",aria-hidden="true").close ×
+                //        p 您可以点击右上角的
+                //            i.icon-remove 来关闭这条消息
+                #mainPanel
+                    block content
+                br
+                br
+                br
+                #footerPanel
+                    block footer
+
+            #leftEverything
+                include ../panel_audit.pug

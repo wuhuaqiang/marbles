@@ -1,0 +1,378 @@
+let moverTimer =null;
+Bmap = {
+    vue: new Vue(),
+    linemapping: {},
+    line: null,
+    lineId: null,
+    map: null,
+    lineIndex:null,
+    startPoint: null,
+    startTime:null,
+    endPoint: null,
+    endTime: null,
+    bounds: null,
+    linesPoints: null,
+    myIcon: null,
+    myZoomCtrl: null,
+    drivingArr: null,
+    planObj: null,
+    opacity: null,
+    width: null,
+    height: null,
+    d: null,
+    cha: null,
+    jia: null,
+    marker: null,
+    route: null,
+    points: null,
+    sizeNum: 15,
+    mapInit: (el, certerPoint) => {
+        Bmap.drivingArr = new Array();
+        Bmap.map = new BMap.Map(el);
+        Bmap.map.enableScrollWheelZoom(true);
+        // 104.0863, 30.656913
+        Bmap.map.centerAndZoom(new BMap.Point(certerPoint[0], certerPoint[1]), Bmap.sizeNum);
+    },
+    myIconInit: (Imageurl, myIconWidth, myIconHeight, offsetWidth, offsetHeight,imageOffsetWidth, imageOffsetHeight) => {
+        // "http://lbsyun.baidu.com/jsdemo/img/Mario.png"
+        Bmap.myIcon = new BMap.Icon(Imageurl, new BMap.Size(myIconWidth, myIconHeight, imageOffsetWidth, imageOffsetHeight), {
+            offset: new BMap.Size(offsetWidth, offsetHeight),
+            imageOffset: new BMap.Size(imageOffsetWidth, imageOffsetHeight)
+        });
+    },
+    ZoomControlInit: (map) => {
+        // 定义一个控件类,即function
+        function ZoomControl() {
+            // 默认停靠位置和偏移量
+            this.defaultAnchor = BMAP_ANCHOR_TOP_RIGHT;
+            this.defaultOffset = new BMap.Size(10, 10);
+        }
+        // 通过JavaScript的prototype属性继承于BMap.Control
+        ZoomControl.prototype = new BMap.Control();
+        ZoomControl.prototype.initialize = function (map) {
+            // 创建一个DOM元素
+            var $div = $("<div class=\"btn-group\">\n" +
+                " <button type=\"button\" class=\"btn btn-primary\" id='openModalNewXl'>规划线路</button>" +
+                "  <button class=\"btn\" id='openModalNewCdz'>新建充电桩</button>\n" +
+                "  <button class=\"btn\">第三个</button>\n" +
+                "</div>");
+            // 设置样式
+           /* $div.css("cursor", "pointer");
+            $div.css("border", "1px solid gray");
+            $div.css("backgroundColor", "blue");*/
+            $div.on('click','#newSource',()=>{
+                alert();
+                $('#tint').fadeIn();
+                $('#startUpPanel').show().addClass('bounceInLeft');
+                // $('#auditContentWrap').show();
+            })
+            Bmap.map.getContainer().appendChild($div[0]);
+            // 将DOM元素返回
+            return $div[0];
+        }
+        // 创建控件
+        var myZoomCtrl = new ZoomControl();
+        // 添加到地图当中
+        Bmap.map.addControl(myZoomCtrl);
+    },
+    drawLine: (results) => {
+        Bmap.opacity = 0.45;
+        Bmap.planObj = results.getPlan(0);
+        let duration = Bmap.planObj.getDuration(true);
+        console.log(duration)
+        console.log(Bmap.startTime);
+        let oldMin = parseInt(Bmap.startTime[1]);
+        let oldHour = parseInt(Bmap.startTime[0]);
+        let newMin = 0;
+        let newHour = 0;
+        if(duration.indexOf("小时")===-1){
+            newMin = parseInt(duration);
+
+        } else if(duration.indexOf("分钟")===-1){
+            newHour = parseInt(duration.substring(0,duration.indexOf("小时")))
+        } else {
+            newHour = parseInt(duration.substring(0,duration.indexOf("小时")))
+            newMin = parseInt(duration.substring(duration.indexOf("小时")+2,duration.indexOf("分钟")))
+        }
+        let hourAdd =  parseInt((oldMin+newMin)/60)
+        newMin = (oldMin+newMin)%60
+        newHour = (hourAdd+oldHour+newHour)%24
+        if(newHour<10){
+            newHour = "0"+newHour;
+        }
+        if(newMin<10){
+            newMin = "0"+newMin;
+        }
+        $("#endTime"+Bmap.lineIndex).val(newHour+":"+newMin);
+        console.log(newHour+":"+newMin)
+        Bmap.b = new Array();
+        // 绘制驾车步行线路
+        for (var i = 0; i < Bmap.planObj.getNumRoutes(); i++) {
+            var route = Bmap.planObj.getRoute(i);
+            if (route.getDistance(false) <= 0) {
+                continue;
+            }
+            Bmap.drivingArr.push(JSON.stringify(route.getPath()))
+            Bmap.addPoints(route.getPath());
+            var polyline = null;
+            // 驾车线路
+            if (route.getRouteType() == BMAP_ROUTE_TYPE_DRIVING) {
+                polyline = new BMap.Polyline(route.getPath(), {
+                    id: Bmap.lineId,
+                    startTime: Bmap.startTime,
+                    endTime: Bmap.endTime,
+                    sort: Bmap.lineIndex,
+                    strokeStyle: Bmap.lineId,
+                    strokeColor: "#0030ff",
+                    strokeOpacity: Bmap.opacity,
+                    strokeWeight: 6,
+                    enableMassClear: true
+                })
+            } else {
+                // 步行线路有可能为0
+                polyline = new BMap.Polyline(route.getPath(), {
+                    id: Bmap.lineId,
+                    startTime: Bmap.startTime,
+                    endTime: Bmap.endTime,
+                    sort: Bmap.lineIndex,
+                    strokeStyle: Bmap.lineId,
+                    strokeColor: "#30a208",
+                    strokeOpacity: 0.75,
+                    strokeWeight: 4,
+                    enableMassClear: true
+                })
+            }
+            polyline.addEventListener("click",Bmap.editLine);
+            Bmap.linemapping[polyline.ba] = Object.assign({}, Bmap.line);
+            console.log("*********************************");
+            console.log(polyline.ba);
+            console.log("*********************************");
+            Bmap.map.addOverlay(polyline);
+        }
+        Bmap.map.setViewport(Bmap.bounds);
+        // 终点
+        Bmap.addMarkerFun(results.getEnd().point, 1, 1);
+        // 开始点
+        Bmap.addMarkerFun(results.getStart().point, 1, 0);
+
+        Bmap.linesPoints[Bmap.linesPoints.length] = Bmap.b;
+    },
+    addMarkerFun: (point, imgType, index, title) => {
+        if (imgType == 1) {
+            // var url = "http://lbsyun.baidu.com/jsdemo/img/dest_markers.png";
+            var url = "../imgs/startPoint.png"; //"http://lbsyun.baidu.com/jsdemo/img/dest_markers.png";
+            // width = 42;
+           var  width = 24;
+            // height = 34;
+            var height = 24;
+            if(index===1){
+                url = "../imgs/endPoint.png"
+            }
+            Bmap.myIconInit(url, width, height, 0, -24, 0, 0);
+            // Bmap.myIconInit(url, width, height, 14, 32, 0, 0 - index * height);
+        } else {
+            var url = "http://lbsyun.baidu.com/jsdemo/img/trans_icons.png";
+            width = 22;
+            height = 25;
+            var d = 25;
+            var cha = 0;
+            var jia = 0
+            if (index == 2) {
+                d = 21;
+                cha = 5;
+                jia = 1;
+            }
+            Bmap.myIconInit(url, width, d, 10, 11 + jia, 0, 0 - index * height - cha);
+        }
+
+        var marker = new BMap.Marker(point, {icon: Bmap.myIcon});
+        if (title != null && title != "") {
+            marker.setTitle(title);
+        }
+        // 起点和终点放在最上面
+        if (imgType == 1) {
+            marker.setTop(true);
+        }
+        Bmap.map.addOverlay(marker);
+    },
+    addPoints: (points) => {
+        for (var i = 0; i < points.length; i++) {
+            Bmap.bounds.push(points[i]);
+            Bmap.b.push(points[i]);
+        }
+    },
+    resetMkPoint: (i, len, pts, carMk) => {
+       if(moverTimer){
+           clearTimeout(moverTimer)
+       }
+        carMk.setPosition(pts[i]);
+        if (i < len) {
+            moverTimer =  setTimeout(function () {
+                i++;
+                Bmap.resetMkPoint(i, len, pts, carMk);
+            }, 500);
+        }
+    },
+    run: (num) => {
+        for (var m = 0; m < Bmap.linesPoints.length; m++) {
+            if(num) {
+                if(num===m){
+                    var pts = Bmap.linesPoints[m];
+                    var len = pts.length;
+                    // Bmap.myIconInit("http://lbsyun.baidu.com/jsdemo/img/Mario.png", 32, 70, 0, 0, 0, 0 );
+                    Bmap.myIconInit("../imgs/car.png", 12, 12, 0, 0, 0, 0 );
+                    var carMk = new BMap.Marker(pts[0], {icon: Bmap.myIcon});
+                    Bmap.map.addOverlay(carMk);
+                    Bmap.resetMkPoint(1, len, pts, carMk)
+                }
+            } else {
+                var pts = Bmap.linesPoints[m];
+                var len = pts.length;
+                // Bmap.myIconInit("http://lbsyun.baidu.com/jsdemo/img/Mario.png", 32, 70, 0, 0, 0, 0 );
+                Bmap.myIconInit("../imgs/car.png", 12, 12, 0, 0, 0, 0 );
+                var carMk = new BMap.Marker(pts[0], {icon: Bmap.myIcon});
+                Bmap.map.addOverlay(carMk);
+                Bmap.resetMkPoint(1, len, pts, carMk)
+            }
+        }
+    },
+    initLine: () => {
+        Bmap.bounds = new Array();
+        Bmap.linesPoints = new Array();
+        Bmap.map.clearOverlays();                                                    // 清空覆盖物
+        var driving = new BMap.DrivingRoute(Bmap.map, {onSearchComplete: Bmap.drawLine});  // 驾车实例,并设置回调
+        driving.search(Bmap.startPoint, Bmap.endPoint)
+    },
+    editLine: (evnt) => {
+        console.log(evnt.target);
+        // console.log(Bmap.linemapping[evnt.target.ba]);
+        // console.log(Bmap.linemapping);
+        // $('#myModal .modal-body').html("");
+        // createLine();
+        // console.log(evnt.target.ia);
+        // console.log(evnt.target.ia[0].lng + "," + evnt.target.ia[0].lat)
+        // $('#myModal .startPointVal').val(evnt.target.ia[0].lng + "," + evnt.target.ia[0].lat);
+        // $('#myModal .endPointVal').val(evnt.target.ia[evnt.target.ia.length-1].lng + "," + evnt.target.ia[evnt.target.ia.length-1].lat);
+        // var geoc = new BMap.Geocoder();
+        // geoc.getLocation(evnt.target.ia[0], function(rs){
+        //     var addComp = rs.addressComponents;
+        //     // alert(addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber);
+        //     var nameStr = addComp.district + addComp.street + addComp.streetNumber;
+        //     $('#myModal .startPoint').val(nameStr);
+        // });
+        // geoc.getLocation(evnt.target.ia[evnt.target.ia.length-1], function(rs){
+        //     var addComp = rs.addressComponents;
+        //     // alert(addComp.province + ", " + addComp.city + ", " + addComp.district + ", " + addComp.street + ", " + addComp.streetNumber);
+        //     var nameStr = addComp.district + addComp.street + addComp.streetNumber;
+        //     $('#myModal .endPoint').val(nameStr);
+        // });
+        $.ajax({
+            type: "post",
+            url: "http://10.168.1.240:10200/api/tLine/list",
+            data: '',
+            dataType: "json",
+            contentType: 'application/json;charset=UTF-8', //contentType很重要
+            success: function (data) {
+                if(data.length){
+                    // $.each(data,(index,obj) => {
+                    //    if(index){
+                    //        createLine(1);
+                    //    } else {
+                    //        createLine(0);
+                    //    }
+                    // })
+                    Bmap.drawAllLine(data)
+                }
+            }
+        });
+
+    },
+    getDuration: (map) => {
+        console.log(Bmap.planObj)
+    },
+    drawAllLine: (lines) => {
+        $('#myModal .modal-body').html("");
+        $('#myModal .modal-body').append("<select id='userId' data-placeholder='请选择用户...' class='chosen-select form-control' tabindex='2' ><option value=''></option> <option value='1'>user1</option> <option value='2'>user2</option> <option value='3'>user3</option></select>");
+        $("#addInputXl").show();
+        $("#addInputCdz").hide();
+        $.each(lines,(num,line)=>{
+            let index = line.sort;
+            var divStr = "<div class=\"input-group\" index='"+num+"'></div>";
+            var lag1Str = "<span class=\"input-group-addon\"> 线路：</span>";
+            var lag2Str = "<input id='startPoint"+num+"' type=\"text\" class=\"form-control startPoint mapSelectPoint\" placeholder=\"起点\">";
+            var lag3Str = "<input id='startPointVal"+num+"' type=\"hidden\" class=\"form-control startPointVal mapSelectPoint\" placeholder=\"起点\">";
+            var lag4Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
+            var lag5Str = "<input id='endPoint"+num+"' type=\"text\" class=\"form-control endPoint mapSelectPoint\" placeholder=\"终点\">";
+            var lag6Str = "<input id='endPointVal"+num+"' type=\"hidden\" class=\"form-control endPointVal mapSelectPoint\" placeholder=\"终点\">";
+            var lag7Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
+            var lag8Str = "<input id='startTime"+num+"' type=\"text\" class=\"form-control startTime form-time\" placeholder=\"开始时间:选择或者输入一个时间：hh:mm\">";
+            var lag9Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
+            var lag10Str = "<input id='endTime"+num+"' type=\"text\" readonly=\"readonly\" class=\"form-control endTime form-time\" placeholder=\"结束时间:hh:mm\">";
+            var lag11Str = "<span id='startPoint"+num+"' class=\"input-group-addon fix-border fix-padding btn btn-primary runLineStatus\"><i class=\"icon icon-star\"></i>执行</span>";
+            var lag12Str = "<span id='delLine"+index+"' class=\"input-group-addon fix-border fix-padding btn btn-danger delline\"><i class=\"icon icon-trash\"></i>删除</span>";
+            var $divStr = $(divStr).attr("id",line.id);
+            var $lag1Str = $(lag1Str);
+            var $lag2Str = $(lag2Str).val(line.startPoint);
+            var $lag3Str = $(lag3Str).val(line.startPointVal);
+            var $lag4Str = $(lag4Str);
+            var $lag5Str = $(lag5Str).val(line.endPoint);
+            var $lag6Str = $(lag6Str).val(line.endPointVal);
+            var $lag7Str = $(lag7Str);
+            var $lag8Str = $(lag8Str).val(line.startTime);
+            var $lag9Str = $(lag9Str);
+            var $lag10Str = $(lag10Str).val(line.endTime);
+            var $lag11Str = $(lag11Str);
+            var $lag12Str = $(lag12Str);
+            if(num!=lines.length-1){
+                $lag12Str.attr('disabled',"true");
+            }
+            $lag8Str.datetimepicker({
+                language:  "zh-CN",
+                weekStart: 1,
+                todayBtn:  1,
+                autoclose: 1,
+                todayHighlight: 1,
+                startView: 1,
+                minView: 0,
+                maxView: 1,
+                forceParse: 0,
+                format: 'hh:ii'
+            });
+            $lag8Str.change((e)=>{
+                let obj = $(e.target);
+                if(obj.parent().prev().find(".endTime").length){
+                    let prevEndTime = obj.parent().prev().find(".endTime").val()
+                    let currStartTime = parseInt($(e.target).val().replace(':',''))
+                    prevEndTime = parseInt(prevEndTime.replace(':',''))
+                    if(currStartTime<prevEndTime){
+                        Bmap.vue.$message({ message: '时间早于前一条线路的结束时间。', type: 'error' })
+                        obj.val("")
+                    }
+                }
+
+            });
+            $divStr.append($lag1Str).append($lag2Str).append($lag3Str).append($lag4Str).append($lag5Str)
+                .append($lag6Str).append($lag7Str).append($lag8Str).append($lag9Str).append($lag10Str)
+                .append($lag11Str).append($lag12Str)
+            $('#myModal .modal-body').append($divStr)
+            if(num){
+                $('#startPoint'+num).attr("readOnly","true")
+                $('#startPoint'+num).unbind('click')
+                $('#startPoint'+num).removeClass("mapSelectPoint")
+                $('#startPoint'+num).val($('#endPoint'+(num-1)).val());
+                $('#startPointVal'+num).val($('#endPointVal'+(num-1)).val());
+            }
+        })
+        $('select.chosen-select').chosen({
+            no_results_text: '没有找到',    // 当检索时没有找到匹配项时显示的提示文本
+            disable_search_threshold: 10, // 10 个以下的选择项则不显示检索框
+            search_contains: true         // 从任意位置开始检索
+        });
+        $('#myModal').modal({
+            keyboard : false,
+            show     : true,
+            moveable : true
+        })
+    }
+}
+

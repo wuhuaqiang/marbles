@@ -1,0 +1,63 @@
+extends ./template/layout.pug
+
+
+block custom_header
+    // --------------- Header -------------- //
+    script(src='/js/ui_events.js?v=' + bag.jshash)
+    script(src='/js/websocket.js?v=' + bag.jshash)
+    script(src='/js/startup.js?v=' + bag.jshash)
+    script(src='/js/tx_story.js?v=' + bag.jshash)
+    link(rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/zui/1.8.1/css/zui.min.css")
+    script(src="//cdnjs.cloudflare.com/ajax/libs/zui/1.8.1/js/zui.min.js")
+    script(src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js")
+    link(rel="stylesheet" href="https://unpkg.com/element-ui/lib/theme-chalk/index.css")
+    script(src="https://unpkg.com/element-ui/lib/index.js")
+    link(href="lib/datetimepicker/datetimepicker.min.css" rel="stylesheet")
+    script(src="lib/datetimepicker/datetimepicker.min.js")
+    link(href="lib/chosen/chosen.min.css" rel="stylesheet")
+    script(src="lib/chosen/chosen.min.js")
+    script(src="http://api.map.baidu.com/api?v=2.0&ak=BjGa4MDmGMiqB04Hrjn9iYvxx94ERYPu")
+    script(src='/js/BmapUtil.js?v=' + bag.jshash)
+    script(type='text/javascript').
+        // $(document).ready(function () {
+        //     var centerPoint = [104.0863, 30.656913];
+        //     Bmap.mapInit("mainPanel",centerPoint);
+        //     console.log(Bmap)
+        // });
+        $(function () {
+            var centerPoint = [104.0863, 30.656913];
+            Bmap.mapInit("mainPanel", centerPoint);
+            Bmap.ZoomControlInit(Bmap.map);
+            getAllLine();
+        })
+
+
+block navpanel
+    // --------------- Navigation Bar  -------------- //
+    include ./template/nav.pug
+
+
+block content
+    //#contentPanel
+    //    include ./panel_startup.pug
+
+        // --------------- Home Panel
+        //include panel_home
+
+        // --------------- Create Panel
+        //include ./panel_create.pug
+
+        // --------------- Start Up Walk Through Panel
+        //include ./panel_startup.pug
+
+        // --------------- Walk Transaction Panel
+        //include ./panel_tx_story.pug
+
+        // --------------- Settings Panel
+        //include ./panel_settings.pug
+
+        // --------------- Disable Owner Panel
+        //include ./panel_disable_owner.pug
+
+block footer
+    //include ./template/blockchain.pug
