@@ -324,44 +324,88 @@ function set_story_mode(setting) {
 //保存数据
 $(document).on('click', '#saveData', () => {
     let lines = $('#myModal .modal-body .lines-group');
-    let cdzs = $('#myModal .modal-body .cdz-group');
+    let chargingPiles = $('#myModal .modal-body .ChargingPile-group');
+    let chargingStations = $('#myModal .modal-body .ChargingStation-group');
     if (lines.length) {
         saveLines(lines);
-    } else if (cdzs.length) {
-        saveCdzs(cdzs);
+    } else if (chargingPiles.length) {
+        saveChargingPile(chargingPiles);
+    } else if (chargingStations.length) {
+        saveChargingStation(chargingStations);
     }
 
 })
 
-//保存充电桩
-function saveCdzs(cdzs) {
-    let cdzsArr = new Array();
-    $.each(cdzs, (index, cdz) => {
-        cdz = $(cdz);
-        console.log(cdz);
-        const id = cdz.attr("id");
-        const sort = parseInt(cdz.attr("index"));
-        const startPoint = cdz.find('.startPoint').val();
-        const endPoint = cdz.find('.endPoint').val();
-        const startPointVal = cdz.find('.startPointVal').val();
-        const endPointVal = cdz.find('.endPointVal').val();
-        const startTime = cdz.find('.startTime').val();
-        const endTime = cdz.find('.endTime').val();
-        const owerId = $('#myModal .modal-body #userId').val();
-        const cdzObj = {
-            id, startPoint, endPoint, startPointVal, endPointVal, startTime, endTime, sort, owerId
+//保存充电站
+function saveChargingStation(chargingStations) {
+    let chargingStationsArr = new Array();
+    $.each(chargingStations, (index, chargingStation) => {
+        chargingStation = $(chargingStation);
+        console.log(chargingStation);
+        const id = chargingStation.attr("id");
+        // const sort = parseInt(chargingStation.attr("index"));
+        const name = chargingStation.find('.name').val();
+        const position = chargingStation.find('.position').val();
+        const positionVal = chargingStation.find('.position_val').val();
+        const capacity = chargingStation.find('.capacity').val();
+        const chargingEfficiency = chargingStation.find('.charging_efficiency').val();
+        const state = chargingStation.find('.state-select').val();
+        const runTime = chargingStation.find('.run_time').val();
+        // const owerId = $('#myModal .modal-body #userId').val();
+        /* [{"id":"123","name":"123","capacity":123.0,"position":"321",
+             "positionVal":"123213","chargingEfficiency":321.0,"createTime":1543825495000,"runTime":1543825502000}]*/
+        const chargingStationObj = {
+            id, name, position, positionVal, capacity, chargingEfficiency, state, runTime
         }
+        console.log(chargingStationObj)
         $.ajax({
             type: "post",
-            url: "http://10.168.1.240:10200/api/tCdz/save",
-            data: JSON.stringify(cdzObj),
+            url: "http://10.168.1.240:10200/api/tChargingStation/save",
+            data: JSON.stringify(chargingStationObj),
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
             success: function (data) {
                 console.log(data)
             }
         });
-        cdzsArr.push(cdzObj);
+        chargingStationsArr.push(chargingStationObj);
+    })
+    $('#myModal').modal('hide')
+}
+
+//保存充电桩
+function saveChargingPile(chargingPiles) {
+    let chargingPilesArr = new Array();
+    $.each(chargingPiles, (index, chargingPile) => {
+        chargingPile = $(chargingPile);
+        console.log(chargingPile);
+        const id = chargingPile.attr("id");
+        // const sort = parseInt(chargingPile.attr("index"));
+        const name = chargingPile.find('.name').val();
+        const position = chargingPile.find('.position').val();
+        const positionVal = chargingPile.find('.position_val').val();
+        const capacity = chargingPile.find('.capacity').val();
+        const chargingEfficiency = chargingPile.find('.charging_efficiency').val();
+        const state = chargingPile.find('.state-select').val();
+        const runTime = chargingPile.find('.run_time').val();
+        // const owerId = $('#myModal .modal-body #userId').val();
+        /* [{"id":"123","name":"123","capacity":123.0,"position":"321",
+             "positionVal":"123213","chargingEfficiency":321.0,"createTime":1543825495000,"runTime":1543825502000}]*/
+        const chargingPileObj = {
+            id, name, position, positionVal, capacity, chargingEfficiency, state, runTime
+        }
+        console.log(chargingPileObj)
+        $.ajax({
+            type: "post",
+            url: "http://10.168.1.240:10200/api/tChargingPile/save",
+            data: JSON.stringify(chargingPileObj),
+            dataType: "json",
+            contentType: 'application/json;charset=UTF-8', //contentType很重要
+            success: function (data) {
+                console.log(data)
+            }
+        });
+        chargingPilesArr.push(chargingPileObj);
     })
     $('#myModal').modal('hide')
 }
@@ -424,12 +468,14 @@ $(document).on('click', '#addInputXl', () => {
 function createLine(num) {
     var index = null;
     $("#addInputXl").show();
-    $("#addInputCdz").hide();
+    $("#addInputChargingStation").hide();
+    $("#addInputChargingPile").hide();
     if (num == 0) {
         index = 0
-        $('#myModal .modal-body').append("<select id='userId' data-placeholder='请选择用户...' class='chosen-select form-control' tabindex='2' ><option value=''></option> <option value='1'>user1</option> <option value='2'>user2</option> <option value='3'>user3</option></select>");
+        // chosen-select
+        $('#myModal .modal-body').append("<select id='userId' data-placeholder='请选择用户...' class='form-control' tabindex='2' ><option value=''></option> <option value='1'>user1</option> <option value='2'>user2</option> <option value='3'>user3</option></select>");
     } else {
-        var index = $(".input-group").length
+        index = $(".input-group").length
     }
     var divStr = "<div class=\"input-group lines-group\" index='" + index + "'></div>";
     var lag1Str = "<span class=\"input-group-addon\"> 线路：</span>";
@@ -531,33 +577,49 @@ function createLine(num) {
     })
 }
 
-$(document).on('click', '#openModalNewCdz', () => {
+$(document).on('click', '#openModalNewChargingStation', () => {
     $('#myModal .modal-body').html("");
-    createCdz();
+    createChargingStation(0);
 })
-$(document).on('click', '#addInputCdz', () => {
-    createCdz()
+$(document).on('click', '#addInputChargingStation', () => {
+    createChargingStation(1)
+})
+$(document).on('click', '#openModalNewChargingPile', () => {
+    $('#myModal .modal-body').html("");
+    createChargingPile(0);
+})
+$(document).on('click', '#addInputChargingPile', () => {
+    createChargingPile(1)
 })
 
-//新建充电桩
-function createCdz() {
+//新建充电站
+function createChargingStation(num) {
+    var index = null;
     $("#addInputXl").hide();
-    $("#addInputCdz").show();
-    var index = $("#myModal div").length - 5
-    var divStr = "<div class=\"input-group cdz-group\" index='" + index + "'></div>";
-    var lag1Str = "<span class=\"input-group-addon\"> 充电桩：</span>";
-    var lag2Str = "<input id='name" + index + "' type=\"text\" class=\"form-control startPoint \" placeholder=\"充电桩名称\">";
+    $("#addInputChargingStation").show();
+    $("#addInputChargingPile").hide();
+    /*if (num == 0) {
+        index = 0
+        $('#myModal .modal-body').append("<select id='userId' data-placeholder='请选择用户...' class='chosen-select form-control' tabindex='2' ><option value=''></option> <option value='1'>user1</option> <option value='2'>user2</option> <option value='3'>user3</option></select>");
+    } else {
+        index = $(".input-group").length
+    }*/
+    index = $(".input-group").length
+    /*var index = $("#myModal div").length - 5*/
+    var divStr = "<div class=\"input-group ChargingStation-group\" index='" + index + "'></div>";
+    var lag1Str = "<span class=\"input-group-addon\"> 充电站：</span>";
+    var lag2Str = "<input id='name" + index + "' type=\"text\" class=\"form-control name \" placeholder=\"充电站名称\">";
     var lag3Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
-    var lag4Str = "<input id='position" + index + "' type=\"text\" class=\"form-control startPoint mapSelectPoint\" placeholder=\"充电桩位置\">";
-    var lag5Str = "<input id='position_val" + index + "' type=\"hidden\" class=\"form-control startPoint mapSelectPoint\" placeholder=\"充电桩位置\">";
+    var lag4Str = "<input id='position" + index + "' type=\"text\" class=\"form-control position mapSelectPoint\" placeholder=\"充电站位置\">";
+    var lag5Str = "<input id='position_val" + index + "' type=\"hidden\" class=\"form-control position_val mapSelectPoint\" placeholder=\"充电站位置\">";
     var lag6Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
-    var lag7Str = "<input id='capacity" + index + "' type=\"text\" class=\"form-control startPoint\" placeholder=\"充电桩容量\">";
+    var lag7Str = "<input id='capacity" + index + "' type=\"text\" class=\"form-control capacity\" placeholder=\"充电站容量\">";
     var lag8Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
-    var lag9Str = "<input id='charging_efficiency" + index + "' type=\"text\" class=\"form-control startPoint\" placeholder=\"充电效率\">";
+    var lag9Str = "<input id='charging_efficiency" + index + "' type=\"text\" class=\"form-control charging_efficiency\" placeholder=\"充电效率\">";
     var lag10Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
     var lag11Str = "<select data-placeholder='选择运行状态...' class='chosen-select form-control state-select' tabindex='2' <option value=''></option> <option value='1'>正常</option> <option value='0'>停运</option> </select>";
     var lag12Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
-    var lag13Str = "<input id='run_time" + index + "' type=\"text\" class=\"form-control endTime form-time\" placeholder=\"投运时间：yyyy-MM-dd\">"; //readonly="readonly"
+    var lag13Str = "<input id='run_time" + index + "' type=\"text\" class=\"form-control run_time form-time\" placeholder=\"投运时间：yyyy-MM-dd\">"; //readonly="readonly"
     /* var lag11Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";*/
     // var lag11Str = "<span id=id='startPoint"+index+"' class=\"input-group-addon fix-border fix-padding btn btn-primary runLineStatus\"><i class=\"icon icon-star\"></i>执行</span>";
     var $divStr = $(divStr);
@@ -621,6 +683,107 @@ function createCdz() {
           $('#startPoint'+index).val($('#endPoint'+(index-1)).val());
           $('#startPointVal'+index).val($('#endPointVal'+(index-1)).val());
       }*/
+    $('#myModal').modal({
+        keyboard: false,
+        show: true,
+        moveable: true
+    })
+}
+
+//新建充电桩
+function createChargingPile(num) {
+    let index = null;
+    $("#addInputXl").hide();
+    $("#addInputChargingStation").hide();
+    $("#addInputChargingPile").show();
+    index = $(".input-group").length;
+    /* var index = $("#myModal div").length - 5*/
+    var divStr = "<div class=\"input-group ChargingPile-group\" index='" + index + "'></div>";
+    var lag0Str = "<span class=\"input-group-addon\"> 充电桩：</span>";
+    var lag1Str = "<select id='csId" + index + "' placeholder='请选择充电站...' class='form-control csId-select' tabindex='2' ><option value=''></option> <option value='1'>user1</option> <option value='2'>user2</option> <option value='3'>user3</option></select>";
+    var lag1_1Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
+    var lag2Str = "<input id='name" + index + "' type=\"text\" class=\"form-control name \" placeholder=\"充电桩名称\">";
+    var lag3Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
+    var lag4Str = "<input id='position" + index + "' type=\"text\" class=\"form-control position mapSelectPoint\" placeholder=\"充电桩位置\">";
+    var lag5Str = "<input id='position_val" + index + "' type=\"hidden\" class=\"form-control position_val mapSelectPoint\" placeholder=\"充电桩位置\">";
+    var lag6Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
+    var lag7Str = "<input id='capacity" + index + "' type=\"text\" class=\"form-control capacity\" placeholder=\"充电桩容量\">";
+    var lag8Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
+    var lag9Str = "<input id='charging_efficiency" + index + "' type=\"text\" class=\"form-control charging_efficiency\" placeholder=\"充电效率\">";
+    var lag10Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
+    var lag11Str = "<select data-placeholder='选择运行状态...' class='form-control state-select' tabindex='2' <option value=''></option> <option value='1'>正常</option> <option value='0'>停运</option> </select>";
+    var lag12Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
+    var lag13Str = "<input id='run_time" + index + "' type=\"text\" class=\"form-control run_time form-time\" placeholder=\"投运时间：yyyy-MM-dd\">"; //readonly="readonly"
+    /* var lag11Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";*/
+    // var lag11Str = "<span id=id='startPoint"+index+"' class=\"input-group-addon fix-border fix-padding btn btn-primary runLineStatus\"><i class=\"icon icon-star\"></i>执行</span>";
+    var $divStr = $(divStr);
+    var $lag0Str = $(lag0Str);
+    var $lag1Str = $(lag1Str);
+    var $lag1_1Str = $(lag1_1Str);
+    var $lag2Str = $(lag2Str);
+    var $lag3Str = $(lag3Str);
+    var $lag4Str = $(lag4Str);
+    var $lag5Str = $(lag5Str);
+    var $lag6Str = $(lag6Str);
+    var $lag7Str = $(lag7Str);
+    var $lag8Str = $(lag8Str);
+    var $lag9Str = $(lag9Str);
+    var $lag10Str = $(lag10Str);
+    var $lag11Str = $(lag11Str);
+    var $lag12Str = $(lag12Str);
+    var $lag13Str = $(lag13Str);
+    $lag13Str.datetimepicker({
+        language: "zh-CN",
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 2,
+        minView: 2,
+        forceParse: 0,
+        format: "yyyy-mm-dd"
+    });
+    /*$lag8Str.datetimepicker({
+        language:  "zh-CN",
+        weekStart: 1,
+        todayBtn:  1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 1,
+        minView: 0,
+        maxView: 1,
+        forceParse: 0,
+        format: 'hh:ii'
+    });*/
+    $divStr.append($lag0Str).append($lag1Str).append($lag1_1Str).append($lag2Str).append($lag3Str).append($lag4Str)
+        .append($lag5Str).append($lag6Str).append($lag7Str).append($lag8Str)
+        .append($lag9Str).append($lag10Str).append($lag11Str).append($lag12Str)
+        .append($lag13Str)
+    // .append($lag11Str)// .append($lag11Str)
+    /* var lineIput = "<div class=\"input-group\">\n" +
+         "  <span class=\"input-group-addon\"> 线路：</span>\n" +
+         "  <input type=\"text\" class=\"form-control\" placeholder=\"起点\">\n" +
+         "  <span class=\"input-group-addon fix-border fix-padding\"></span>\n" +
+         "  <input type=\"text\" class=\"form-control\" placeholder=\"终点\">\n" +
+         "  <span class=\"input-group-addon fix-border fix-padding\"></span>\n" +
+         "  <input type=\"text\" class=\"form-control form-time\" placeholder=\"开始时间:选择或者输入一个时间：hh:mm\">"+
+        /!* "  <input type=\"text\" class=\"form-control\" placeholder=\"开始时间\">\n" +*!/
+         "  <span class=\"input-group-addon fix-border fix-padding\"></span>\n" +
+         "  <input type=\"text\" class=\"form-control\" placeholder=\"结束时间\">\n" +
+         "</div>";*/
+    $('#myModal .modal-body').append($divStr)
+    /*  if(num){
+          $('#startPoint'+index).attr("readOnly","true")
+          $('#startPoint'+index).unbind('click')
+          $('#startPoint'+index).removeClass("mapSelectPoint")
+          $('#startPoint'+index).val($('#endPoint'+(index-1)).val());
+          $('#startPointVal'+index).val($('#endPointVal'+(index-1)).val());
+      }*/
+    $('select.chosen-select').chosen({
+        no_results_text: '没有找到',    // 当检索时没有找到匹配项时显示的提示文本
+        disable_search_threshold: 10, // 10 个以下的选择项则不显示检索框
+        search_contains: true         // 从任意位置开始检索
+    });
     $('#myModal').modal({
         keyboard: false,
         show: true,
@@ -692,12 +855,22 @@ $(document).on('click', '.runLineStatus', (e) => {
         timer = setTimeout(function () {
             Bmap.run();
         }, 5000);
+        $('#myModal').modal('hide')
     } catch (e) {
         console.log(e)
     }
 
 
 })
+//模拟驾驶
+$(document).on('click', '#simulatedDriving', () => {
+    Bmap.map.clearOverlays();
+    getAllChargingStation();
+    timer = setTimeout(function () {
+        Bmap.runAll();
+    }, 5000);
+})
+
 //删除线路
 $(document).on('click', '.delline', (e) => {
     var obj = $(e.target);
@@ -734,7 +907,7 @@ $(document).on('click', '.delline', (e) => {
 
 })
 
-//获取所以线路
+//获取所有线路
 function getAllLine() {
     $.ajax({
         type: "post",
@@ -760,4 +933,54 @@ function getAllLine() {
         }
     });
 
+}
+
+//获取所有充电站
+function getAllChargingStation() {
+    $.ajax({
+        type: "post",
+        url: "http://10.168.1.240:10200/api/tChargingStation/list",
+        data: '',
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8', //contentType很重要
+        success: function (data) {
+            if (data.length) {
+                $.each(data, (index, obj) => {
+                    Bmap.myIconInit("../imgs/chargingStation.png", 36, 36, 0, 0, 0, 0);
+                    let strings = obj.positionVal.split(',');
+                    let point = new BMap.Point(strings[0], strings[1])
+                    let carMk = new BMap.Marker(point, {icon: Bmap.myIcon, title: obj.name});
+                    carMk.addEventListener("click", showCar);
+                    Bmap.map.addOverlay(carMk);
+                    console.log(obj.positionVal);
+                })
+            }
+        }
+    });
+
+}
+
+function showCar(e, m) {
+    let title = $(e.currentTarget.V.outerHTML).attr("title");
+    $.ajax({
+        type: "post",
+        url: "http://10.168.1.240:10200/api/tChargingStation/getChargingStationByName",
+        data: title,
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8', //contentType很重要
+        success: function (data) {
+            console.log(data)
+            if (data.length) {
+                // $.each(data, (index, obj) => {
+                //     Bmap.myIconInit("../imgs/chargingStation.png", 36, 36, 0, 0, 0, 0);
+                //     let strings = obj.positionVal.split(',');
+                //     let point = new BMap.Point(strings[0], strings[1])
+                //     let carMk = new BMap.Marker(point, {icon: Bmap.myIcon, title: obj.name});
+                //     carMk.addEventListener("click", showCar);
+                //     Bmap.map.addOverlay(carMk);
+                //     console.log(obj.positionVal);
+                // })
+            }
+        }
+    });
 }

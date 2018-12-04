@@ -7,9 +7,11 @@ a, abbr, acronym, address, applet, article, aside, audio, b, big, blockquote, bo
     font: inherit;
     vertical-align: baseline
 }
+
 article, aside, details, figcaption, figure, footer, header, hgroup, menu, nav, section {
     display: block
 }
+
 html {
     height: 100%;
     position: relative;
@@ -28,6 +30,7 @@ body {
     background: #343d48;
     min-width: 745px
 }
+
 #rightEverything {
     transition: width 3s;
     min-width: 765px
@@ -88,6 +91,7 @@ body {
     margin-right: 15px;
     margin-left: 15px
 }
+
 .panel {
     margin-top: 20px
 }
@@ -1719,13 +1723,46 @@ body {
     border-style: solid;
     border-color: #50565f transparent transparent transparent
 }
+
 .mapSelectBox {
     width: 780px;
     height: 500px;
 }
+
 .modal-dialog {
     width: 800px !important;
 }
-#userId_chosen{
+
+.ChargingPile-group .state-select {
+    width: 100px !important;
+}
+
+.chosen-select {
+    width: 100px !important;
+}
+
+.csId_chosen {
+    width: 100px !important;
+}
+
+.ChargingPile-group .csId-select {
+    width: 100px !important;
+}
+
+.input-group .form-control {
+    position: relative;
+    z-index: 2;
+    /* float: left; */
+    float: none;
+    width: 100%;
+    margin-bottom: 0;
+}
+
+.run_time {
+    width: 100px !important;
+}
+
+#userId {
     width: 100% !important;
 }
+

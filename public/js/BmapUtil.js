@@ -1,13 +1,13 @@
-let moverTimer =null;
+let moverTimer = null;
 Bmap = {
     vue: new Vue(),
     linemapping: {},
     line: null,
     lineId: null,
     map: null,
-    lineIndex:null,
+    lineIndex: null,
     startPoint: null,
-    startTime:null,
+    startTime: null,
     endPoint: null,
     endTime: null,
     bounds: null,
@@ -33,7 +33,7 @@ Bmap = {
         // 104.0863, 30.656913
         Bmap.map.centerAndZoom(new BMap.Point(certerPoint[0], certerPoint[1]), Bmap.sizeNum);
     },
-    myIconInit: (Imageurl, myIconWidth, myIconHeight, offsetWidth, offsetHeight,imageOffsetWidth, imageOffsetHeight) => {
+    myIconInit: (Imageurl, myIconWidth, myIconHeight, offsetWidth, offsetHeight, imageOffsetWidth, imageOffsetHeight) => {
         // "http://lbsyun.baidu.com/jsdemo/img/Mario.png"
         Bmap.myIcon = new BMap.Icon(Imageurl, new BMap.Size(myIconWidth, myIconHeight, imageOffsetWidth, imageOffsetHeight), {
             offset: new BMap.Size(offsetWidth, offsetHeight),
@@ -47,20 +47,22 @@ Bmap = {
             this.defaultAnchor = BMAP_ANCHOR_TOP_RIGHT;
             this.defaultOffset = new BMap.Size(10, 10);
         }
+
         // 通过JavaScript的prototype属性继承于BMap.Control
         ZoomControl.prototype = new BMap.Control();
         ZoomControl.prototype.initialize = function (map) {
             // 创建一个DOM元素
             var $div = $("<div class=\"btn-group\">\n" +
-                " <button type=\"button\" class=\"btn btn-primary\" id='openModalNewXl'>规划线路</button>" +
-                "  <button class=\"btn\" id='openModalNewCdz'>新建充电桩</button>\n" +
-                "  <button class=\"btn\">第三个</button>\n" +
+                " <button type=\"button\" class=\"btn btn-primary\" id='simulatedDriving'>模拟汽车行驶</button>" +
+                " <button type=\"button\" class=\"btn\" id='openModalNewXl'>规划线路</button>" +
+                "  <button class=\"btn\" id='openModalNewChargingStation'>新建充电站</button>\n" +
+                "  <button class=\"btn\" id='openModalNewChargingPile'>新建充电桩</button>\n" +
                 "</div>");
             // 设置样式
-           /* $div.css("cursor", "pointer");
-            $div.css("border", "1px solid gray");
-            $div.css("backgroundColor", "blue");*/
-            $div.on('click','#newSource',()=>{
+            /* $div.css("cursor", "pointer");
+             $div.css("border", "1px solid gray");
+             $div.css("backgroundColor", "blue");*/
+            $div.on('click', '#newSource', () => {
                 alert();
                 $('#tint').fadeIn();
                 $('#startUpPanel').show().addClass('bounceInLeft');
@@ -76,7 +78,7 @@ Bmap = {
         Bmap.map.addControl(myZoomCtrl);
     },
     drawLine: (results) => {
-        Bmap.opacity = 0.45;
+        Bmap.opacity = 0.1;
         Bmap.planObj = results.getPlan(0);
         let duration = Bmap.planObj.getDuration(true);
         console.log(duration)
@@ -85,26 +87,26 @@ Bmap = {
         let oldHour = parseInt(Bmap.startTime[0]);
         let newMin = 0;
         let newHour = 0;
-        if(duration.indexOf("小时")===-1){
+        if (duration.indexOf("小时") === -1) {
             newMin = parseInt(duration);
 
-        } else if(duration.indexOf("分钟")===-1){
-            newHour = parseInt(duration.substring(0,duration.indexOf("小时")))
+        } else if (duration.indexOf("分钟") === -1) {
+            newHour = parseInt(duration.substring(0, duration.indexOf("小时")))
         } else {
-            newHour = parseInt(duration.substring(0,duration.indexOf("小时")))
-            newMin = parseInt(duration.substring(duration.indexOf("小时")+2,duration.indexOf("分钟")))
+            newHour = parseInt(duration.substring(0, duration.indexOf("小时")))
+            newMin = parseInt(duration.substring(duration.indexOf("小时") + 2, duration.indexOf("分钟")))
         }
-        let hourAdd =  parseInt((oldMin+newMin)/60)
-        newMin = (oldMin+newMin)%60
-        newHour = (hourAdd+oldHour+newHour)%24
-        if(newHour<10){
-            newHour = "0"+newHour;
+        let hourAdd = parseInt((oldMin + newMin) / 60)
+        newMin = (oldMin + newMin) % 60
+        newHour = (hourAdd + oldHour + newHour) % 24
+        if (newHour < 10) {
+            newHour = "0" + newHour;
         }
-        if(newMin<10){
-            newMin = "0"+newMin;
+        if (newMin < 10) {
+            newMin = "0" + newMin;
         }
-        $("#endTime"+Bmap.lineIndex).val(newHour+":"+newMin);
-        console.log(newHour+":"+newMin)
+        $("#endTime" + Bmap.lineIndex).val(newHour + ":" + newMin);
+        console.log(newHour + ":" + newMin)
         Bmap.b = new Array();
         // 绘制驾车步行线路
         for (var i = 0; i < Bmap.planObj.getNumRoutes(); i++) {
@@ -125,7 +127,7 @@ Bmap = {
                     strokeStyle: Bmap.lineId,
                     strokeColor: "#0030ff",
                     strokeOpacity: Bmap.opacity,
-                    strokeWeight: 6,
+                    strokeWeight: 5,
                     enableMassClear: true
                 })
             } else {
@@ -142,7 +144,7 @@ Bmap = {
                     enableMassClear: true
                 })
             }
-            polyline.addEventListener("click",Bmap.editLine);
+            polyline.addEventListener("click", Bmap.editLine);
             Bmap.linemapping[polyline.ba] = Object.assign({}, Bmap.line);
             console.log("*********************************");
             console.log(polyline.ba);
@@ -160,15 +162,18 @@ Bmap = {
     addMarkerFun: (point, imgType, index, title) => {
         if (imgType == 1) {
             // var url = "http://lbsyun.baidu.com/jsdemo/img/dest_markers.png";
-            var url = "../imgs/startPoint.png"; //"http://lbsyun.baidu.com/jsdemo/img/dest_markers.png";
-            // width = 42;
-           var  width = 24;
-            // height = 34;
-            var height = 24;
-            if(index===1){
-                url = "../imgs/endPoint.png"
+            //var url = "../imgs/startPoint.png"; //"http://lbsyun.baidu.com/jsdemo/img/dest_markers.png";
+            var url = "./imgs/startPoint.png"; //"http://lbsyun.baidu.com/jsdemo/img/dest_markers.png";
+            // width = 24;
+            var width = 0;
+            // height = 24;
+            var height = 0;
+            if (index === 1) {
+                // url = "../imgs/endPoint.png"
+                url = "./imgs/endPoint.png"
             }
             Bmap.myIconInit(url, width, height, 0, -24, 0, 0);
+            // Bmap.myIconInit(url, width, height, 0, -24, 0, 0);
             // Bmap.myIconInit(url, width, height, 14, 32, 0, 0 - index * height);
         } else {
             var url = "http://lbsyun.baidu.com/jsdemo/img/trans_icons.png";
@@ -202,25 +207,37 @@ Bmap = {
         }
     },
     resetMkPoint: (i, len, pts, carMk) => {
-       if(moverTimer){
-           clearTimeout(moverTimer)
-       }
+        if (moverTimer) {
+            clearTimeout(moverTimer)
+        }
         carMk.setPosition(pts[i]);
         if (i < len) {
-            moverTimer =  setTimeout(function () {
+            moverTimer = setTimeout(function () {
                 i++;
                 Bmap.resetMkPoint(i, len, pts, carMk);
             }, 500);
         }
     },
+    resetMkPointAll: (i, len, pts, carMk) => {
+        carMk.setPosition(pts[i]);
+        if (i < len) {
+            moverTimer = setTimeout(function () {
+                i++;
+                Bmap.resetMkPointAll(i, len, pts, carMk);
+            }, 500);
+        } else {
+            alert(carMk.getTitle());
+            console.log(carMk.getPosition());
+        }
+    },
     run: (num) => {
         for (var m = 0; m < Bmap.linesPoints.length; m++) {
-            if(num) {
-                if(num===m){
+            if (num) {
+                if (num === m) {
                     var pts = Bmap.linesPoints[m];
                     var len = pts.length;
                     // Bmap.myIconInit("http://lbsyun.baidu.com/jsdemo/img/Mario.png", 32, 70, 0, 0, 0, 0 );
-                    Bmap.myIconInit("../imgs/car.png", 12, 12, 0, 0, 0, 0 );
+                    Bmap.myIconInit("../imgs/car_val.png", 24, 24, 0, 0, 0, 0);
                     var carMk = new BMap.Marker(pts[0], {icon: Bmap.myIcon});
                     Bmap.map.addOverlay(carMk);
                     Bmap.resetMkPoint(1, len, pts, carMk)
@@ -229,11 +246,22 @@ Bmap = {
                 var pts = Bmap.linesPoints[m];
                 var len = pts.length;
                 // Bmap.myIconInit("http://lbsyun.baidu.com/jsdemo/img/Mario.png", 32, 70, 0, 0, 0, 0 );
-                Bmap.myIconInit("../imgs/car.png", 12, 12, 0, 0, 0, 0 );
+                Bmap.myIconInit("../imgs/car_val.png", 24, 24, 0, 0, 0, 0);
                 var carMk = new BMap.Marker(pts[0], {icon: Bmap.myIcon});
                 Bmap.map.addOverlay(carMk);
                 Bmap.resetMkPoint(1, len, pts, carMk)
             }
+        }
+    },
+    runAll: () => {
+        for (var m = 0; m < Bmap.linesPoints.length; m++) {
+            console.log("car" + m);
+            var pts = Bmap.linesPoints[m];
+            var len = pts.length;
+            Bmap.myIconInit("../imgs/car_val.png", 24, 24, 0, 0, 0, 0);
+            var carMk = new BMap.Marker(pts[0], {icon: Bmap.myIcon, title: "car" + (m + 1)});
+            Bmap.map.addOverlay(carMk);
+            Bmap.resetMkPointAll(1, len, pts, carMk)
         }
     },
     initLine: () => {
@@ -273,7 +301,7 @@ Bmap = {
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
             success: function (data) {
-                if(data.length){
+                if (data.length) {
                     // $.each(data,(index,obj) => {
                     //    if(index){
                     //        createLine(1);
@@ -292,25 +320,27 @@ Bmap = {
     },
     drawAllLine: (lines) => {
         $('#myModal .modal-body').html("");
-        $('#myModal .modal-body').append("<select id='userId' data-placeholder='请选择用户...' class='chosen-select form-control' tabindex='2' ><option value=''></option> <option value='1'>user1</option> <option value='2'>user2</option> <option value='3'>user3</option></select>");
+        //chosen-select
+        $('#myModal .modal-body').append("<select id='userId' data-placeholder='请选择用户...' class='form-control' tabindex='2' ><option value=''></option> <option value='1'>user1</option> <option value='2'>user2</option> <option value='3'>user3</option></select>");
         $("#addInputXl").show();
-        $("#addInputCdz").hide();
-        $.each(lines,(num,line)=>{
+        $("#addInputChargingStation").hide();
+        $("#addInputChargingPile").hide();
+        $.each(lines, (num, line) => {
             let index = line.sort;
-            var divStr = "<div class=\"input-group\" index='"+num+"'></div>";
+            var divStr = "<div class=\"input-group lines-group\" index='" + num + "'></div>";
             var lag1Str = "<span class=\"input-group-addon\"> 线路：</span>";
-            var lag2Str = "<input id='startPoint"+num+"' type=\"text\" class=\"form-control startPoint mapSelectPoint\" placeholder=\"起点\">";
-            var lag3Str = "<input id='startPointVal"+num+"' type=\"hidden\" class=\"form-control startPointVal mapSelectPoint\" placeholder=\"起点\">";
+            var lag2Str = "<input id='startPoint" + num + "' type=\"text\" class=\"form-control startPoint mapSelectPoint\" placeholder=\"起点\">";
+            var lag3Str = "<input id='startPointVal" + num + "' type=\"hidden\" class=\"form-control startPointVal mapSelectPoint\" placeholder=\"起点\">";
             var lag4Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
-            var lag5Str = "<input id='endPoint"+num+"' type=\"text\" class=\"form-control endPoint mapSelectPoint\" placeholder=\"终点\">";
-            var lag6Str = "<input id='endPointVal"+num+"' type=\"hidden\" class=\"form-control endPointVal mapSelectPoint\" placeholder=\"终点\">";
+            var lag5Str = "<input id='endPoint" + num + "' type=\"text\" class=\"form-control endPoint mapSelectPoint\" placeholder=\"终点\">";
+            var lag6Str = "<input id='endPointVal" + num + "' type=\"hidden\" class=\"form-control endPointVal mapSelectPoint\" placeholder=\"终点\">";
             var lag7Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
-            var lag8Str = "<input id='startTime"+num+"' type=\"text\" class=\"form-control startTime form-time\" placeholder=\"开始时间:选择或者输入一个时间：hh:mm\">";
+            var lag8Str = "<input id='startTime" + num + "' type=\"text\" class=\"form-control startTime form-time\" placeholder=\"开始时间:选择或者输入一个时间：hh:mm\">";
             var lag9Str = "<span class=\"input-group-addon fix-border fix-padding\"></span>";
-            var lag10Str = "<input id='endTime"+num+"' type=\"text\" readonly=\"readonly\" class=\"form-control endTime form-time\" placeholder=\"结束时间:hh:mm\">";
-            var lag11Str = "<span id='startPoint"+num+"' class=\"input-group-addon fix-border fix-padding btn btn-primary runLineStatus\"><i class=\"icon icon-star\"></i>执行</span>";
-            var lag12Str = "<span id='delLine"+index+"' class=\"input-group-addon fix-border fix-padding btn btn-danger delline\"><i class=\"icon icon-trash\"></i>删除</span>";
-            var $divStr = $(divStr).attr("id",line.id);
+            var lag10Str = "<input id='endTime" + num + "' type=\"text\" readonly=\"readonly\" class=\"form-control endTime form-time\" placeholder=\"结束时间:hh:mm\">";
+            var lag11Str = "<span id='startPoint" + num + "' class=\"input-group-addon fix-border fix-padding btn btn-primary runLineStatus\"><i class=\"icon icon-star\"></i>执行</span>";
+            var lag12Str = "<span id='delLine" + index + "' class=\"input-group-addon fix-border fix-padding btn btn-danger delline\"><i class=\"icon icon-trash\"></i>删除</span>";
+            var $divStr = $(divStr).attr("id", line.id);
             var $lag1Str = $(lag1Str);
             var $lag2Str = $(lag2Str).val(line.startPoint);
             var $lag3Str = $(lag3Str).val(line.startPointVal);
@@ -323,13 +353,13 @@ Bmap = {
             var $lag10Str = $(lag10Str).val(line.endTime);
             var $lag11Str = $(lag11Str);
             var $lag12Str = $(lag12Str);
-            if(num!=lines.length-1){
-                $lag12Str.attr('disabled',"true");
+            if (num != lines.length - 1) {
+                $lag12Str.attr('disabled', "true");
             }
             $lag8Str.datetimepicker({
-                language:  "zh-CN",
+                language: "zh-CN",
                 weekStart: 1,
-                todayBtn:  1,
+                todayBtn: 1,
                 autoclose: 1,
                 todayHighlight: 1,
                 startView: 1,
@@ -338,14 +368,14 @@ Bmap = {
                 forceParse: 0,
                 format: 'hh:ii'
             });
-            $lag8Str.change((e)=>{
+            $lag8Str.change((e) => {
                 let obj = $(e.target);
-                if(obj.parent().prev().find(".endTime").length){
+                if (obj.parent().prev().find(".endTime").length) {
                     let prevEndTime = obj.parent().prev().find(".endTime").val()
-                    let currStartTime = parseInt($(e.target).val().replace(':',''))
-                    prevEndTime = parseInt(prevEndTime.replace(':',''))
-                    if(currStartTime<prevEndTime){
-                        Bmap.vue.$message({ message: '时间早于前一条线路的结束时间。', type: 'error' })
+                    let currStartTime = parseInt($(e.target).val().replace(':', ''))
+                    prevEndTime = parseInt(prevEndTime.replace(':', ''))
+                    if (currStartTime < prevEndTime) {
+                        Bmap.vue.$message({message: '时间早于前一条线路的结束时间。', type: 'error'})
                         obj.val("")
                     }
                 }
@@ -355,12 +385,12 @@ Bmap = {
                 .append($lag6Str).append($lag7Str).append($lag8Str).append($lag9Str).append($lag10Str)
                 .append($lag11Str).append($lag12Str)
             $('#myModal .modal-body').append($divStr)
-            if(num){
-                $('#startPoint'+num).attr("readOnly","true")
-                $('#startPoint'+num).unbind('click')
-                $('#startPoint'+num).removeClass("mapSelectPoint")
-                $('#startPoint'+num).val($('#endPoint'+(num-1)).val());
-                $('#startPointVal'+num).val($('#endPointVal'+(num-1)).val());
+            if (num) {
+                $('#startPoint' + num).attr("readOnly", "true")
+                $('#startPoint' + num).unbind('click')
+                $('#startPoint' + num).removeClass("mapSelectPoint")
+                $('#startPoint' + num).val($('#endPoint' + (num - 1)).val());
+                $('#startPointVal' + num).val($('#endPointVal' + (num - 1)).val());
             }
         })
         $('select.chosen-select').chosen({
@@ -369,9 +399,9 @@ Bmap = {
             search_contains: true         // 从任意位置开始检索
         });
         $('#myModal').modal({
-            keyboard : false,
-            show     : true,
-            moveable : true
+            keyboard: false,
+            show: true,
+            moveable: true
         })
     }
 }
