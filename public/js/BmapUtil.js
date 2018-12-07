@@ -1,9 +1,13 @@
 let moverTimer = null;
 Bmap = {
     vue: new Vue(),
-    linemapping: {},
+    linemapping: new Array(),
+    userCarMapping: {},
+    lines: null,
     line: null,
     lineId: null,
+    lineIndexMark: 0,
+    lineNumber: null,
     map: null,
     lineIndex: null,
     startPoint: null,
@@ -25,6 +29,7 @@ Bmap = {
     marker: null,
     route: null,
     points: null,
+    cars: null,
     sizeNum: 15,
     mapInit: (el, certerPoint) => {
         Bmap.drivingArr = new Array();
@@ -62,12 +67,55 @@ Bmap = {
             /* $div.css("cursor", "pointer");
              $div.css("border", "1px solid gray");
              $div.css("backgroundColor", "blue");*/
-            $div.on('click', '#newSource', () => {
-                alert();
+            /*$div.on('click', () => {
                 $('#tint').fadeIn();
                 $('#startUpPanel').show().addClass('bounceInLeft');
                 // $('#auditContentWrap').show();
-            })
+            })*/
+            Bmap.map.getContainer().appendChild($div[0]);
+            // 将DOM元素返回
+            return $div[0];
+        }
+        // 创建控件
+        var myZoomCtrl = new ZoomControl();
+        // 添加到地图当中
+        Bmap.map.addControl(myZoomCtrl);
+    },
+    ZoomControlInitLEFT: (map) => {
+        // 定义一个控件类,即function
+        function ZoomControl() {
+            // 默认停靠位置和偏移量
+            this.defaultAnchor = BMAP_ANCHOR_TOP_LEFT;
+            this.defaultOffset = new BMap.Size(10, 10);
+        }
+
+        // 通过JavaScript的prototype属性继承于BMap.Control
+        ZoomControl.prototype = new BMap.Control();
+        ZoomControl.prototype.initialize = function (map) {
+            // 创建一个DOM元素
+            var $div = $("<nav class='menu' data-ride='menu' style='width: 200px'>" +
+                "<ul id='treeMenu' class='tree tree-menu' data-ride='tree'>" +
+                "<li><a id='evLineMapping' href='#'><i class='icon icon-th'></i>btn1</a></li>" +
+                "<li><a href='#'><i class='icon icon-user'></i>btn2</a></li>" +
+                "<li>" +
+                "<a href='#'><i class='icon icon-time'></i>btn3</a>" +
+                "</li>" +
+                "<li><a href='#'><i class='icon icon-trash'></i>btn4</a></li>" +
+                "<li><a href='#'><i class='icon icon-list-ul'></i>btn5</a></li>" +
+                "<li class='open'>" +
+                "<a href='#'><i class='icon icon-tasks'></i>btn6</a>" +
+                "</li>" +
+                "</ul>" +
+                "</nav>");
+            // 设置样式
+            /* $div.css("cursor", "pointer");
+             $div.css("border", "1px solid gray");
+             $div.css("backgroundColor", "blue");*/
+            // 手动通过点击模拟高亮菜单项
+            $div.on('click', 'a', function () {
+                $('#treeMenu li.active').removeClass('active');
+                $(this).closest('li').addClass('active');
+            });
             Bmap.map.getContainer().appendChild($div[0]);
             // 将DOM元素返回
             return $div[0];
@@ -81,8 +129,8 @@ Bmap = {
         Bmap.opacity = 0.1;
         Bmap.planObj = results.getPlan(0);
         let duration = Bmap.planObj.getDuration(true);
-        console.log(duration)
-        console.log(Bmap.startTime);
+        // console.log(duration)
+        // console.log(Bmap.startTime);
         let oldMin = parseInt(Bmap.startTime[1]);
         let oldHour = parseInt(Bmap.startTime[0]);
         let newMin = 0;
@@ -106,7 +154,7 @@ Bmap = {
             newMin = "0" + newMin;
         }
         $("#endTime" + Bmap.lineIndex).val(newHour + ":" + newMin);
-        console.log(newHour + ":" + newMin)
+        // console.log(newHour + ":" + newMin);
         Bmap.b = new Array();
         // 绘制驾车步行线路
         for (var i = 0; i < Bmap.planObj.getNumRoutes(); i++) {
@@ -146,9 +194,9 @@ Bmap = {
             }
             polyline.addEventListener("click", Bmap.editLine);
             Bmap.linemapping[polyline.ba] = Object.assign({}, Bmap.line);
-            console.log("*********************************");
-            console.log(polyline.ba);
-            console.log("*********************************");
+            // console.log("*********************************");
+            // console.log(polyline.ba);
+            // console.log("*********************************");
             Bmap.map.addOverlay(polyline);
         }
         Bmap.map.setViewport(Bmap.bounds);
@@ -156,7 +204,7 @@ Bmap = {
         Bmap.addMarkerFun(results.getEnd().point, 1, 1);
         // 开始点
         Bmap.addMarkerFun(results.getStart().point, 1, 0);
-
+        debugger;
         Bmap.linesPoints[Bmap.linesPoints.length] = Bmap.b;
     },
     addMarkerFun: (point, imgType, index, title) => {
@@ -218,16 +266,30 @@ Bmap = {
             }, 500);
         }
     },
-    resetMkPointAll: (i, len, pts, carMk) => {
+    resetMkPointAll: (i, len, pts, carMk, time) => {
+        let geoc = new BMap.Geocoder();
+        geoc.getLocation(pts[i], function (rs) {
+            let addComp = rs.addressComponents;
+            let nameStr = addComp.district + addComp.street + addComp.streetNumber;
+            const obj = {id: carMk.ba.split(",")[1], positionVal: pts[i].lng + "," + pts[i].lat, position: nameStr}
+            updateElectricVehicleById(obj)
+        });
+        let du = 0;
+        if (i == len - 1) {
+            du = Math.round(time / (len - 1)) + time % (len - 1);
+        } else {
+            du = Math.round(time / (len - 1));
+        }
         carMk.setPosition(pts[i]);
         if (i < len) {
+            // debugger;
             moverTimer = setTimeout(function () {
                 i++;
-                Bmap.resetMkPointAll(i, len, pts, carMk);
-            }, 500);
+                Bmap.resetMkPointAll(i, len, pts, carMk, time);
+            }, du / 10);
         } else {
-            alert(carMk.getTitle());
-            console.log(carMk.getPosition());
+            // alert(carMk.getTitle());
+            // console.log(carMk.getPosition());
         }
     },
     run: (num) => {
@@ -255,8 +317,9 @@ Bmap = {
     },
     runAll: () => {
         for (var m = 0; m < Bmap.linesPoints.length; m++) {
-            console.log("car" + m);
+            // console.log(JSON.stringify(Bmap.linesPoints[0]));
             var pts = Bmap.linesPoints[m];
+            // console.log(pts);
             var len = pts.length;
             Bmap.myIconInit("../imgs/car_val.png", 24, 24, 0, 0, 0, 0);
             var carMk = new BMap.Marker(pts[0], {icon: Bmap.myIcon, title: "car" + (m + 1)});
@@ -272,7 +335,7 @@ Bmap = {
         driving.search(Bmap.startPoint, Bmap.endPoint)
     },
     editLine: (evnt) => {
-        console.log(evnt.target);
+        // console.log(evnt.target);
         // console.log(Bmap.linemapping[evnt.target.ba]);
         // console.log(Bmap.linemapping);
         // $('#myModal .modal-body').html("");
@@ -316,7 +379,7 @@ Bmap = {
 
     },
     getDuration: (map) => {
-        console.log(Bmap.planObj)
+        // console.log(Bmap.planObj)
     },
     drawAllLine: (lines) => {
         $('#myModal .modal-body').html("");

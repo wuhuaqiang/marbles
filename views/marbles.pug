@@ -16,9 +16,17 @@ block custom_header
     script(src="lib/datetimepicker/datetimepicker.min.js")
     link(href="lib/chosen/chosen.min.css" rel="stylesheet")
     script(src="lib/chosen/chosen.min.js")
+    link(href="lib/datagrid/zui.datagrid.min.css" rel="stylesheet")
+    script(src="lib/datagrid/zui.datagrid.min.js")
     link(type="text/css" rel="stylesheet" href="/css/main.css?v=" + bag.csshash)
     script(src="http://api.map.baidu.com/api?v=2.0&ak=BjGa4MDmGMiqB04Hrjn9iYvxx94ERYPu")
     script(src='/js/BmapUtil.js?v=' + bag.jshash)
+    script(src='/js/util.js?v=' + bag.jshash)
+    script(src='/js/chargingPile.js?v=' + bag.jshash)
+    script(src='/js/chargingStation.js?v=' + bag.jshash)
+    script(src='/js/electricVehicle.js?v=' + bag.jshash)
+    script(src='/js/line.js?v=' + bag.jshash)
+    script(src='/js/mapping.js?v=' + bag.jshash)
     script(type='text/javascript').
         // $(document).ready(function () {
         //     var centerPoint = [104.0863, 30.656913];
@@ -29,8 +37,20 @@ block custom_header
             var centerPoint = [104.0863, 30.656913];
             Bmap.mapInit("mainPanel", centerPoint);
             Bmap.ZoomControlInit(Bmap.map);
+            Bmap.ZoomControlInitLEFT(Bmap.map);
             getAllLine();
             getAllChargingStation();
+            getAllTElectricVehicleWithLine();
+            var mPoint = new BMap.Point(centerPoint[0], centerPoint[1]);
+            // var circle = new BMap.Circle(mPoint, 1000, {
+            //     fillColor: "blue",
+            //     strokeWeight: 1,
+            //     fillOpacity: 0.3,
+            //     strokeOpacity: 0.3
+            // });
+            // map.addOverlay(circle);
+            var local = new BMap.LocalSearch(Bmap.map, {renderOptions: {map: Bmap.map, autoViewport: false}});
+            local.searchNearby('充电站', mPoint, 10000);
         })
 
 

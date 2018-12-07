@@ -1766,3 +1766,22 @@ body {
     width: 100% !important;
 }
 
+#pileTable {
+    display: inline-flex;
+    width: 730px;
+}
+
+.item-content ul li {
+    list-style: none;
+    float: left;
+    margin-left: 10px;
+}
+
+nav.menu {
+    width: 150px !important;
+    color: #353535;
+    text-shadow: 0 1px 0 #fff;
+    background-color: #f2f2f2;
+    border-color: #bfbfbf;
+    opacity: 0.9;
+}
