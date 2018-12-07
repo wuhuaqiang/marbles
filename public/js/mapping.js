@@ -33,7 +33,10 @@ function drawLine(results) {
             hour = parseInt(duration.substring(0, duration.indexOf("小时")))
             min = parseInt(duration.substring(duration.indexOf("小时") + 2, duration.indexOf("分钟")))
         }
-        console.log(parseFloat(distance));
+        debugger;
+        distance = parseFloat(distance);
+        let speek = distance / (hour + min / 60);
+        console.log(speek);
         const timer = (hour * 60 + min) * 60 * 1000;
         Bmap.lines[Bmap.lineIndexMark].timer = timer;
     }
