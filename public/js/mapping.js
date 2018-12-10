@@ -33,10 +33,10 @@ function drawLine(results) {
             hour = parseInt(duration.substring(0, duration.indexOf("小时")))
             min = parseInt(duration.substring(duration.indexOf("小时") + 2, duration.indexOf("分钟")))
         }
-        debugger;
+        // debugger;
         distance = parseFloat(distance);
         let speek = distance / (hour + min / 60);
-        console.log(speek);
+        // console.log(speek);
         const timer = (hour * 60 + min) * 60 * 1000;
         Bmap.lines[Bmap.lineIndexMark].timer = timer;
     }
@@ -45,13 +45,21 @@ function drawLine(results) {
         getEvLineMapping();
     } else {
         for (let m = 0; m < Bmap.lines.length; m++) {
+            let startTime = Bmap.lines[m].startTime;
             let pts = Bmap.lines[m].linePoints;
             let carMk = Bmap.lines[m].car
             let len = pts.length;
             let time = Bmap.lines[m].timer
-            timer = setTimeout(function () {
-                Bmap.resetMkPointAll(1, len, pts, carMk, time)
-            }, m * 10000);
+            const startTimeLong = (parseInt(startTime.split(":")[0]) * 60 + parseInt(startTime.split(":")[1])) * 60 * 1000;
+
+            // console.log(startTimeLong);
+            timer = setInterval(function () {
+                const currTimeLong = (parseInt(Bmap.systemTime.split(":")[0]) * 60 * 60 + parseInt(Bmap.systemTime.split(":")[1]) * 60 + parseInt(Bmap.systemTime.split(":")[2])) * 1000;
+                console.log(currTimeLong);
+                if (startTimeLong == currTimeLong) {
+                    Bmap.resetMkPointAll(1, len, pts, carMk, time)
+                }
+            }, 1);
         }
     }
 }

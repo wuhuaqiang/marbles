@@ -65,6 +65,19 @@ html
                                 h4.modal-title map
                             div.modal-body
                             div.modal-footer
+                div#myTimeCol.modal.fade
+                    div.modal-dialog
+                        div.modal-content
+                            div.modal-header
+                                //button(type="button")#closeMap.close
+                                    //data-dismiss="modal".close#disableStoryMode
+                                    //span(aria-hidden="true") ×
+                                    //span.sr-only 关闭
+                                h4.modal-title 设置模拟时间
+                            div.modal-body
+                                input(type="text")#simulationTime
+                            div.modal-footer
+                                button#saveSystemTime(type="button").btn.btn-primary 保存
                                 //button(type="button",data-dismiss="modal").btn.btn-default 关闭
                                 //button#getPoint(type="button").btn.btn-primary 保存
                 //div#myInfo.alert.alert-warning.alert-dismissable

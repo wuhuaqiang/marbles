@@ -84,3 +84,80 @@ function getDetailPints(points, stepLat, stepLng) {
     }
     return newPoints;
 }
+
+// function setSystemTime(time) {
+//     if (Bmap.systemTimeLable) {
+//         Bmap.systemTimeLable.setContent(time);
+//     } else {
+//         let point = Bmap.map.getCenter();
+//         var opts = {
+//             position: Bmap.map.getBounds().xl,    // 指定文本标注所在的地理位置
+//             offset: new BMap.Size(-1000, 30)    //设置文本偏移量
+//         }
+//         Bmap.systemTimeLable = new BMap.Label(time, opts);  // 创建文本标注对象
+//         Bmap.systemTimeLable.setStyle({
+//             color: "black",
+//             fontSize: "16px",
+//             fontWeight: "12px",
+//             backgroundColor: "red",
+//             height: "30px",
+//             lineHeight: "30px",
+//             fontFamily: "微软雅黑"
+//         });
+//         Bmap.map.addOverlay(Bmap.systemTimeLable);
+//     }
+//
+// }
+function setSystemTime() {
+    $("#simulationSysTime").text(Bmap.systemTime);
+    if (Bmap.systemTimer) {
+        clearTimeout(Bmap.systemTimer);
+    }
+    Bmap.systemTimer = setInterval(function () {
+        let split = Bmap.systemTime.split(":");
+        let newTime = "";
+        if (8 < parseInt(split[2]) && parseInt(split[2]) < 59) {
+            newTime = parseInt(split[1]) + ":" + (parseInt(split[2]) + 1);
+        }
+        if (parseInt(split[2]) == 59) {
+            newTime = (parseInt(split[1]) + 1) + ":00";
+        }
+        if (parseInt(split[2]) < 9) {
+            newTime = parseInt(split[1]) + ":0" + (parseInt(split[2]) + 1);
+        }
+        if (parseInt(split[1]) < 10) {
+            newTime = "0" + newTime;
+        }
+        if (newTime.split(":")[0] == 60) {
+            //debugger;
+            newTime = "00:" + newTime.split(":")[1];
+
+
+            if (parseInt(split[0]) < 9) {
+                split[0] = "0" + (parseInt(split[0]) + 1);
+            } else {
+                split[0] = (parseInt(split[0]) + 1);
+            }
+
+
+        }
+        if (split[0] == 24) {
+            Bmap.systemTime = "00:" + newTime;
+        } else {
+            Bmap.systemTime = split[0] + ":" + newTime;
+        }
+        $("#simulationSysTime").text(Bmap.systemTime);
+        //setSystemTime(Bmap.systemTime);
+    }, 1000 / Bmap.ffRatio);
+}
+
+function getCurrTimeSetSysTime() {
+    var currDate = new Date();//获取系统当前时间
+    const h = currDate.getHours();
+    const m = currDate.getMinutes();
+    const s = currDate.getSeconds()
+    Bmap.systemTime = h + ":" + m + ":" + s;
+    Bmap.ffRatio = 1;
+    setSystemTime();
+
+}

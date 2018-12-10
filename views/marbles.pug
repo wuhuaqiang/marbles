@@ -41,7 +41,8 @@ block custom_header
             getAllLine();
             getAllChargingStation();
             getAllTElectricVehicleWithLine();
-            var mPoint = new BMap.Point(centerPoint[0], centerPoint[1]);
+            getCurrTimeSetSysTime();
+            // var mPoint = new BMap.Point(centerPoint[0], centerPoint[1]);
             // var circle = new BMap.Circle(mPoint, 1000, {
             //     fillColor: "blue",
             //     strokeWeight: 1,
@@ -49,8 +50,8 @@ block custom_header
             //     strokeOpacity: 0.3
             // });
             // map.addOverlay(circle);
-            var local = new BMap.LocalSearch(Bmap.map, {renderOptions: {map: Bmap.map, autoViewport: false}});
-            local.searchNearby('充电站', mPoint, 10000);
+            // var local = new BMap.LocalSearch(Bmap.map, {renderOptions: {map: Bmap.map, autoViewport: false}});
+            // local.searchNearby('充电站', mPoint, 10000);
         })
 
 
@@ -82,4 +83,4 @@ block content
         //include ./panel_disable_owner.pug
 
 block footer
-    //include ./template/blockchain.pug
+    include ./template/footer.pug

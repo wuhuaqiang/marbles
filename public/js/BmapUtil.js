@@ -1,8 +1,12 @@
 let moverTimer = null;
 Bmap = {
     vue: new Vue(),
+    systemTimer: null,
     linemapping: new Array(),
     userCarMapping: {},
+    systemTime: null,
+    ffRatio: null,
+    systemTimeLable: null,
     lines: null,
     line: null,
     lineId: null,
@@ -98,7 +102,7 @@ Bmap = {
                 "<li><a id='evLineMapping' href='#'><i class='icon icon-th'></i>btn1</a></li>" +
                 "<li><a href='#'><i class='icon icon-user'></i>btn2</a></li>" +
                 "<li>" +
-                "<a href='#'><i class='icon icon-time'></i>btn3</a>" +
+                "<a href='#' id='setSimulationTime'><i class='icon icon-time'></i>设置模拟时间</a>" +
                 "</li>" +
                 "<li><a href='#'><i class='icon icon-trash'></i>btn4</a></li>" +
                 "<li><a href='#'><i class='icon icon-list-ul'></i>btn5</a></li>" +
@@ -286,7 +290,7 @@ Bmap = {
             moverTimer = setTimeout(function () {
                 i++;
                 Bmap.resetMkPointAll(i, len, pts, carMk, time);
-            }, du / 10);
+            }, du / Bmap.ffRatio);
         } else {
             // alert(carMk.getTitle());
             // console.log(carMk.getPosition());

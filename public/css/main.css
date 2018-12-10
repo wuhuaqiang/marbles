@@ -1785,3 +1785,12 @@ nav.menu {
     border-color: #bfbfbf;
     opacity: 0.9;
 }
+
+.systime {
+    font-size: 16px;
+    color: red;
+}
+
+/*#myTimeCol {*/
+/*width: 500px;*/
+/*}*/

@@ -504,9 +504,40 @@ $(document).on('click', '.delline', (e) => {
     }
 
 })
+$(document).on("click", "#setSimulationTime", function () {
+    $('#myTimeCol').modal('show')
+    $('#myTimeCol .modal-body').html("");
+    let divStr = "<div class=\"input-group lines-group\"></div>";
+    let timeStr = "<input id='simulationTime' type=\"text\" class=\"form-control startTime form-time\" placeholder=\"时间:选择或者输入一个时间：hh:mm\">";
+    let fixStr = "<span class=\"input-group-addon fix-border fix-padding\">请选择快进系数</span>";
+    let ffRatioStr = "<select id='ffRatio' placeholder='...' class='form-control ffRatio' tabindex='2' ><option value=''></option> <option value='10'>10倍</option> <option value='100'>100倍</option> <option value='1000'>1000倍</option></select>";
+    let $divStr = $(divStr);
+    let $timeStr = $(timeStr);
+    let $fixStr = $(fixStr);
+    let $ffRatioStr = $(ffRatioStr);
+    $timeStr.datetimepicker({
+        language: "zh-CN",
+        weekStart: 1,
+        todayBtn: 1,
+        autoclose: 1,
+        todayHighlight: 1,
+        startView: 1,
+        minView: 0,
+        maxView: 1,
+        forceParse: 0,
+        format: 'hh:ii'
+    });
+    $divStr.append($timeStr).append($fixStr).append($ffRatioStr);
+    $('#myTimeCol .modal-body').append($divStr);
+})
 
+$(document).on("click", "#saveSystemTime", function () {
+    Bmap.systemTime = $("#simulationTime").val() + ":00";
+    Bmap.ffRatio = $("#ffRatio").val();
+    if (!Bmap.ffRatio) {
+        Bmap.ffRatio = 1;
+    }
+    setSystemTime();
+    $('#myTimeCol').modal('hide')
 
-/*
-$(document).on("click", "#evLineMapping", function () {
-
-})*/
+})
