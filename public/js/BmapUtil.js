@@ -364,7 +364,7 @@ Bmap = {
         // });
         $.ajax({
             type: "post",
-            url: "http://10.168.1.240:10200/api/tLine/list",
+            url: "http://localhost:10200/api/tLine/list",
             data: '',
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要

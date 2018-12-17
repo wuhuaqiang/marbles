@@ -57,8 +57,7 @@ $(document).on('ready', function () {
     $(document).on('click', '.marblesFix', function () {
         if ($(this).parent().parent().hasClass('marblesFixed')) {
             $(this).parent().parent().removeClass('marblesFixed');
-        }
-        else {
+        } else {
             $(this).parent().parent().addClass('marblesFixed');
         }
     });
@@ -97,8 +96,7 @@ $(document).on('ready', function () {
                 $('.companyPanel[company="' + i + '"]').find('.companyVisible').html(known_companies[i].visible);
                 $('.companyPanel[company="' + i + '"]').find('.companyCount').html(known_companies[i].count);
             }
-        }
-        else {
+        } else {
             let parts = input.split(',');
             console.log('searching on', parts);
 
@@ -131,8 +129,7 @@ $(document).on('ready', function () {
                 if (known_companies[i].visible === 0) {
                     console.log('hiding company', i);
                     $('.companyPanel[company="' + i + '"]').fadeOut();
-                }
-                else {
+                } else {
                     $('.companyPanel[company="' + i + '"]').fadeIn();
                 }
             }
@@ -146,8 +143,7 @@ $(document).on('ready', function () {
         if ($('#userSelect').is(':visible')) {
             $('#userSelect').fadeOut();
             $('#carrot').removeClass('fa-angle-up').addClass('fa-angle-down');
-        }
-        else {
+        } else {
             $('#userSelect').fadeIn();
             $('#carrot').removeClass('fa-angle-down').addClass('fa-angle-up');
         }
@@ -176,8 +172,7 @@ $(document).on('ready', function () {
     $('#notificationHandle').click(function () {
         if ($('#noticeScrollWrap').is(':visible')) {
             closeNoticePanel();
-        }
-        else {
+        } else {
             openNoticePanel();
         }
     });
@@ -311,8 +306,7 @@ function set_story_mode(setting) {
         $('#disableStoryMode').prop('disabled', false);
         $('#storyStatus').addClass('storyOn').html('on');
         window.localStorage.setItem(lsKey, JSON.stringify(fromLS));		//save
-    }
-    else {
+    } else {
         fromLS.story_mode = false;
         $('#disableStoryMode').prop('disabled', true);
         $('#enableStoryMode').prop('disabled', false);
@@ -483,7 +477,7 @@ $(document).on('click', '.delline', (e) => {
     if (lineId) {
         $.ajax({
             type: "post",
-            url: "http://10.168.1.240:10200/api/tLine/delbyId",
+            url: "http://localhost:10200/api/tLine/delbyId",
             data: lineId,
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -543,67 +537,24 @@ $(document).on("click", "#saveSystemTime", function () {
 })
 $(document).on("click", "#getTransactionAllList", function () {
     // alert(1);
-    $('#transactionListCol').modal('show');
-    $('#transactionListCol .modal-body').html("");
-    const htmlStr = "<table id='transactionList' class=\"table table-bordered\">\n" +
-        "  <thead>\n" +
-        "    <tr>\n" +
-        "      <th>交易</th>\n" +
-        "      <th>区块号</th>\n" +
-        "      <th>时间</th>\n" +
-        "      <th>转出</th>\n" +
-        "      <th><i class=\"icon icon-long-arrow-right\"></i></th>\n" +
-        "      <th>转入</th>\n" +
-        "      <th>金额</th>\n" +
-        "      <th>电量</th>\n" +
-        "    </tr>\n" +
-        "  </thead>\n" +
-        "  <tbody>\n" +
-        "    <tr>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "    </tr>\n" +
-        "    <tr>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "    </tr>\n" +
-        "  </tbody>\n" +
-        "  <tfoot>\n" +
-        "    <tr>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "      <td>...</td>\n" +
-        "    </tr>\n" +
-        "  </tfoot>\n" +
-        "</table>";
-    const page = "<div id='transactionListTools'><ul class=\"pager\">\n" +
-        "  <li class=\"previous\"><a>«</a></li>\n" +
-        "  <li><a>1</a></li>\n" +
-        "  <li class=\"active\"><a>2</a></li>\n" +
-        // "<li><a href=\"###\" data-toggle=\"pager\" data-placement=\"top\">...</a></li>"+
-        "  <li><a>3</a></li>\n" +
-        "  <li><a>4</a></li>\n" +
-        "  <li><a>5</a></li>\n" +
-        "  <li class=\"next\"><a>»</a></li>\n" +
-        "</ul></div>"
-    $('#transactionListCol .modal-body').append(htmlStr).append(page);
+
+    let param = {page: 1, size: 5};
+    $.ajax({
+        type: "post",
+        url: "http://localhost:10200/api/tTransaction/page/",
+        data: JSON.stringify(param),
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8', //contentType很重要
+        success: function (data) {
+            createTable(data);
+        },
+        error: function (data) {
+            if (data.responseText == 'success') {
+                createTable(data);
+
+            }
+        }
+    });
 })
 $(document).on('click', '#transactionListTools li', (e) => {
     let page = $(e.target).text();
@@ -622,7 +573,8 @@ $(document).on('click', '#transactionListTools li', (e) => {
     if (page == '»') {
         flag = false;
         page = $("#transactionListTools li.active").text();
-        if (page != 5) {
+        const maxPage = $("#transactionListTools").data("pages");
+        if (page != maxPage) {
             currPageObj = $("#transactionListTools li.active").next();
             $("#transactionListTools li.active").removeClass('active');
             currPageObj.addClass('active');
@@ -633,8 +585,68 @@ $(document).on('click', '#transactionListTools li', (e) => {
         $("#transactionListTools li").removeClass('active');
         $(e.target).parent().addClass('active');
     }
+    let param = {page: parseInt(page), size: 5};
+    $.ajax({
+        type: "post",
+        url: "http://localhost:10200/api/tTransaction/page/",
+        data: JSON.stringify(param),
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8', //contentType很重要
+        success: function (data) {
+            createTable(data);
+        },
+        error: function (data) {
+            if (data.responseText == 'success') {
+                createTable(data);
+
+            }
+        }
+    });
     console.log(page);
 })
+
+function createTable(data) {
+    $('#transactionListCol').modal('show');
+    $('#transactionListCol .modal-body').html("");
+    const htmlStr = "<table id='transactionList' class=\"table table-bordered\">\n" +
+        "  <thead>\n" +
+        "    <tr>\n" +
+        "      <th>交易ID</th>\n" +
+        "      <th>区块号</th>\n" +
+        "      <th>时间</th>\n" +
+        "      <th>转出</th>\n" +
+        "      <th><i class=\"icon icon-long-arrow-right\"></i></th>\n" +
+        "      <th>转入</th>\n" +
+        "      <th>金额</th>\n" +
+        "      <th>电量</th>\n" +
+        "    </tr>\n" +
+        "  </thead>\n" +
+        "  <tbody>\n" +
+        "  </tbody>\n" +
+        "</table>";
+    $('#transactionListCol .modal-body').html(htmlStr);
+    console.log(data);
+    const records = data.records;
+    for (let i = 0; i < records.length; i++) {
+        let trStr = "<tr><td>" + records[i].txId + "</td><td>" + records[i].blockNumber + "</td><td>" + records[i].txTime + "</td><td>" + records[i].txFrom + "</td><td>....</td><td>" + records[i].txTo + "</td><td>" + records[i].txValue + "</td><td>" + records[i].txPower + "</td></tr>";
+        $('#transactionListCol #transactionList thead').append($(trStr));
+    }
+    const pageStart = "<div id='transactionListTools'><ul class=\"pager\"><li class=\"previous\"><a>«</a></li>";
+    let numberStr = '';
+    for (let i = 1; i <= data.pages; i++) {
+        if (data.current == i) {
+            numberStr += "  <li class=\"active\"><a>" + i + "</a></li>\n";
+        } else {
+            numberStr += "  <li><a>" + i + "</a></li>\n";
+        }
+    }
+    const pageEnd = "  <li class=\"next\"><a>»</a></li></ul></div>";
+    const page = pageStart + numberStr + pageEnd;
+    const $page = $(page);
+    $page.data("pages", data.pages);
+    $('#transactionListCol .modal-body').append($page);
+}
+
 $(document).on('click', '#viewElectricityPrice', (e) => {
     $('#electricityPriceCol').modal('show');
     // $('#electricityPriceCol .modal-body').html("");
@@ -684,8 +696,8 @@ $(document).on('click', '#viewElectricityPrice', (e) => {
                 var myChart = ec.init(document.getElementById('echartsMain'));
                 option = {
                     title: {
-                       /* text: '实时电量',
-                        subtext: '实时电量'*/
+                        /* text: '实时电量',
+                         subtext: '实时电量'*/
                     },
                     tooltip: {
                         trigger: 'axis',
@@ -724,7 +736,7 @@ $(document).on('click', '#viewElectricityPrice', (e) => {
                             boundaryGap: false,
                             min: 0,
                             max: 24,
-                            splitNumber:24,
+                            splitNumber: 24,
                             data: xdata,
                             axisLabel: {
                                 formatter: '{value}',
@@ -737,7 +749,7 @@ $(document).on('click', '#viewElectricityPrice', (e) => {
                         {
                             type: 'value',
                             data: ydata,
-                            splitNumber:5,
+                            splitNumber: 5,
                             axisLine: {
                                 lineStyle: {
                                     color: '#dc143c'
