@@ -1,3 +1,4 @@
+
 let moverTimer = null;
 Bmap = {
     vue: new Vue(),
@@ -104,8 +105,8 @@ Bmap = {
                 "<li>" +
                 "<a href='#' id='setSimulationTime'><i class='icon icon-time'></i>设置模拟时间</a>" +
                 "</li>" +
-                "<li><a href='#'><i class='icon icon-trash'></i>btn4</a></li>" +
-                "<li><a href='#'><i class='icon icon-list-ul'></i>btn5</a></li>" +
+                "<li id='getTransactionAllList'><a href='#'　><i class='icon icon-list-ul'></i>交易列表</a></li>" + /*icon-trash*/
+                "<li id='viewElectricityPrice'><a href='#'><i class='icon icon-list-ul'></i>实时电价</a></li>" +
                 "<li class='open'>" +
                 "<a href='#'><i class='icon icon-tasks'></i>btn6</a>" +
                 "</li>" +

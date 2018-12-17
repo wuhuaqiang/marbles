@@ -505,7 +505,7 @@ $(document).on('click', '.delline', (e) => {
 
 })
 $(document).on("click", "#setSimulationTime", function () {
-    $('#myTimeCol').modal('show')
+    $('#myTimeCol').modal('show');
     $('#myTimeCol .modal-body').html("");
     let divStr = "<div class=\"input-group lines-group\"></div>";
     let timeStr = "<input id='simulationTime' type=\"text\" class=\"form-control startTime form-time\" placeholder=\"时间:选择或者输入一个时间：hh:mm\">";
@@ -539,5 +539,276 @@ $(document).on("click", "#saveSystemTime", function () {
     }
     setSystemTime();
     $('#myTimeCol').modal('hide')
+
+})
+$(document).on("click", "#getTransactionAllList", function () {
+    // alert(1);
+    $('#transactionListCol').modal('show');
+    $('#transactionListCol .modal-body').html("");
+    const htmlStr = "<table id='transactionList' class=\"table table-bordered\">\n" +
+        "  <thead>\n" +
+        "    <tr>\n" +
+        "      <th>交易</th>\n" +
+        "      <th>区块号</th>\n" +
+        "      <th>时间</th>\n" +
+        "      <th>转出</th>\n" +
+        "      <th><i class=\"icon icon-long-arrow-right\"></i></th>\n" +
+        "      <th>转入</th>\n" +
+        "      <th>金额</th>\n" +
+        "      <th>电量</th>\n" +
+        "    </tr>\n" +
+        "  </thead>\n" +
+        "  <tbody>\n" +
+        "    <tr>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "    </tr>\n" +
+        "    <tr>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "    </tr>\n" +
+        "  </tbody>\n" +
+        "  <tfoot>\n" +
+        "    <tr>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "      <td>...</td>\n" +
+        "    </tr>\n" +
+        "  </tfoot>\n" +
+        "</table>";
+    const page = "<div id='transactionListTools'><ul class=\"pager\">\n" +
+        "  <li class=\"previous\"><a>«</a></li>\n" +
+        "  <li><a>1</a></li>\n" +
+        "  <li class=\"active\"><a>2</a></li>\n" +
+        // "<li><a href=\"###\" data-toggle=\"pager\" data-placement=\"top\">...</a></li>"+
+        "  <li><a>3</a></li>\n" +
+        "  <li><a>4</a></li>\n" +
+        "  <li><a>5</a></li>\n" +
+        "  <li class=\"next\"><a>»</a></li>\n" +
+        "</ul></div>"
+    $('#transactionListCol .modal-body').append(htmlStr).append(page);
+})
+$(document).on('click', '#transactionListTools li', (e) => {
+    let page = $(e.target).text();
+    let currPageObj = '';
+    let flag = true;
+    if (page == '«') {
+        flag = false;
+        page = $("#transactionListTools li.active").text();
+        if (page != 1) {
+            currPageObj = $("#transactionListTools li.active").prev();
+            $("#transactionListTools li.active").removeClass('active');
+            currPageObj.addClass('active');
+        }
+        page = currPageObj.text();
+    }
+    if (page == '»') {
+        flag = false;
+        page = $("#transactionListTools li.active").text();
+        if (page != 5) {
+            currPageObj = $("#transactionListTools li.active").next();
+            $("#transactionListTools li.active").removeClass('active');
+            currPageObj.addClass('active');
+        }
+        page = currPageObj.text();
+    }
+    if (flag) {
+        $("#transactionListTools li").removeClass('active');
+        $(e.target).parent().addClass('active');
+    }
+    console.log(page);
+})
+$(document).on('click', '#viewElectricityPrice', (e) => {
+    $('#electricityPriceCol').modal('show');
+    // $('#electricityPriceCol .modal-body').html("");
+    // require.config({
+    //     paths: {
+    //         echarts: 'http://echarts.baidu.com/build/dist'
+    //     }
+    // });
+    let xStr = "0,0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19,20,20,21,21,22,22,23,23,24";
+    let yStr = "0.25,0.25,0.25,0.21,0.21,0.17,0.17,0.06,0.06,0.06,0.06,0.19,0.19,0.38,0.38,0.46,0.46,0.55,0.55,0.56,0.56,0.53,0.53,0.52,0.52,0.51,0.51,0.52,0.52,0.52,0.52,0.48,0.48,0.5,0.5,0.59,0.59,0.69,0.69,0.62,0.62,0.57,0.57,0.49,0.49,0.5,0.5,0.51,0.51";
+    const xStrArr = xStr.split(",");
+    const yStrArr = yStr.split(",");
+    let data = new Array();
+    let xdata = new Array();
+    let ydata = new Array();
+    for (let i = 0; i < xStrArr.length; i++) {
+        let uData = new Array();
+        // if(i%2==0){
+        xdata.push(xStrArr[i]);
+        ydata.push(yStrArr[i]);
+        // }
+
+        uData.push(xStrArr[i]);
+        // uData.push(parseInt(xStrArr[i]));
+        // uData.push(parseFloat(yStrArr[i]));
+        uData.push(yStrArr[i]);
+        data.push(uData);
+    }
+    console.log(data);
+    loadScript("http://echarts.baidu.com/build/dist/echarts.js", function () {
+
+        // 路径配置
+        require.config({
+            paths: {
+                echarts: 'http://echarts.baidu.com/build/dist'
+            }
+        });
+
+        // 使用
+        require(
+            [
+                'echarts',
+                'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
+            ],
+            function (ec) {
+                // 基于准备好的dom，初始化echarts图表
+                var myChart = ec.init(document.getElementById('echartsMain'));
+                option = {
+                    title: {
+                       /* text: '实时电量',
+                        subtext: '实时电量'*/
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            show: true,
+                            type: 'cross',
+                            lineStyle: {
+                                type: 'dashed',
+                                width: 1
+                            }
+                        },
+                        formatter: function (params) {
+                            return params.seriesName + ' : [ '
+                                // + params.value[0] + ', '
+                                + params.value[1] + '元/kW.h ]';
+                        }
+                    },
+                    legend: {
+                        data: ['电价']
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            mark: {show: true},
+                            // dataZoom: {show: true},
+                            // dataView: {show: true, readOnly: false},
+                            // magicType: {show: true, type: ['line', 'bar']},
+                            // restore: {show: true},
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    calculable: true,
+                    xAxis: [
+                        {
+                            type: 'value',
+                            boundaryGap: false,
+                            min: 0,
+                            max: 24,
+                            splitNumber:24,
+                            data: xdata,
+                            axisLabel: {
+                                formatter: '{value}',
+                                interval: 1,
+                            },
+                            name: '时间:t/h',
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            data: ydata,
+                            splitNumber:5,
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#dc143c'
+                                }
+                            },
+                            name: '电价:元/kW.h',
+                        }
+                    ],
+                    series: [
+                        {
+                            name: '电价',
+                            type: 'line',
+                            data: data,
+                            /*   markPoint: {
+                                   data: [
+                                       // 纵轴，默认
+                                       {
+                                           type: 'max',
+                                           name: '最大值',
+                                           symbol: 'emptyCircle',
+                                           itemStyle: {normal: {color: '#dc143c', label: {position: 'top'}}}
+                                       },
+                                       {
+                                           type: 'min',
+                                           name: '最小值',
+                                           symbol: 'emptyCircle',
+                                           itemStyle: {normal: {color: '#dc143c', label: {position: 'bottom'}}}
+                                       },
+                                       // 横轴
+                                       {
+                                           type: 'max',
+                                           name: '最大值',
+                                           valueIndex: 0,
+                                           symbol: 'emptyCircle',
+                                           itemStyle: {normal: {color: '#1e90ff', label: {position: 'right'}}}
+                                       },
+                                       {
+                                           type: 'min',
+                                           name: '最小值',
+                                           valueIndex: 0,
+                                           symbol: 'emptyCircle',
+                                           itemStyle: {normal: {color: '#1e90ff', label: {position: 'left'}}}
+                                       }
+                                   ]
+                               },*/
+                            // markLine: {
+                            //     data: [
+                            //         // 纵轴，默认
+                            //         {type: 'max', name: '最大值', itemStyle: {normal: {color: '#dc143c'}}},
+                            //         {type: 'min', name: '最小值', itemStyle: {normal: {color: '#dc143c'}}},
+                            //         {type: 'average', name: '平均值', itemStyle: {normal: {color: '#dc143c'}}},
+                            //         // 横轴
+                            //         {type: 'max', name: '最大值', valueIndex: 0, itemStyle: {normal: {color: '#1e90ff'}}},
+                            //         {type: 'min', name: '最小值', valueIndex: 0, itemStyle: {normal: {color: '#1e90ff'}}},
+                            //         {
+                            //             type: 'average',
+                            //             name: '平均值',
+                            //             valueIndex: 0,
+                            //             itemStyle: {normal: {color: '#1e90ff'}}
+                            //         }
+                            //     ]
+                            // }
+                        }
+                    ]
+                };
+
+                // 为echarts对象加载数据
+                myChart.setOption(option);
+            }
+        );
+
+    });
 
 })

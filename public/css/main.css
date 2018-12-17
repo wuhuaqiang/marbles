@@ -1791,6 +1791,15 @@ nav.menu {
     color: red;
 }
 
+#transactionListCol li {
+    cursor: pointer;
+}
+
+#echartsMain {
+    width: 760px;
+    height: 400px;
+}
+
 /*#myTimeCol {*/
 /*width: 500px;*/
 /*}*/
