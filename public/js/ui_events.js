@@ -477,7 +477,7 @@ $(document).on('click', '.delline', (e) => {
     if (lineId) {
         $.ajax({
             type: "post",
-            url: "http://10.168.1.240:10200/api/tLine/delbyId",
+            url: "http://localhost:10200/api/tLine/delbyId",
             data: lineId,
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -498,6 +498,7 @@ $(document).on('click', '.delline', (e) => {
     }
 
 })
+//设置模拟时间
 $(document).on("click", "#setSimulationTime", function () {
     $('#myTimeCol').modal('show');
     $('#myTimeCol .modal-body').html("");
@@ -524,7 +525,7 @@ $(document).on("click", "#setSimulationTime", function () {
     $divStr.append($timeStr).append($fixStr).append($ffRatioStr);
     $('#myTimeCol .modal-body').append($divStr);
 })
-
+//保存系统时间
 $(document).on("click", "#saveSystemTime", function () {
     Bmap.systemTime = $("#simulationTime").val() + ":00";
     Bmap.ffRatio = $("#ffRatio").val();
@@ -535,13 +536,14 @@ $(document).on("click", "#saveSystemTime", function () {
     $('#myTimeCol').modal('hide')
 
 })
+//获取交易列表
 $(document).on("click", "#getTransactionAllList", function () {
     // alert(1);
 
     let param = {page: 1, size: 5};
     $.ajax({
         type: "post",
-        url: "http://10.168.1.240:10200/api/tTransaction/page/",
+        url: "http://localhost:10200/api/tTransaction/page/",
         data: JSON.stringify(param),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -556,6 +558,7 @@ $(document).on("click", "#getTransactionAllList", function () {
         }
     });
 })
+//交易列表翻页操作
 $(document).on('click', '#transactionListTools li', (e) => {
     let page = $(e.target).text();
     let currPageObj = '';
@@ -588,7 +591,7 @@ $(document).on('click', '#transactionListTools li', (e) => {
     let param = {page: parseInt(page), size: 5};
     $.ajax({
         type: "post",
-        url: "http://10.168.1.240:10200/api/tTransaction/page/",
+        url: "http://localhost:10200/api/tTransaction/page/",
         data: JSON.stringify(param),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -604,7 +607,7 @@ $(document).on('click', '#transactionListTools li', (e) => {
     });
     console.log(page);
 })
-
+//创建交易表格
 function createTable(data) {
     $('#transactionListCol').modal('show');
     $('#transactionListCol .modal-body').html("");
