@@ -1799,7 +1799,9 @@ nav.menu {
     width: 760px;
     height: 400px;
 }
-
+#transactionListCol .modal-dialog{
+    width: 1300px !important;
+}
 /*#myTimeCol {*/
 /*width: 500px;*/
 /*}*/

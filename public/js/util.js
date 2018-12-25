@@ -161,6 +161,7 @@ function getCurrTimeSetSysTime() {
     setSystemTime();
 
 }
+
 function loadScript(url, callback) {
 
     var script = document.createElement("script");
@@ -171,7 +172,7 @@ function loadScript(url, callback) {
 
         if (script.readyState) {
 
-            script.onreadystatechange = function() {
+            script.onreadystatechange = function () {
 
                 if (script.readyState == "loaded" || script.readyState == "complete") {
 
@@ -185,7 +186,7 @@ function loadScript(url, callback) {
 
         } else {
 
-            script.onload = function() {
+            script.onload = function () {
 
                 callback();
 
@@ -193,10 +194,26 @@ function loadScript(url, callback) {
 
         }
 
-    };
+    }
+    ;
 
     script.src = url;
 
     document.body.appendChild(script);
 
+}
+
+var dateFormat = function (timestamp) {
+    var time = new Date(timestamp)    //先将时间戳转为Date对象，然后才能使用Date的方法
+    var year = time.getFullYear(),
+        month = time.getMonth() + 1,  //月份是从0开始的
+        day = time.getDate(),
+        hour = time.getHours(),
+        minute = time.getMinutes(),
+        second = time.getSeconds()
+    //add0()方法在后面定义
+    return year + '-' + this.add0(month) + '-' + this.add0(day) + ' ' + this.add0(hour) + ':' + this.add0(minute) + ':' + this.add0(second)
+}
+var add0 = function (m) {
+    return m < 10 ? '0' + m : m
 }

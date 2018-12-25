@@ -22,7 +22,7 @@ function saveChargingStation(chargingStations) {
         // console.log(chargingStationObj)
         $.ajax({
             type: "post",
-            url: "http://localhost:10200/api/tChargingStation/save",
+            url: "http://10.168.1.240:10200/api/tChargingStation/save",
             data: JSON.stringify(chargingStationObj),
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -137,7 +137,7 @@ function createChargingStation(num) {
 function getAllChargingStation() {
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tChargingStation/list",
+        url: "http://10.168.1.240:10200/api/tChargingStation/list",
         data: '',
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -164,7 +164,7 @@ function showChargingStationDetails(e) {
     let title = $(e.currentTarget.V.outerHTML).attr("title");
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tChargingStation/getChargingStationByName",
+        url: "http://10.168.1.240:10200/api/tChargingStation/getChargingStationByName",
         data: title,
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要

@@ -2,7 +2,7 @@
 function getAllTElectricVehicleWithLine() {
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tElectricVehicle/getAllListWithLine",
+        url: "http://10.168.1.240:10200/api/tElectricVehicle/getAllListWithLine",
         data: '',
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -31,7 +31,7 @@ function updateElectricVehicleById(obj) {
     //console.log(obj);
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tElectricVehicle/update",
+        url: "http://10.168.1.240:10200/api/tElectricVehicle/update",
         data: JSON.stringify(obj),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -101,7 +101,7 @@ function showTElectricVehicleDetails(e) {
     let point = e.target.LA;
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tElectricVehicle/getEVWithLineById",
+        url: "http://10.168.1.240:10200/api/tElectricVehicle/getEVWithLineById",
         data: JSON.stringify(param),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要

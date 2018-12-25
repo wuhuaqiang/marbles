@@ -477,7 +477,7 @@ $(document).on('click', '.delline', (e) => {
     if (lineId) {
         $.ajax({
             type: "post",
-            url: "http://localhost:10200/api/tLine/delbyId",
+            url: "http://10.168.1.240:10200/api/tLine/delbyId",
             data: lineId,
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -541,7 +541,7 @@ $(document).on("click", "#getTransactionAllList", function () {
     let param = {page: 1, size: 5};
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tTransaction/page/",
+        url: "http://10.168.1.240:10200/api/tTransaction/page/",
         data: JSON.stringify(param),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -588,7 +588,7 @@ $(document).on('click', '#transactionListTools li', (e) => {
     let param = {page: parseInt(page), size: 5};
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tTransaction/page/",
+        url: "http://10.168.1.240:10200/api/tTransaction/page/",
         data: JSON.stringify(param),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -627,8 +627,8 @@ function createTable(data) {
     $('#transactionListCol .modal-body').html(htmlStr);
     console.log(data);
     const records = data.records;
-    for (let i = 0; i < records.length; i++) {
-        let trStr = "<tr><td>" + records[i].txId + "</td><td>" + records[i].blockNumber + "</td><td>" + records[i].txTime + "</td><td>" + records[i].txFrom + "</td><td>....</td><td>" + records[i].txTo + "</td><td>" + records[i].txValue + "</td><td>" + records[i].txPower + "</td></tr>";
+    for (let i = 0; i < records.length; i++) { //(dateToString(new Date(records[i].txTime))
+        let trStr = "<tr><td>" + records[i].txId + "</td><td>" + records[i].blockNumber + "</td><td>" + dateFormat(records[i].txTime) + "</td><td>" + records[i].txFrom + "</td><td>....</td><td>" + records[i].txTo + "</td><td>" + records[i].txValue + "</td><td>" + records[i].txPower + "</td></tr>";
         $('#transactionListCol #transactionList thead').append($(trStr));
     }
     const pageStart = "<div id='transactionListTools'><ul class=\"pager\"><li class=\"previous\"><a>«</a></li>";
