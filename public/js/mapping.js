@@ -47,6 +47,7 @@ function drawLine(results) {
         for (let m = 0; m < Bmap.lines.length; m++) {
             let startTime = Bmap.lines[m].startTime;
             let pts = Bmap.lines[m].linePoints;
+            // console.log(pts);
             let carMk = Bmap.lines[m].car
             let len = pts.length;
             let time = Bmap.lines[m].timer
@@ -55,7 +56,7 @@ function drawLine(results) {
             // console.log(startTimeLong);
             timer = setInterval(function () {
                 const currTimeLong = (parseInt(Bmap.systemTime.split(":")[0]) * 60 * 60 + parseInt(Bmap.systemTime.split(":")[1]) * 60 + parseInt(Bmap.systemTime.split(":")[2])) * 1000;
-                console.log(currTimeLong);
+                // console.log(currTimeLong);
                 if (startTimeLong == currTimeLong) {
                     Bmap.resetMkPointAll(1, len, pts, carMk, time)
                 }

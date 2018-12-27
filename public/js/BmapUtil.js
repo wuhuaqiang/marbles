@@ -1,4 +1,3 @@
-
 let moverTimer = null;
 Bmap = {
     vue: new Vue(),
@@ -272,13 +271,6 @@ Bmap = {
         }
     },
     resetMkPointAll: (i, len, pts, carMk, time) => {
-        let geoc = new BMap.Geocoder();
-        geoc.getLocation(pts[i], function (rs) {
-            let addComp = rs.addressComponents;
-            let nameStr = addComp.district + addComp.street + addComp.streetNumber;
-            const obj = {id: carMk.ba.split(",")[1], positionVal: pts[i].lng + "," + pts[i].lat, position: nameStr}
-            updateElectricVehicleById(obj)
-        });
         let du = 0;
         if (i == len - 1) {
             du = Math.round(time / (len - 1)) + time % (len - 1);
@@ -286,15 +278,41 @@ Bmap = {
             du = Math.round(time / (len - 1));
         }
         carMk.setPosition(pts[i]);
+        // console.log(i);
+        // console.log(len);
         if (i < len) {
+            try {
+                let geoc = new BMap.Geocoder();
+                geoc.getLocation(pts[i], function (rs) {
+                    let addComp = rs.addressComponents;
+                    let nameStr = addComp.district + addComp.street + addComp.streetNumber;
+                    if (pts[i]) {
+                        const obj = {
+                            id: carMk.ba.split(",")[1],
+                            positionVal: pts[i].lng + "," + pts[i].lat,
+                            position: nameStr,
+                            power: -0.08
+                        }
+                        updateElectricVehicleById(obj)
+                    }
+
+                });
+            } catch (e) {
+                console.log(e);
+            }
+
             // debugger;
             moverTimer = setTimeout(function () {
                 i++;
                 Bmap.resetMkPointAll(i, len, pts, carMk, time);
             }, du / Bmap.ffRatio);
         } else {
+            //debugger;
+            console.log(carMk.getTitle() + "当前执行的线路结束");
+            //console.log("线路结束");
             // alert(carMk.getTitle());
             // console.log(carMk.getPosition());
+            // alert("线路结束");
         }
     },
     run: (num) => {
