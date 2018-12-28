@@ -28,6 +28,10 @@ block custom_header
     script(src='/js/chargingPile.js?v=' + bag.jshash)
     script(src='/js/chargingStation.js?v=' + bag.jshash)
     script(src='/js/electricVehicle.js?v=' + bag.jshash)
+    script(src='/js/task.js?v=' + bag.jshash)
+    script(src='/js/user.js?v=' + bag.jshash)
+    script(src='/js/runTaskLog.js?v=' + bag.jshash)
+    script(src='/js/electricVehicle.js?v=' + bag.jshash)
     script(src='/js/line.js?v=' + bag.jshash)
     script(src='/js/mapping.js?v=' + bag.jshash)
     //script(src='/js/util/echarts.common.min.js')
@@ -46,6 +50,7 @@ block custom_header
             getAllChargingStation();
             getAllTElectricVehicleWithLine();
             getCurrTimeSetSysTime();
+            User.getUserList();
             // var mPoint = new BMap.Point(centerPoint[0], centerPoint[1]);
             // var circle = new BMap.Circle(mPoint, 1000, {
             //     fillColor: "blue",

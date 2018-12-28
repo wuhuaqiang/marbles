@@ -40,6 +40,7 @@ function createChargingStation(num) {
     let index = null;
     $("#addInputXl").hide();
     $("#addInputChargingStation").show();
+    $("#addInputTask").hide();
     $("#addInputChargingPile").hide();
     /*if (num == 0) {
         index = 0

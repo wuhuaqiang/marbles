@@ -320,12 +320,16 @@ $(document).on('click', '#saveData', () => {
     let lines = $('#myModal .modal-body .lines-group');
     let chargingPiles = $('#myModal .modal-body .ChargingPile-group');
     let chargingStations = $('#myModal .modal-body .ChargingStation-group');
+    let tasks = $('#myModal .modal-body .tasks-group');
     if (lines.length) {
         saveLines(lines);
     } else if (chargingPiles.length) {
         saveChargingPile(chargingPiles);
     } else if (chargingStations.length) {
         saveChargingStation(chargingStations);
+    } else if (tasks.length) {
+        const userId = $('#myModal .modal-body #userId').val();
+        Task.saveTasks(userId, tasks);
     }
 
 })
@@ -354,8 +358,13 @@ $(document).on('click', '#addInputXl', () => {
     }
 
 })
-
-
+$(document).on('click', '#openModalNewTask', () => {
+    $('#myModal .modal-body').html("");
+    Task.createTask(0);
+})
+$(document).on('click', '#addInputTask', () => {
+    Task.createTask(1);
+})
 $(document).on('click', '#openModalNewChargingStation', () => {
     $('#myModal .modal-body').html("");
     createChargingStation(0);
@@ -459,6 +468,26 @@ $(document).on('click', '#simulatedDriving', () => {
 
     } catch (e) {
         console.error(e)
+    }
+
+})
+//获取当前任务
+$(document).on('click', '#getcurrTasks', () => {
+    const userIds = new Array();
+    for (var key in Bmap.userCarMapping) {
+        userIds.push(key)
+    }
+    const tasks = Task.getcurrTasks(userIds.join(","));
+    for (let i = 0; i < tasks.length; i++) {
+        if (Task.taskFlag) {
+            Task.currUserId = tasks[i].owerId;
+            Task.userTasklist[Task.currUserId] = tasks[i];
+            let position = Bmap.userCarMapping[Task.currUserId].getPosition();
+            const startPoint = position.lng + "," + position.lat;
+            const endPoint = tasks[i].point;
+            Task.taskFlag = false;
+            Task.getTaskLine(startPoint, endPoint);
+        }
     }
 
 })
@@ -607,6 +636,7 @@ $(document).on('click', '#transactionListTools li', (e) => {
     });
     console.log(page);
 })
+
 //创建交易表格
 function createTable(data) {
     $('#transactionListCol').modal('show');

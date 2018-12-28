@@ -36,6 +36,7 @@ function createLine(num) {
     let index = null;
     $("#addInputXl").show();
     $("#addInputChargingStation").hide();
+    $("#addInputTask").hide();
     $("#addInputChargingPile").hide();
     if (num == 0) {
         index = 0

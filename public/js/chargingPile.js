@@ -40,6 +40,7 @@ function createChargingPile(num) {
     let index = null;
     $("#addInputXl").hide();
     $("#addInputChargingStation").hide();
+    $("#addInputTask").hide();
     $("#addInputChargingPile").show();
     index = $(".input-group").length;
     /* let index = $("#myModal div").length - 5*/

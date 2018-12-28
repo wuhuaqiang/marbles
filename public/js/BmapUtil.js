@@ -66,6 +66,7 @@ Bmap = {
                 " <button type=\"button\" class=\"btn\" id='openModalNewXl'>规划线路</button>" +
                 "  <button class=\"btn\" id='openModalNewChargingStation'>新建充电站</button>\n" +
                 "  <button class=\"btn\" id='openModalNewChargingPile'>新建充电桩</button>\n" +
+                "  <button class=\"btn\" id='openModalNewTask'>新建任务</button>\n" +
                 "</div>");
             // 设置样式
             /* $div.css("cursor", "pointer");
@@ -100,7 +101,7 @@ Bmap = {
             var $div = $("<nav class='menu' data-ride='menu' style='width: 200px'>" +
                 "<ul id='treeMenu' class='tree tree-menu' data-ride='tree'>" +
                 "<li><a id='evLineMapping' href='#'><i class='icon icon-th'></i>btn1</a></li>" +
-                "<li><a href='#'><i class='icon icon-user'></i>btn2</a></li>" +
+                "<li><a id='getcurrTasks' href='#'><i class='icon icon-user'></i>获取用户任务</a></li>" +
                 "<li>" +
                 "<a href='#' id='setSimulationTime'><i class='icon icon-time'></i>设置模拟时间</a>" +
                 "</li>" +
@@ -273,10 +274,10 @@ Bmap = {
     resetMkPointAll: (i, len, pts, carMk, time) => {
         const power = getTElectricVehiclePower(carMk.ba.split(",")[1]);
         console.error(power);
-        if(power<18){
+        /*if(power<18){
            alert("电量过低停车");
            return;
-        }
+        }*/
         let du = 0;
         if (i == len - 1) {
             du = Math.round(time / (len - 1)) + time % (len - 1);
