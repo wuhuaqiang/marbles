@@ -271,6 +271,12 @@ Bmap = {
         }
     },
     resetMkPointAll: (i, len, pts, carMk, time) => {
+        const power = getTElectricVehiclePower(carMk.ba.split(",")[1]);
+        console.error(power);
+        if(power<18){
+           alert("电量过低停车");
+           return;
+        }
         let du = 0;
         if (i == len - 1) {
             du = Math.round(time / (len - 1)) + time % (len - 1);
@@ -291,7 +297,7 @@ Bmap = {
                             id: carMk.ba.split(",")[1],
                             positionVal: pts[i].lng + "," + pts[i].lat,
                             position: nameStr,
-                            power: -0.08
+                            power: -0.0000033 * du
                         }
                         updateElectricVehicleById(obj)
                     }

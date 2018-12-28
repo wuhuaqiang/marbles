@@ -64,7 +64,7 @@ function showTElectricVehicleDetails_Bf(e) {
                     // "      <div class=\"pull-right label label-success\">"+new Date().toDateString()+"</div>\n" +
                     "    </div>\n" +
                     "    <div class=\"item-content\"><h2>充电站汽车信息</h2><ul><li><a>用户:" + info.userName + "</a></li>" +
-                    "<li><a>电池容量:" + info.batteryCapacity + "(KW)</a></li><li><a>当前电量:" + info.power + "(KW)</a></li>\n" +
+                    "<li><a>电池容量:" + info.batteryCapacity + "(kW·h)</a></li><li><a>当前电量:" + info.power + "(kW·h)</a></li>\n" +
                     "<li><a>状态:" + ((info.state == 1) ? "正常" : "停运") + "</a></li><li><a>位置:" + info.position + "</a></li><li><a>速度:" + info.speed + "(km/h)</a></li></ul>";
 
                 const htmlE = "</div>\n" +
@@ -126,7 +126,7 @@ function createInfoWindow(info, point) {
         // "      <div class=\"pull-right label label-success\">"+new Date().toDateString()+"</div>\n" +
         "    </div>\n" +
         "    <div class=\"item-content\"><h2>充电站汽车信息</h2><ul><li><a>用户:" + info.userName + "</a></li>" +
-        "<li><a>电池容量:" + info.batteryCapacity + "(KW)</a></li><li><a>当前电量:" + info.power + "(KW)</a></li>\n" +
+        "<li><a>电池容量:" + info.batteryCapacity + "(kW·h)</a></li><li><a>当前电量:" + info.power + "(kW·h)</a></li>\n" +
         "<li><a>状态:" + ((info.state == 1) ? "正常" : "停运") + "</a></li><li><a>位置:" + info.position + "</a></li><li><a>速度:" + info.speed + "(km/h)</a></li></ul>";
 
     const htmlE = "</div>\n" +
@@ -150,4 +150,23 @@ function createInfoWindow(info, point) {
             fixedBottomFrom: 5, // 从第100行（在此例中是最后一行）开始固定到底部
         }
     });
+}
+
+//获取汽车当前电量
+function getTElectricVehiclePower(id) {
+    const param = {id: id}
+    let result;
+    $.ajax({
+        type: "post",
+        url: "http://localhost:10200/api/tElectricVehicle/getEVById",
+        data: JSON.stringify(param),
+        async:false,
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8', //contentType很重要
+        success: function (data) {
+            console.log(data);
+            result = data.power;
+        }
+    });
+    return result;
 }
