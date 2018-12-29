@@ -479,8 +479,23 @@ $(document).on('click', '#getcurrTasks', () => {
     }
     const tasks = Task.getcurrTasks(userIds.join(","));
     for (let i = 0; i < tasks.length; i++) {
+        Task.userIdList.push(tasks[i].owerId);
+    }
+    Task.taskList = tasks;
+    Task.startAllTask();
+
+})
+//获取当前任务
+$(document).on('click', '#getcurrTasks', () => {
+    const userIds = new Array();
+    for (var key in Bmap.userCarMapping) {
+        userIds.push(key)
+    }
+    const tasks = Task.getcurrTasks(userIds.join(","));
+    for (let i = 0; i < tasks.length; i++) {
         if (Task.taskFlag) {
             Task.currUserId = tasks[i].owerId;
+            Task.userIdList.push(tasks[i].owerId);
             Task.userTasklist[Task.currUserId] = tasks[i];
             let position = Bmap.userCarMapping[Task.currUserId].getPosition();
             const startPoint = position.lng + "," + position.lat;

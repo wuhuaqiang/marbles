@@ -272,6 +272,9 @@ Bmap = {
         }
     },
     resetMkPointAll: (i, len, pts, carMk, time) => {
+        if (i == 1) {
+            console.log(carMk.getTitle() + "开始执行当前线路");
+        }
         const power = getTElectricVehiclePower(carMk.ba.split(",")[1]);
         console.error(power);
         /*if(power<18){
@@ -314,8 +317,13 @@ Bmap = {
                 Bmap.resetMkPointAll(i, len, pts, carMk, time);
             }, du / Bmap.ffRatio);
         } else {
+
             //debugger;
             console.log(carMk.getTitle() + "当前执行的线路结束");
+            Task.currUserId = carMk.ba.split(",")[0];
+            Task.closeTask(Task.userTasklist[Task.currUserId].id);
+            Task.getcurrTaskByUserId(carMk.ba.split(",")[0]);
+            Task.startTask();
             //console.log("线路结束");
             // alert(carMk.getTitle());
             // console.log(carMk.getPosition());

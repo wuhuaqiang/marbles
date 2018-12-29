@@ -1,7 +1,8 @@
 Task = {
     userTasklist: {},
     currUserId: null,
-    taskFlag: true,
+    userIdList: new Array(),
+    taskIndexMark: 0,
     taskList: null,
     getcurrTasks: (userIds) => {
         let result;
@@ -30,7 +31,8 @@ Task = {
             success: function (data) {
                 console.log(data);
                 result = data;
-                userTasklist[data.owerId] = data;
+                Task.userTasklist[data.owerId] = data;
+                //Task.taskList[data.owerId] = data;
             }
         });
         return result;
@@ -41,6 +43,14 @@ Task = {
         Bmap.startPoint = new BMap.Point(Number(startPointArr[0]), Number(startPointArr[1])); // 起点
         Bmap.endPoint = new BMap.Point(Number(endPointArr[0]), Number(endPointArr[1])); // 终点
         let driving = new BMap.DrivingRoute(Bmap.map, {onSearchComplete: Task.getLinePoints});  // 驾车实例,并设置回调
+        driving.search(Bmap.startPoint, Bmap.endPoint);
+    },
+    getAllTaskLine: (startPoint, endPoint) => {
+        let startPointArr = startPoint.split(",");
+        let endPointArr = endPoint.split(",");
+        Bmap.startPoint = new BMap.Point(Number(startPointArr[0]), Number(startPointArr[1])); // 起点
+        Bmap.endPoint = new BMap.Point(Number(endPointArr[0]), Number(endPointArr[1])); // 终点
+        let driving = new BMap.DrivingRoute(Bmap.map, {onSearchComplete: Task.getAllLinePoints});  // 驾车实例,并设置回调
         driving.search(Bmap.startPoint, Bmap.endPoint);
     },
     getLinePoints: (results) => {
@@ -69,14 +79,73 @@ Task = {
         }
         Task.runTask();
     },
+    getAllLinePoints: (results) => {
+        let plan = results.getPlan(0);
+        let duration = plan.getDuration(true);
+        let distance = plan.getDistance(true);
+        for (let i = 0; i < plan.getNumRoutes(); i++) {
+            let route = plan.getRoute(i);
+            Task.userTasklist[Task.userIdList[Task.taskIndexMark]].linePoints = getDetailPints(route.getPath(), 0.0001, 0.00001);
+            Task.userTasklist[Task.userIdList[Task.taskIndexMark]].car = Bmap.userCarMapping[Task.userIdList[Task.taskIndexMark]];
+            let min = 0, hour = 0;
+            if (duration.indexOf("小时") === -1) {
+                min = parseInt(duration);
+
+            } else if (duration.indexOf("分钟") === -1) {
+                hour = parseInt(duration.substring(0, duration.indexOf("小时")))
+            } else {
+                hour = parseInt(duration.substring(0, duration.indexOf("小时")))
+                min = parseInt(duration.substring(duration.indexOf("小时") + 2, duration.indexOf("分钟")))
+            }
+            // debugger;
+            distance = parseFloat(distance);
+            let speek = distance / (hour + min / 60);
+            const timer = (hour * 60 + min) * 60 * 1000;
+            Task.userTasklist[Task.userIdList[Task.taskIndexMark]].timer = timer;
+        }
+        Task.runAllTask();
+    },
     runTask: () => {
         let pts = Task.userTasklist[Task.currUserId].linePoints;
         let carMk = Task.userTasklist[Task.currUserId].car
         let len = pts.length;
         let time = Task.userTasklist[Task.currUserId].timer
+        let startLong = Task.userTasklist[Task.currUserId].time;
         let timer = setTimeout(function () {
             Bmap.resetMkPointAll(1, len, pts, carMk, time)
-        }, 1);
+        }, startLong / Bmap.ffRatio);
+    },
+    runAllTask: () => {
+        let pts = Task.userTasklist[Task.userIdList[Task.taskIndexMark]].linePoints;
+        let carMk = Task.userTasklist[Task.userIdList[Task.taskIndexMark]].car;
+        let len = pts.length;
+        let time = Task.userTasklist[Task.userIdList[Task.taskIndexMark]].timer;
+        let startLong = Task.taskList[Task.taskIndexMark].time;
+        let splitTime = Bmap.systemTime.split(":");
+        const currLong = (parseInt(splitTime[0]) * 60 * 60 + parseInt(splitTime[1]) * 60 + parseInt(splitTime[2])) * 1000;
+
+        let timer = setTimeout(function () {
+            Bmap.resetMkPointAll(1, len, pts, carMk, time)
+        }, (startLong - currLong) / Bmap.ffRatio);
+        if (Task.taskIndexMark < Task.taskList.length - 1) {
+            Task.taskIndexMark++;
+            Task.startAllTask();
+        }
+    },
+    startAllTask: () => {
+        Task.currUserId = Task.taskList[Task.taskIndexMark].owerId;
+        Task.userTasklist[Task.userIdList[Task.taskIndexMark]] = Task.taskList[Task.taskIndexMark];
+        let position = Bmap.userCarMapping[Task.userIdList[Task.taskIndexMark]].getPosition();
+        const startPoint = position.lng + "," + position.lat;
+        const endPoint = Task.taskList[Task.taskIndexMark].point;
+        Task.getAllTaskLine(startPoint, endPoint);
+    }
+    ,
+    startTask: () => {
+        let position = Bmap.userCarMapping[Task.currUserId].getPosition();
+        const startPoint = position.lng + "," + position.lat;
+        const endPoint = Task.userTasklist[Task.currUserId].point;
+        Task.getTaskLine(startPoint, endPoint);
     },
     createTask: (num) => {
         let index = null;
@@ -117,6 +186,22 @@ Task = {
             keyboard: false,
             show: true,
             moveable: true
+        })
+    },
+    closeTask: (taskId) => {
+        $.ajax({
+            type: "post",
+            url: "http://localhost:10200/api/tTask/close",
+            data: taskId,
+            async: false,
+            dataType: "json",
+            contentType: 'application/json;charset=UTF-8', //contentType很重要
+            success: function (data) {
+                console.log("关闭成功");
+            },
+            error: function () {
+                console.log("关闭成功");
+            }
         })
     },
     saveTasks: (userId, tasks) => {
