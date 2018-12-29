@@ -13,6 +13,16 @@ function dateToString(date) {
     return dateTime;
 }
 
+function chargingCar(carMk) {
+    let ret = true;
+    for (let i = 0; i < Bmap.chargingCar.length; i++) {
+        if (carMk == Bmap.chargingCar[i]) {
+            ret = false;
+        }
+    }
+    return ret;
+}
+
 //字符串转时间
 function stringToDate(dateStr, separator) {
     if (!separator) {
@@ -160,6 +170,62 @@ function getCurrTimeSetSysTime() {
     Bmap.ffRatio = 1;
     setSystemTime();
 
+}
+
+function goCharging() {
+    var driving = new BMap.DrivingRoute(Bmap.map, {onSearchComplete: getMinimumTime});  // 驾车实例,并设置回调
+    driving.search(Bmap.chargingCar[Bmap.chargingCarIndex].getPosition(), Bmap.chargingStationPoints[Bmap.chargingStationIndex])
+}
+
+function getMinimumTime(results) {
+
+    let plan = results.getPlan(0);
+    let duration = plan.getDuration(true);
+    let newMin = 0
+    let newHour = 0
+    if (duration.indexOf("小时") === -1) {
+        newMin = parseInt(duration);
+    } else if (duration.indexOf("分钟") === -1) {
+        newHour = parseInt(duration.substring(0, duration.indexOf("小时")))
+    } else {
+        newHour = parseInt(duration.substring(0, duration.indexOf("小时")))
+        newMin = parseInt(duration.substring(duration.indexOf("小时") + 2, duration.indexOf("分钟")))
+    }
+    const currTimeLong = (newHour * 60 + newMin) * 60 * 1000;
+    if (Bmap.minTime == -1) {
+        Bmap.minTime = currTimeLong;
+        Bmap.nearestPoint = Bmap.chargingStationPoints[Bmap.chargingStationIndex];
+    } else if (Bmap.minTime > currTimeLong) {
+        Bmap.minTime = currTimeLong;
+        Bmap.nearestPoint = Bmap.chargingStationPoints[Bmap.chargingStationIndex];
+    }
+    if (Bmap.chargingStationIndex < Bmap.chargingStationPoints.length - 1) {
+        Bmap.chargingStationIndex++;
+        goCharging()
+    } else if (Bmap.chargingCarIndex < Bmap.chargingCar.length - 1) {
+        const mapping = {
+            carMk: Bmap.chargingCar[Bmap.chargingCarIndex],
+            minTime: Bmap.minTime,
+            nearestPoint: Bmap.nearestPoint
+        };
+        Bmap.carMinTimenearestPointMapping.push(mapping);
+        Bmap.chargingCarIndex++;
+        goCharging();
+    } else {
+        for (let i = 0; i < Bmap.carMinTimenearestPointMapping.length; i++) {
+            if (Bmap.carMinTimenearestPointMapping[i].minTime * 0.0000033 < 3) {
+                Task.getChargingLine(Bmap.carMinTimenearestPointMapping[i].carMk.getPosition(), Bmap.nearestPoint);
+            } else {
+                Bmap.myIconInit("../imgs/car.gif", 18, 18, 0, 0, 0, 0);
+                Bmap.carMinTimenearestPointMapping[i].carMk.setIcon(Bmap.myIcon);
+                var label = new BMap.Label("我需要救援...", {offset: new BMap.Size(20, -10)});
+                Bmap.carMinTimenearestPointMapping[i].carMk.setLabel(label);
+                //Bmap.currCar.setAnimation(BMAP_ANIMATION_BOUNCE);
+                alert(Bmap.carMinTimenearestPointMapping[i].carMk.getTitle() + "需要救援");
+            }
+        }
+
+    }
 }
 
 function loadScript(url, callback) {

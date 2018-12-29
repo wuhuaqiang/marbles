@@ -16,6 +16,8 @@ function getAllTElectricVehicleWithLine() {
                     let point = new BMap.Point(strings[0], strings[1])
                     let carMk = new BMap.Marker(point, {icon: Bmap.myIcon, title: obj.userName + ":Car"});
                     carMk.addEventListener("click", showTElectricVehicleDetails);
+                    let label = new BMap.Label(obj.userName, {offset: new BMap.Size(20, -10)});
+                    carMk.setLabel(label);
                     Bmap.map.addOverlay(carMk);
                     carMk.ba = obj.userId + "," + obj.id;
                     Bmap.userCarMapping[obj.userId] = carMk;
@@ -160,7 +162,7 @@ function getTElectricVehiclePower(id) {
         type: "post",
         url: "http://localhost:10200/api/tElectricVehicle/getEVById",
         data: JSON.stringify(param),
-        async:false,
+        async: false,
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
         success: function (data) {

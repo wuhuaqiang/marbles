@@ -1,7 +1,18 @@
 let moverTimer = null;
 Bmap = {
     vue: new Vue(),
+
     systemTimer: null,
+    chargingStationPoints: new Array(),
+    nearestPoint: null,
+    minTime: -1,
+    chargingCar: new Array(),
+    chargingCarIndex: 0,
+    carMinTimenearestPointMapping: new Array(),
+    currPower: null,
+    currCar: null,
+    currPoint: null,
+    chargingStationIndex: 0,
     linemapping: new Array(),
     userCarMapping: {},
     systemTime: null,
@@ -277,16 +288,28 @@ Bmap = {
         }
         const power = getTElectricVehiclePower(carMk.ba.split(",")[1]);
         console.error(power);
-        /*if(power<18){
-           alert("电量过低停车");
-           return;
-        }*/
+        if (power < 3 && chargingCar(carMk)) {
+            console.log("电量过低查询充电站");
+            Bmap.myIconInit("../imgs/car_xycd.gif", 18, 18, 0, 0, 0, 0);
+            carMk.setIcon(Bmap.myIcon);
+            var label = new BMap.Label("我需要充电...", {offset: new BMap.Size(20, -10)});
+            carMk.setLabel(label);
+            Bmap.chargingCar.push(carMk);
+            /*Bmap.currPoint = carMk.getPosition();
+            Bmap.currPower = power;
+            Bmap.currCar = carMk;
+            Bmap.chargingStationIndex = 0;*/
+            Bmap.chargingCarIndex = 0;
+            goCharging()
+            return;
+        }
         let du = 0;
         if (i == len - 1) {
             du = Math.round(time / (len - 1)) + time % (len - 1);
         } else {
             du = Math.round(time / (len - 1));
         }
+        console.log(du);
         carMk.setPosition(pts[i]);
         // console.log(i);
         // console.log(len);
@@ -303,6 +326,7 @@ Bmap = {
                             position: nameStr,
                             power: -0.0000033 * du
                         }
+                        console.log(obj.power);
                         updateElectricVehicleById(obj)
                     }
 
@@ -317,13 +341,19 @@ Bmap = {
                 Bmap.resetMkPointAll(i, len, pts, carMk, time);
             }, du / Bmap.ffRatio);
         } else {
-
+            if (carMk == Bmap.currCar) {
+                Bmap.myIconInit("../imgs/car_zzcd.gif", 18, 18, 0, 0, 0, 0);
+                carMk.setIcon(Bmap.myIcon);
+                var label = new BMap.Label("我正在充电...", {offset: new BMap.Size(20, -10)});
+                carMk.setLabel(label);
+            } else {
+                console.log(carMk.getTitle() + "当前执行的线路结束");
+                Task.currUserId = carMk.ba.split(",")[0];
+                Task.closeTask(Task.userTasklist[Task.currUserId].id);
+                Task.getcurrTaskByUserId(carMk.ba.split(",")[0]);
+                Task.startTask();
+            }
             //debugger;
-            console.log(carMk.getTitle() + "当前执行的线路结束");
-            Task.currUserId = carMk.ba.split(",")[0];
-            Task.closeTask(Task.userTasklist[Task.currUserId].id);
-            Task.getcurrTaskByUserId(carMk.ba.split(",")[0]);
-            Task.startTask();
             //console.log("线路结束");
             // alert(carMk.getTitle());
             // console.log(carMk.getPosition());

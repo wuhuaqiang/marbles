@@ -31,11 +31,25 @@ Task = {
             success: function (data) {
                 console.log(data);
                 result = data;
-                Task.userTasklist[data.owerId] = data;
+                if (data) {
+                    Task.userTasklist[data.owerId] = data;
+                } else {
+                    Task.userTasklist[Task.currUserId] = "";
+                    Task.currUserId = "";
+                }
+
                 //Task.taskList[data.owerId] = data;
+            },
+            error: function () {
+                Task.userTasklist[Task.currUserId] = "";
+                Task.currUserId = "";
             }
         });
         return result;
+    },
+    getChargingLine: (startPoint, endPoint) => {
+        let driving = new BMap.DrivingRoute(Bmap.map, {onSearchComplete: Task.getChargingLinePoints});  // 驾车实例,并设置回调
+        driving.search(startPoint, endPoint);
     },
     getTaskLine: (startPoint, endPoint) => {
         let startPointArr = startPoint.split(",");
@@ -52,6 +66,35 @@ Task = {
         Bmap.endPoint = new BMap.Point(Number(endPointArr[0]), Number(endPointArr[1])); // 终点
         let driving = new BMap.DrivingRoute(Bmap.map, {onSearchComplete: Task.getAllLinePoints});  // 驾车实例,并设置回调
         driving.search(Bmap.startPoint, Bmap.endPoint);
+    },
+    getChargingLinePoints: (results) => {
+        let plan = results.getPlan(0);
+        let duration = plan.getDuration(true);
+        let distance = plan.getDistance(true);
+        for (let i = 0; i < plan.getNumRoutes(); i++) {
+            let route = plan.getRoute(i);
+            let pts = getDetailPints(route.getPath(), 0.0001, 0.00001);
+            let min = 0, hour = 0;
+            if (duration.indexOf("小时") === -1) {
+                min = parseInt(duration);
+
+            } else if (duration.indexOf("分钟") === -1) {
+                hour = parseInt(duration.substring(0, duration.indexOf("小时")))
+            } else {
+                hour = parseInt(duration.substring(0, duration.indexOf("小时")))
+                min = parseInt(duration.substring(duration.indexOf("小时") + 2, duration.indexOf("分钟")))
+            }
+            // debugger;
+            distance = parseFloat(distance);
+            let speek = distance / (hour + min / 60);
+            const time = (hour * 60 + min) * 60 * 1000;
+            let carMk = Bmap.currCar;
+            let len = pts.length;
+            let timer = setTimeout(function () {
+                Bmap.resetMkPointAll(1, len, pts, carMk, time)
+            }, 1000);
+
+        }
     },
     getLinePoints: (results) => {
         let plan = results.getPlan(0);

@@ -147,7 +147,8 @@ function getAllChargingStation() {
                 $.each(data, (index, obj) => {
                     Bmap.myIconInit("../imgs/chargingStation.png", 36, 36, 0, 0, 0, 0);
                     let strings = obj.positionVal.split(',');
-                    let point = new BMap.Point(strings[0], strings[1])
+                    let point = new BMap.Point(strings[0], strings[1]);
+                    Bmap.chargingStationPoints.push(point);
                     let carMk = new BMap.Marker(point, {icon: Bmap.myIcon, title: obj.name});
                     carMk.addEventListener("click", showChargingStationDetails);
                     Bmap.map.addOverlay(carMk);
