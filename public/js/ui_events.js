@@ -222,7 +222,7 @@ $(document).on('ready', function () {
     });
 
     function auditMarble(that, open) {
-        debugger;
+        //debugger;
         console.log(that);
         let marble_id = $(that).attr('id');
         $('.auditingMarble').removeClass('auditingMarble');
@@ -697,6 +697,13 @@ function createTable(data) {
 
 $(document).on('click', '#viewElectricityPrice', (e) => {
     $('#electricityPriceCol').modal('show');
+    let q = new Queue();
+    //debugger;
+    q.enqueue("Meredith");
+    q.enqueue("Cynthia");
+    q.enqueue("Jennifer");
+    q.dequeue();
+    console.log(q.toString());
     // $('#electricityPriceCol .modal-body').html("");
     // require.config({
     //     paths: {

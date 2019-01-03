@@ -166,7 +166,7 @@ function getTElectricVehiclePower(id) {
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
         success: function (data) {
-            console.log(data);
+            // console.log(data);
             result = data.power;
         }
     });

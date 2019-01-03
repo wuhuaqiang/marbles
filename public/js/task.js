@@ -1,6 +1,7 @@
 Task = {
     userTasklist: {},
     currUserId: null,
+    userIdQueue: new Queue(),
     userIdList: new Array(),
     taskIndexMark: 0,
     taskList: null,
@@ -97,13 +98,17 @@ Task = {
         }
     },
     getLinePoints: (results) => {
+        let currUserId = Bmap.userIdQueue.front();
+        if (!currUserId) {
+            return;
+        }
         let plan = results.getPlan(0);
         let duration = plan.getDuration(true);
         let distance = plan.getDistance(true);
         for (let i = 0; i < plan.getNumRoutes(); i++) {
             let route = plan.getRoute(i);
-            Task.userTasklist[Task.currUserId].linePoints = getDetailPints(route.getPath(), 0.0001, 0.00001);
-            Task.userTasklist[Task.currUserId].car = Bmap.userCarMapping[Task.currUserId];
+            Task.userTasklist[currUserId].linePoints = getDetailPints(route.getPath(), 0.0001, 0.00001);
+            Task.userTasklist[currUserId].car = Bmap.userCarMapping[currUserId];
             let min = 0, hour = 0;
             if (duration.indexOf("小时") === -1) {
                 min = parseInt(duration);
@@ -118,9 +123,10 @@ Task = {
             distance = parseFloat(distance);
             let speek = distance / (hour + min / 60);
             const timer = (hour * 60 + min) * 60 * 1000;
-            Task.userTasklist[Task.currUserId].timer = timer;
+            Task.userTasklist[currUserId].timer = timer;
+            console.log(currUserId);
         }
-        Task.runTask();
+        Task.runTask(currUserId);
     },
     getAllLinePoints: (results) => {
         let plan = results.getPlan(0);
@@ -148,15 +154,17 @@ Task = {
         }
         Task.runAllTask();
     },
-    runTask: () => {
-        let pts = Task.userTasklist[Task.currUserId].linePoints;
-        let carMk = Task.userTasklist[Task.currUserId].car
+    runTask: (currUserId) => {
+        console.log(currUserId);
+        let pts = Task.userTasklist[currUserId].linePoints;
+        let carMk = Task.userTasklist[currUserId].car
         let len = pts.length;
-        let time = Task.userTasklist[Task.currUserId].timer
-        let startLong = Task.userTasklist[Task.currUserId].time;
+        let time = Task.userTasklist[currUserId].timer
+        let startLong = Task.userTasklist[currUserId].time;
         let timer = setTimeout(function () {
             Bmap.resetMkPointAll(1, len, pts, carMk, time)
         }, startLong / Bmap.ffRatio);
+        Bmap.userIdQueue.dequeue();
     },
     runAllTask: () => {
         let pts = Task.userTasklist[Task.userIdList[Task.taskIndexMark]].linePoints;
@@ -184,11 +192,18 @@ Task = {
         Task.getAllTaskLine(startPoint, endPoint);
     }
     ,
-    startTask: () => {
-        let position = Bmap.userCarMapping[Task.currUserId].getPosition();
-        const startPoint = position.lng + "," + position.lat;
-        const endPoint = Task.userTasklist[Task.currUserId].point;
-        Task.getTaskLine(startPoint, endPoint);
+    startTask: (currUserId) => {
+        if (currUserId) {
+            let position = Bmap.userCarMapping[currUserId].getPosition();
+            const startPoint = position.lng + "," + position.lat;
+            const endPoint = Task.userTasklist[currUserId].point;
+            if (endPoint) {
+                Task.getTaskLine(startPoint, endPoint);
+            } else {
+                Bmap.userIdQueue.dequeue();
+            }
+        }
+
     },
     createTask: (num) => {
         let index = null;

@@ -1,14 +1,19 @@
 let moverTimer = null;
 Bmap = {
     vue: new Vue(),
-
+    userIdQueue: new Queue(),
     systemTimer: null,
     chargingStationPoints: new Array(),
     nearestPoint: null,
     minTime: -1,
+    helpCar: new Array(),
     chargingCar: new Array(),
+    chargingCarMark: new Array(),
+    chargingCarQueue: new Queue(),
     chargingCarIndex: 0,
     carMinTimenearestPointMapping: new Array(),
+    currChargingCar: '',
+    currTaskCar: '',
     currPower: null,
     currCar: null,
     currPoint: null,
@@ -220,7 +225,7 @@ Bmap = {
         Bmap.addMarkerFun(results.getEnd().point, 1, 1);
         // 开始点
         Bmap.addMarkerFun(results.getStart().point, 1, 0);
-        debugger;
+        // debugger;
         Bmap.linesPoints[Bmap.linesPoints.length] = Bmap.b;
     },
     addMarkerFun: (point, imgType, index, title) => {
@@ -283,24 +288,32 @@ Bmap = {
         }
     },
     resetMkPointAll: (i, len, pts, carMk, time) => {
+        //debugger;
+        if (checkHelpCar(carMk)) {
+            console.log(carMk.getTitle() + "需要救援");
+            return;
+        }
         if (i == 1) {
             console.log(carMk.getTitle() + "开始执行当前线路");
         }
         const power = getTElectricVehiclePower(carMk.ba.split(",")[1]);
-        console.error(power);
-        if (power < 3 && chargingCar(carMk)) {
+        //console.error(power);
+        if (power < 4 && chargingCar(carMk)) {
             console.log("电量过低查询充电站");
             Bmap.myIconInit("../imgs/car_xycd.gif", 18, 18, 0, 0, 0, 0);
             carMk.setIcon(Bmap.myIcon);
             var label = new BMap.Label("我需要充电...", {offset: new BMap.Size(20, -10)});
             carMk.setLabel(label);
             Bmap.chargingCar.push(carMk);
+            Bmap.chargingCarMark.push(carMk);
+            Bmap.chargingCarQueue.enqueue(carMk);
             /*Bmap.currPoint = carMk.getPosition();
             Bmap.currPower = power;
             Bmap.currCar = carMk;
             Bmap.chargingStationIndex = 0;*/
-            Bmap.chargingCarIndex = 0;
-            goCharging()
+            /* Bmap.chargingCarIndex = 0;
+             Bmap.chargingCarIndex = 0;*/
+            /* goCharging()*/
             return;
         }
         let du = 0;
@@ -309,7 +322,7 @@ Bmap = {
         } else {
             du = Math.round(time / (len - 1));
         }
-        console.log(du);
+        // console.log(du);
         carMk.setPosition(pts[i]);
         // console.log(i);
         // console.log(len);
@@ -326,7 +339,10 @@ Bmap = {
                             position: nameStr,
                             power: -0.0000033 * du
                         }
-                        console.log(obj.power);
+                        // console.log(obj.power);
+                        // console.log(carMk);
+                        /*let label = carMk.getLabel();
+                        label.setContent("当前电量:"+obj.power);*/
                         updateElectricVehicleById(obj)
                     }
 
@@ -341,7 +357,8 @@ Bmap = {
                 Bmap.resetMkPointAll(i, len, pts, carMk, time);
             }, du / Bmap.ffRatio);
         } else {
-            if (carMk == Bmap.currCar) {
+            //console.log(carMk.getLabel());
+            if (carMk.getLabel().content == "我需要充电...") {
                 Bmap.myIconInit("../imgs/car_zzcd.gif", 18, 18, 0, 0, 0, 0);
                 carMk.setIcon(Bmap.myIcon);
                 var label = new BMap.Label("我正在充电...", {offset: new BMap.Size(20, -10)});
@@ -351,14 +368,17 @@ Bmap = {
                 Task.currUserId = carMk.ba.split(",")[0];
                 Task.closeTask(Task.userTasklist[Task.currUserId].id);
                 Task.getcurrTaskByUserId(carMk.ba.split(",")[0]);
-                Task.startTask();
+                Bmap.userIdQueue.enqueue(carMk.ba.split(",")[0]);
+                Task.userIdQueue.enqueue(carMk.ba.split(",")[0]);
+                /* Task.startTask();*/
             }
-            //debugger;
-            //console.log("线路结束");
-            // alert(carMk.getTitle());
-            // console.log(carMk.getPosition());
-            // alert("线路结束");
+
         }
+    },
+    changePower: (currPower, maxPower, carMk) => {
+        moverTimer = setTimeout(function () {
+            Bmap.resetMkPointAll(currPower, maxPower, carMk);
+        }, du / Bmap.ffRatio);
     },
     run: (num) => {
         for (var m = 0; m < Bmap.linesPoints.length; m++) {

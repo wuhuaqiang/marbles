@@ -15,9 +15,19 @@ function dateToString(date) {
 
 function chargingCar(carMk) {
     let ret = true;
-    for (let i = 0; i < Bmap.chargingCar.length; i++) {
-        if (carMk == Bmap.chargingCar[i]) {
+    for (let i = 0; i < Bmap.chargingCarMark.length; i++) {
+        if (carMk == Bmap.chargingCarMark[i]) {
             ret = false;
+        }
+    }
+    return ret;
+}
+
+function checkHelpCar(carMk) {
+    let ret = false;
+    for (let i = 0; i < Bmap.helpCar.length; i++) {
+        if (carMk == Bmap.helpCar[i]) {
+            ret = true;
         }
     }
     return ret;
@@ -172,13 +182,23 @@ function getCurrTimeSetSysTime() {
 
 }
 
-function goCharging() {
+function startCharging(chargingCar) {
+
+}
+
+function charging(chargingCar) {
+    if (chargingCar) {
+        var driving = new BMap.DrivingRoute(Bmap.map, {onSearchComplete: getMinimumTime});  // 驾车实例,并设置回调
+        driving.search(chargingCar.getPosition(), Bmap.chargingStationPoints[Bmap.chargingStationIndex])
+    }
+}
+
+function queryChargingStation() {
     var driving = new BMap.DrivingRoute(Bmap.map, {onSearchComplete: getMinimumTime});  // 驾车实例,并设置回调
     driving.search(Bmap.chargingCar[Bmap.chargingCarIndex].getPosition(), Bmap.chargingStationPoints[Bmap.chargingStationIndex])
 }
 
 function getMinimumTime(results) {
-
     let plan = results.getPlan(0);
     let duration = plan.getDuration(true);
     let newMin = 0
@@ -191,30 +211,54 @@ function getMinimumTime(results) {
         newHour = parseInt(duration.substring(0, duration.indexOf("小时")))
         newMin = parseInt(duration.substring(duration.indexOf("小时") + 2, duration.indexOf("分钟")))
     }
+    let route = plan.getRoute(0);
+    let pts = getDetailPints(route.getPath(), 0.0001, 0.00001);
     const currTimeLong = (newHour * 60 + newMin) * 60 * 1000;
     if (Bmap.minTime == -1) {
         Bmap.minTime = currTimeLong;
-        Bmap.nearestPoint = Bmap.chargingStationPoints[Bmap.chargingStationIndex];
+        // Bmap.nearestPoint = Bmap.chargingStationPoints[Bmap.chargingStationIndex];
+        Bmap.nearestPoint = pts;
     } else if (Bmap.minTime > currTimeLong) {
         Bmap.minTime = currTimeLong;
-        Bmap.nearestPoint = Bmap.chargingStationPoints[Bmap.chargingStationIndex];
+        Bmap.nearestPoint = pts;
     }
     if (Bmap.chargingStationIndex < Bmap.chargingStationPoints.length - 1) {
         Bmap.chargingStationIndex++;
-        goCharging()
-    } else if (Bmap.chargingCarIndex < Bmap.chargingCar.length - 1) {
-        const mapping = {
+        charging(Bmap.currChargingCar);
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        console.log(Bmap.chargingCarQueue.front())
+        console.log(Bmap.nearestPoint)
+        console.log(Bmap.minTime)
+        console.log("$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$$")
+        // } else if (Bmap.chargingCarIndex < Bmap.chargingCar.length - 1) {
+        //     Bmap.chargingStationIndex = 0;
+        //     const mapping = {
+        //         carMk: Bmap.chargingCar[Bmap.chargingCarIndex],
+        //         minTime: Bmap.minTime,
+        //         nearestPoint: Bmap.nearestPoint,
+        //         pts: Bmap.nearestPoint
+        //     };
+        //     Bmap.carMinTimenearestPointMapping.push(mapping);
+        //     Bmap.chargingCarIndex++;
+    } else {
+        /*const mapping = {
             carMk: Bmap.chargingCar[Bmap.chargingCarIndex],
             minTime: Bmap.minTime,
-            nearestPoint: Bmap.nearestPoint
-        };
-        Bmap.carMinTimenearestPointMapping.push(mapping);
-        Bmap.chargingCarIndex++;
-        goCharging();
-    } else {
+            nearestPoint: Bmap.nearestPoint,
+            pts: Bmap.nearestPoint
+        };*/
+
+        /*/!*Bmap.carMinTimenearestPointMapping.push(mapping);*!/
         for (let i = 0; i < Bmap.carMinTimenearestPointMapping.length; i++) {
-            if (Bmap.carMinTimenearestPointMapping[i].minTime * 0.0000033 < 3) {
-                Task.getChargingLine(Bmap.carMinTimenearestPointMapping[i].carMk.getPosition(), Bmap.nearestPoint);
+            Bmap.currCar = Bmap.carMinTimenearestPointMapping[i].carMk;
+            if (Bmap.carMinTimenearestPointMapping[i].minTime * 0.0000033 < getTElectricVehiclePower(Bmap.carMinTimenearestPointMapping[i].carMk.ba.split(",")[1])) {
+                const time = Bmap.carMinTimenearestPointMapping[i].minTime;
+                let carMk = Bmap.carMinTimenearestPointMapping[i].carMk;
+                let pts = Bmap.carMinTimenearestPointMapping[i].pts;
+                let len = pts.length;
+                let timer = setTimeout(function () {
+                    Bmap.resetMkPointAll(1, len, pts, carMk, time)
+                }, 1000);
             } else {
                 Bmap.myIconInit("../imgs/car.gif", 18, 18, 0, 0, 0, 0);
                 Bmap.carMinTimenearestPointMapping[i].carMk.setIcon(Bmap.myIcon);
@@ -222,8 +266,42 @@ function getMinimumTime(results) {
                 Bmap.carMinTimenearestPointMapping[i].carMk.setLabel(label);
                 //Bmap.currCar.setAnimation(BMAP_ANIMATION_BOUNCE);
                 alert(Bmap.carMinTimenearestPointMapping[i].carMk.getTitle() + "需要救援");
+                Bmap.helpCar.push(Bmap.carMinTimenearestPointMapping[i].carMk);
             }
+            Bmap.chargingCar.remove(Bmap.currCar);
+        }*/
+
+        /* console.log("*********************************************");
+         console.log(Bmap.chargingCarQueue.front());
+         console.log(Bmap.chargingCarQueue.front().ba);
+         console.log("*********************************************");*/
+        if (Bmap.chargingCarQueue.front()) {
+            if (Bmap.minTime * 0.0000033 < getTElectricVehiclePower(Bmap.chargingCarQueue.front().ba.split(",")[1])) {
+                const time = Bmap.minTime;
+                let carMk = Bmap.chargingCarQueue.front();
+                let pts = Bmap.nearestPoint;
+                let len = pts.length;
+                let timer = setTimeout(function () {
+                    Bmap.resetMkPointAll(1, len, pts, carMk, time)
+                }, 1000);
+            } else {
+                Bmap.myIconInit("../imgs/car.gif", 18, 18, 0, 0, 0, 0);
+                Bmap.chargingCarQueue.front().setIcon(Bmap.myIcon);
+                var label = new BMap.Label("我需要救援...", {offset: new BMap.Size(20, -10)});
+                Bmap.chargingCarQueue.front().setLabel(label);
+                //Bmap.currCar.setAnimation(BMAP_ANIMATION_BOUNCE);
+                /*alert(Bmap.chargingCarQueue.front().getTitle() + "需要救援");*/
+                Bmap.helpCar.push(Bmap.chargingCarQueue.front());
+            }
+            Bmap.minTime = -1;
+            Bmap.nearestPoint = [];
+            Bmap.chargingStationIndex = 0;
+            Bmap.chargingCar.remove(Bmap.chargingCarQueue.dequeue());
         }
+
+        // Bmap.carMinTimenearestPointMapping = new Array();
+        // Bmap.chargingCarIndex = 0;
+
 
     }
 }
@@ -283,3 +361,81 @@ var dateFormat = function (timestamp) {
 var add0 = function (m) {
     return m < 10 ? '0' + m : m
 }
+
+/*--------------Queue类的定义*/
+function Queue() {
+    this.dataStore = [];
+    this.enqueue = enqueue;
+    this.dequeue = dequeue;
+    this.front = front;
+    this.back = back;
+    this.toString = toString;
+    this.empty = empty;
+    this.check = check;
+}
+
+//入队，就是在数组的末尾添加一个元素
+function check(element) {
+    let flag = true;
+    for (let i = 0; i < this.dataStore.length; i++) {
+        if (this.dataStore[i] == element) {
+            flag = false;
+        }
+    }
+    return flag;
+}
+
+//入队，就是在数组的末尾添加一个元素
+function enqueue(element) {
+    this.dataStore.push(element);
+}
+
+//出队，就是删除数组的第一个元素
+function dequeue() {
+    return this.dataStore.shift();
+}
+
+//取出数组的第一个元素
+function front() {
+    return this.dataStore[0];
+}
+
+//取出数组的最后一个元素
+function back() {
+    return this.dataStore[this.dataStore.length - 1];
+}
+
+function toString() {
+    var retStr = "";
+    for (var i = 0; i < this.dataStore.length; ++i) {
+        retStr += this.dataStore[i] + "&nbsp;"
+    }
+    return retStr;
+}
+
+//判断数组是否为空
+function empty() {
+    if (this.dataStore.length == 0) {
+        return true;
+    } else {
+        return false;
+    }
+}
+
+//返回数组中元素的个数
+function count() {
+    return this.dataStore.length;
+}
+
+Array.prototype.indexOf = function (val) {
+    for (var i = 0; i < this.length; i++) {
+        if (this[i] == val) return i;
+    }
+    return -1;
+};
+Array.prototype.remove = function (val) {
+    var index = this.indexOf(val);
+    if (index > -1) {
+        this.splice(index, 1);
+    }
+};
