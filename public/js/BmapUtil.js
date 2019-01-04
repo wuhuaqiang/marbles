@@ -302,31 +302,7 @@ Bmap = {
             console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
             console.log(id);
             console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
-            try {
-                let geoc = new BMap.Geocoder();
-                geoc.getLocation(pts[i], function (rs) {
-                    let addComp = rs.addressComponents;
-                    let nameStr = addComp.district + addComp.street + addComp.streetNumber;
-                    if (pts[i]) {
-                        const obj = {
-                            id: id,
-                            owerId: carMk.ba.split(",")[0],
-                            startTime: Bmap.systemTime,
-                            startPointVal: pts[i].lng + "," + pts[i].lat,
-                            startPoint: nameStr,
-                            state: 0
-                        }
-                        // console.log(obj.power);
-                        // console.log(carMk);
-                        /*let label = carMk.getLabel();
-                        label.setContent("当前电量:"+obj.power);*/
-                        runLogStart(obj);
-                    }
-
-                });
-            } catch (e) {
-                console.log(e);
-            }
+            runLogStart(carMk, id);
 
 
             console.log(carMk.getTitle() + "开始执行当前线路");
@@ -334,6 +310,7 @@ Bmap = {
         const power = getTElectricVehiclePower(carMk.ba.split(",")[1]);
         //console.error(power);
         if (power < 4 && chargingCar(carMk)) {
+            runLogEnd(carMk, "电量过低当前任务未完成", 2);
             console.log("电量过低查询充电站");
             Bmap.myIconInit("../imgs/car_xycd.gif", 18, 18, 0, 0, 0, 0);
             carMk.setIcon(Bmap.myIcon);
@@ -395,6 +372,7 @@ Bmap = {
         } else {
             //console.log(carMk.getLabel());
             if (carMk.getLabel().content == "我需要充电...") {
+                runLogEnd(carMk, "充电", 1);
                 Bmap.myIconInit("../imgs/car_zzcd.gif", 18, 18, 0, 0, 0, 0);
                 carMk.setIcon(Bmap.myIcon);
                 // var label = new BMap.Label("我正在充电...", {offset: new BMap.Size(20, -10)});
@@ -403,6 +381,7 @@ Bmap = {
                 // carMk.setLabel(label);
                 Bmap.changePower(carMk);
             } else {
+                runLogEnd(carMk, "执行任务", 1);
                 console.log(carMk.getTitle() + "当前执行的线路结束");
                 Task.currUserId = carMk.ba.split(",")[0];
                 Task.closeTask(Task.userTasklist[Task.currUserId].id);
