@@ -6,6 +6,7 @@ Bmap = {
     chargingStationPoints: new Array(),
     nearestPoint: null,
     minTime: -1,
+    myuuid: new UUID(),
     helpCar: new Array(),
     chargingCar: new Array(),
     chargingCarMark: new Array(),
@@ -294,6 +295,40 @@ Bmap = {
             return;
         }
         if (i == 1) {
+            let id = Bmap.myuuid.createUUID();
+            let title = carMk.getTitle();
+            carMk.setTitle(title + ":" + id);
+
+            console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+            console.log(id);
+            console.log("^^^^^^^^^^^^^^^^^^^^^^^^^^^^^");
+            try {
+                let geoc = new BMap.Geocoder();
+                geoc.getLocation(pts[i], function (rs) {
+                    let addComp = rs.addressComponents;
+                    let nameStr = addComp.district + addComp.street + addComp.streetNumber;
+                    if (pts[i]) {
+                        const obj = {
+                            id: id,
+                            owerId: carMk.ba.split(",")[0],
+                            startTime: Bmap.systemTime,
+                            startPointVal: pts[i].lng + "," + pts[i].lat,
+                            startPoint: nameStr,
+                            state: 0
+                        }
+                        // console.log(obj.power);
+                        // console.log(carMk);
+                        /*let label = carMk.getLabel();
+                        label.setContent("当前电量:"+obj.power);*/
+                        runLogStart(obj);
+                    }
+
+                });
+            } catch (e) {
+                console.log(e);
+            }
+
+
             console.log(carMk.getTitle() + "开始执行当前线路");
         }
         const power = getTElectricVehiclePower(carMk.ba.split(",")[1]);
@@ -302,8 +337,9 @@ Bmap = {
             console.log("电量过低查询充电站");
             Bmap.myIconInit("../imgs/car_xycd.gif", 18, 18, 0, 0, 0, 0);
             carMk.setIcon(Bmap.myIcon);
-            var label = new BMap.Label("我需要充电...", {offset: new BMap.Size(20, -10)});
-            carMk.setLabel(label);
+            /* var label = new BMap.Label("我需要充电...", {offset: new BMap.Size(20, -10)});*/
+            let label = carMk.getLabel();
+            carMk.setLabel(label.setContent("我需要充电..."));
             Bmap.chargingCar.push(carMk);
             Bmap.chargingCarMark.push(carMk);
             Bmap.chargingCarQueue.enqueue(carMk);
@@ -361,8 +397,11 @@ Bmap = {
             if (carMk.getLabel().content == "我需要充电...") {
                 Bmap.myIconInit("../imgs/car_zzcd.gif", 18, 18, 0, 0, 0, 0);
                 carMk.setIcon(Bmap.myIcon);
-                var label = new BMap.Label("我正在充电...", {offset: new BMap.Size(20, -10)});
-                carMk.setLabel(label);
+                // var label = new BMap.Label("我正在充电...", {offset: new BMap.Size(20, -10)});
+                let label = carMk.getLabel();
+                carMk.setLabel(label.setContent("我正在充电..."));
+                // carMk.setLabel(label);
+                Bmap.changePower(carMk);
             } else {
                 console.log(carMk.getTitle() + "当前执行的线路结束");
                 Task.currUserId = carMk.ba.split(",")[0];
@@ -375,10 +414,37 @@ Bmap = {
 
         }
     },
-    changePower: (currPower, maxPower, carMk) => {
-        moverTimer = setTimeout(function () {
-            Bmap.resetMkPointAll(currPower, maxPower, carMk);
-        }, du / Bmap.ffRatio);
+    changePower: (carMk) => {
+        let evId = carMk.ba.split(",")[1];
+        let tEVInfo = getTElectricVehicleInfo(evId);
+        console.log(tEVInfo.power);
+        console.log(tEVInfo.batteryCapacity);
+        if (tEVInfo.batteryCapacity - tEVInfo.power > 0.5) {
+            tEVInfo.power = 0.5;
+            updateElectricVehicleById(tEVInfo);
+            let moverTimer = setTimeout(function () {
+                Bmap.changePower(carMk);
+            }, 1000 * 60 / Bmap.ffRatio);
+        } else if (tEVInfo.batteryCapacity - tEVInfo.power > 0) {
+            tEVInfo.power = tEVInfo.batteryCapacity - tEVInfo.power;
+            updateElectricVehicleById(tEVInfo);
+            Bmap.myIconInit("../imgs/car_val.png", 24, 24, 0, 0, 0, 0);
+            carMk.setIcon(Bmap.myIcon);
+            console.log(carMk);
+            var label = carMk.getLabel();
+            console.log(label);
+            Bmap.chargingCar.remove(carMk);
+            Bmap.chargingCarMark.remove(carMk);
+            carMk.setLabel(label.setContent(carMk.getTitle().split(":")[0]));
+            console.log(carMk.getTitle() + "充电结束");
+            Task.currUserId = carMk.ba.split(",")[0];
+            //Task.closeTask(Task.userTasklist[Task.currUserId].id);
+            Task.getcurrTaskByUserId(carMk.ba.split(",")[0]);
+            Bmap.userIdQueue.enqueue(carMk.ba.split(",")[0]);
+            Task.userIdQueue.enqueue(carMk.ba.split(",")[0]);
+
+        }
+
     },
     run: (num) => {
         for (var m = 0; m < Bmap.linesPoints.length; m++) {

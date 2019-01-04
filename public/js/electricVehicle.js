@@ -172,3 +172,22 @@ function getTElectricVehiclePower(id) {
     });
     return result;
 }
+
+//获取电动汽车信息
+function getTElectricVehicleInfo(id) {
+    const param = {id: id}
+    let result;
+    $.ajax({
+        type: "post",
+        url: "http://localhost:10200/api/tElectricVehicle/getEVById",
+        data: JSON.stringify(param),
+        async: false,
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8', //contentType很重要
+        success: function (data) {
+            // console.log(data);
+            result = data;
+        }
+    });
+    return result;
+}
