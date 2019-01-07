@@ -9,7 +9,7 @@ let taskTimer = setInterval(function () {
         Task.startTask(Bmap.userIdQueue.front())
 
     }
-}, 2000);
+}, 3000);
 let chargingTimer = setInterval(function () {
     if (!Bmap.chargingCarQueue.empty() && Bmap.chargingCarQueue.front() != Bmap.currChargingCar) {
         charging(Bmap.chargingCarQueue.front());

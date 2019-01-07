@@ -183,6 +183,7 @@ function getCurrTimeSetSysTime() {
             Bmap.systemTime = data[0].timeStart;
             Bmap.ffRatio = data[0].k;
             Bmap.simulationId = data[0].id;
+            setSystemTime();
         },
         error: function (data) {
             console.log(data);
@@ -194,7 +195,7 @@ function getCurrTimeSetSysTime() {
     const s = currDate.getSeconds()
     Bmap.systemTime = h + ":" + m + ":" + s;
     Bmap.ffRatio = 1;*/
-    setSystemTime();
+
 
 }
 
