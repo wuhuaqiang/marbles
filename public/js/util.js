@@ -172,12 +172,28 @@ function setSystemTime() {
 }
 
 function getCurrTimeSetSysTime() {
-    var currDate = new Date();//获取系统当前时间
+    $.ajax({
+        type: "post",
+        url: "http://localhost:10200/api/tSystemsetting/list/",
+        data: "",
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8', //contentType很重要
+        success: function (data) {
+            console.log(data[0]);
+            Bmap.systemTime = data[0].timeStart;
+            Bmap.ffRatio = data[0].k;
+            Bmap.simulationId = data[0].id;
+        },
+        error: function (data) {
+            console.log(data);
+        }
+    });
+    /*var currDate = new Date();//获取系统当前时间
     const h = currDate.getHours();
     const m = currDate.getMinutes();
     const s = currDate.getSeconds()
     Bmap.systemTime = h + ":" + m + ":" + s;
-    Bmap.ffRatio = 1;
+    Bmap.ffRatio = 1;*/
     setSystemTime();
 
 }

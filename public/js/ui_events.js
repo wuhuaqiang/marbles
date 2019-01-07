@@ -547,10 +547,12 @@ $(document).on("click", "#setSimulationTime", function () {
     $('#myTimeCol').modal('show');
     $('#myTimeCol .modal-body').html("");
     let divStr = "<div class=\"input-group lines-group\"></div>";
+    let idStr = "<input id='simulationId' type=\"hidden\" class=\"form-control id\">";
     let timeStr = "<input id='simulationTime' type=\"text\" class=\"form-control startTime form-time\" placeholder=\"时间:选择或者输入一个时间：hh:mm\">";
     let fixStr = "<span class=\"input-group-addon fix-border fix-padding\">请选择快进系数</span>";
     let ffRatioStr = "<select id='ffRatio' placeholder='...' class='form-control ffRatio' tabindex='2' ><option value=''></option> <option value='10'>10倍</option> <option value='100'>100倍</option> <option value='1000'>1000倍</option></select>";
     let $divStr = $(divStr);
+    let $idStr = $(idStr);
     let $timeStr = $(timeStr);
     let $fixStr = $(fixStr);
     let $ffRatioStr = $(ffRatioStr);
@@ -566,17 +568,22 @@ $(document).on("click", "#setSimulationTime", function () {
         forceParse: 0,
         format: 'hh:ii'
     });
-    $divStr.append($timeStr).append($fixStr).append($ffRatioStr);
+    $divStr.append($idStr).append($timeStr).append($fixStr).append($ffRatioStr);
     $('#myTimeCol .modal-body').append($divStr);
+    $("#simulationId").val(Bmap.simulationId);
+    $("#simulationTime").val(Bmap.systemTime);
+    $("#ffRatio").val(Bmap.ffRatio);
 })
 //保存系统时间
 $(document).on("click", "#saveSystemTime", function () {
+    Bmap.simulationId = $("#simulationId").val();
     Bmap.systemTime = $("#simulationTime").val() + ":00";
     Bmap.ffRatio = $("#ffRatio").val();
     if (!Bmap.ffRatio) {
         Bmap.ffRatio = 1;
     }
     setSystemTime();
+    saveSystemSetting();
     $('#myTimeCol').modal('hide')
 
 })

@@ -23,6 +23,7 @@ Bmap = {
     userCarMapping: {},
     systemTime: null,
     ffRatio: null,
+    simulationId: null,
     systemTimeLable: null,
     lines: null,
     line: null,
