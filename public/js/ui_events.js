@@ -655,6 +655,7 @@ $(document).on('click', '#transactionListTools li', (e) => {
 //创建交易表格
 function createTable(data) {
     $('#transactionListCol').modal('show');
+    $('#transactionListCol .modal-title').text("交易列表");
     $('#transactionListCol .modal-body').html("");
     const htmlStr = "<table id='transactionList' class=\"table table-bordered\">\n" +
         "  <thead>\n" +

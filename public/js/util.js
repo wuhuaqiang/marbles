@@ -285,6 +285,7 @@ function getMinimumTime(results) {
                     Bmap.resetMkPointAll(1, len, pts, carMk, time)
                 }, 1000);
             } else {
+                runLogEnd(Bmap.chargingCarQueue.front(), "需要救援", 2);
                 Bmap.myIconInit("../imgs/car.gif", 18, 18, 0, 0, 0, 0);
                 Bmap.chargingCarQueue.front().setIcon(Bmap.myIcon);
                 var label = new BMap.Label("我需要救援...", {offset: new BMap.Size(20, -10)});
@@ -518,97 +519,18 @@ UUID.rand = function (max) {
     return Math.floor(Math.random() * (max + 1));
 };
 
-function runLogStart(carMk, id) {
-    try {
-        let geoc = new BMap.Geocoder();
-        geoc.getLocation(carMk.getPosition(), function (rs) {
-            let addComp = rs.addressComponents;
-            let nameStr = addComp.district + addComp.street + addComp.streetNumber;
-            const obj = {
-                id: id,
-                owerId: carMk.ba.split(",")[0],
-                startTime: Bmap.systemTime,
-                startPointVal: carMk.getPosition().lng + "," + carMk.getPosition().lat,
-                startPoint: nameStr,
-                state: 0
-            }
-            // console.log(obj.power);
-            // console.log(carMk);
-            /*let label = carMk.getLabel();
-            label.setContent("当前电量:"+obj.power);*/
-            $.ajax({
-                type: "post",
-                url: "http://localhost:10200/api/tRunLog/save",
-                data: JSON.stringify(obj),
-                dataType: "json",
-                /*        async: false,*/
-                contentType: 'application/json;charset=UTF-8', //contentType很重要
-                success: function (data) {
-                    console.log(data);
-                    console.error(data);
-                }, error: function (data) {
-                    console.log(data);
-                    console.error(data);
-                }
-            });
 
-        });
-    } catch (e) {
-        console.log(e);
+function getDateStr() {
+    //获取当前时间
+    var date = new Date();
+    var year = date.getFullYear();
+    var month = date.getMonth() + 1;
+    var day = date.getDate();
+    if (month < 10) {
+        month = "0" + month;
     }
-}
-
-function runLogEnd(carMk, remark, state) {
-    try {
-        let geoc = new BMap.Geocoder();
-        geoc.getLocation(carMk.getPosition(), function (rs) {
-            let addComp = rs.addressComponents;
-            let nameStr = addComp.district + addComp.street + addComp.streetNumber;
-            let tArr = carMk.getTitle().split(":");
-            const obj = {
-                id: tArr[tArr.length - 1],
-                owerId: carMk.ba.split(",")[0],
-                endTime: Bmap.systemTime,
-                endPointVal: carMk.getPosition().lng + "," + carMk.getPosition().lat,
-                endPoint: nameStr,
-                remark: remark,
-                state: state
-            }
-            // console.log(obj.power);
-            // console.log(carMk);
-            /*let label = carMk.getLabel();
-            label.setContent("当前电量:"+obj.power);*/
-            $.ajax({
-                type: "post",
-                url: "http://localhost:10200/api/tRunLog/update",
-                data: JSON.stringify(obj),
-                dataType: "json",
-                contentType: 'application/json;charset=UTF-8', //contentType很重要
-                success: function (data) {
-                    console.log(data);
-                }, error: function (data) {
-                    console.log(data);
-                }
-            });
-
-        });
-
-    } catch (e) {
-        console.log(e);
+    if (day < 10) {
+        day = "0" + day;
     }
-}
-
-function getRunLogById(id) {
-    $.ajax({
-        type: "post",
-        url: "http://localhost:10200/api/tRunLog/update",
-        data: JSON.stringify(id),
-        dataType: "json",
-        contentType: 'application/json;charset=UTF-8', //contentType很重要
-        success: function (data) {
-            console.log(data);
-        }, error: function (data) {
-            console.log(data);
-        }
-    });
+    return year + "-" + month + "-" + day;
 }
