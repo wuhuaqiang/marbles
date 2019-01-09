@@ -2,15 +2,15 @@
 /* global toTitleCase, connect_to_server, refreshHomePanel, closeNoticePanel, openNoticePanel, show_tx_step, marbles*/
 /* global pendingTxDrawing:true */
 /* exported record_company, autoCloseNoticePanel, start_up, block_ui_delay*/
-let ws = {};
-let bgcolors = ['whitebg', 'blackbg', 'redbg', 'greenbg', 'bluebg', 'purplebg', 'pinkbg', 'orangebg', 'yellowbg'];
-let autoCloseNoticePanel = null;
-let known_companies = {};
-let start_up = true;
-let lsKey = 'marbles';
-let fromLS = {};
-let block_ui_delay = 15000; 								//default, gets set in ws block msg
-let auditingMarble = null;
+var ws = {};
+var bgcolors = ['whitebg', 'blackbg', 'redbg', 'greenbg', 'bluebg', 'purplebg', 'pinkbg', 'orangebg', 'yellowbg'];
+var autoCloseNoticePanel = null;
+var known_companies = {};
+var start_up = true;
+var lsKey = 'marbles';
+var fromLS = {};
+var block_ui_delay = 15000; 								//default, gets set in ws block msg
+var auditingMarble = null;
 
 // =================================================================================
 // On Load
@@ -28,7 +28,7 @@ $(document).on('ready', function () {
     // =================================================================================
     $('#createMarbleButton').click(function () {
         console.log('creating marble');
-        let obj = {
+        var obj = {
             type: 'create',
             color: $('.colorSelected').attr('color'),
             size: $('select[name="size"]').val(),
@@ -40,13 +40,42 @@ $(document).on('ready', function () {
         console.log('creating marble, sending', obj);
         $('#createPanel').fadeOut();
         $('#tint').fadeOut();
+        const objA = {
+            type: 'initAccount',
+            id: 'A',
+            value: '245',
+        }
+        const objC = {
+            type: 'initAccount',
+            id: 'B',
+            value: '185',
+        }
+        // ws.send(JSON.stringify(objA));
+        // ws.send(JSON.stringify(objC));
+        const objB = {
+            type: 'queryAccount',
+            id: 'A',
+        }
+        const objD = {
+            type: 'transferAccounts',
+            from: 'A',
+            to: 'B',
+            value: '100',
+        }
+        const objE = {
+            type: 'queryAccount',
+            id: 'B',
+        }
+        ws.send(JSON.stringify(objD));
+        ws.send(JSON.stringify(objB));
 
+        ws.send(JSON.stringify(objE));
         show_tx_step({state: 'building_proposal'}, function () {
             ws.send(JSON.stringify(obj));
 
             refreshHomePanel();
             $('.colorValue').html('Color');											//reset
-            for (let i in bgcolors) $('.createball').removeClass(bgcolors[i]);		//reset
+            for (var i in bgcolors) $('.createball').removeClass(bgcolors[i]);		//reset
             $('.createball').css('border', '2px dashed #fff');						//reset
         });
 
@@ -57,7 +86,8 @@ $(document).on('ready', function () {
     $(document).on('click', '.marblesFix', function () {
         if ($(this).parent().parent().hasClass('marblesFixed')) {
             $(this).parent().parent().removeClass('marblesFixed');
-        } else {
+        }
+        else {
             $(this).parent().parent().addClass('marblesFixed');
         }
     });
@@ -68,21 +98,21 @@ $(document).on('ready', function () {
         $(this).parent().find('.colorOptionsWrap').show();
     });
     $(document).on('click', '.colorOption', function () {
-        let color = $(this).attr('color');
-        let html = '<span class="fa fa-circle colorSelected ' + color + '" color="' + color + '"></span>';
+        var color = $(this).attr('color');
+        var html = '<span class="fa fa-circle colorSelected ' + color + '" color="' + color + '"></span>';
 
         $(this).parent().parent().find('.colorValue').html(html);
         $(this).parent().hide();
 
-        for (let i in bgcolors) $('.createball').removeClass(bgcolors[i]);		//remove prev color
+        for (var i in bgcolors) $('.createball').removeClass(bgcolors[i]);		//remove prev color
         $('.createball').css('border', '0').addClass(color + 'bg');				//set new color
     });
 
     //username/company search
     $('#searchUsers').keyup(function () {
-        let count = 0;
-        let input = $(this).val().toLowerCase();
-        for (let i in known_companies) {
+        var count = 0;
+        var input = $(this).val().toLowerCase();
+        for (var i in known_companies) {
             known_companies[i].visible = 0;
         }
 
@@ -96,19 +126,20 @@ $(document).on('ready', function () {
                 $('.companyPanel[company="' + i + '"]').find('.companyVisible').html(known_companies[i].visible);
                 $('.companyPanel[company="' + i + '"]').find('.companyCount').html(known_companies[i].count);
             }
-        } else {
-            let parts = input.split(',');
+        }
+        else {
+            var parts = input.split(',');
             console.log('searching on', parts);
 
             //figure out if the user matches the search
             $('.marblesWrap').each(function () {												//iter on each marble user wrap
-                let username = $(this).attr('username');
-                let company = $(this).attr('company');
+                var username = $(this).attr('username');
+                var company = $(this).attr('company');
                 if (username && company) {
-                    let full = (username + company).toLowerCase();
-                    let show = false;
+                    var full = (username + company).toLowerCase();
+                    var show = false;
 
-                    for (let x in parts) {													//iter on each search term
+                    for (var x in parts) {													//iter on each search term
                         if (parts[x].trim() === '') continue;
                         if (full.indexOf(parts[x].trim()) >= 0 || $(this).hasClass('marblesFixed')) {
                             count++;
@@ -129,7 +160,8 @@ $(document).on('ready', function () {
                 if (known_companies[i].visible === 0) {
                     console.log('hiding company', i);
                     $('.companyPanel[company="' + i + '"]').fadeOut();
-                } else {
+                }
+                else {
                     $('.companyPanel[company="' + i + '"]').fadeIn();
                 }
             }
@@ -143,7 +175,8 @@ $(document).on('ready', function () {
         if ($('#userSelect').is(':visible')) {
             $('#userSelect').fadeOut();
             $('#carrot').removeClass('fa-angle-up').addClass('fa-angle-down');
-        } else {
+        }
+        else {
             $('#userSelect').fadeIn();
             $('#carrot').removeClass('fa-angle-down').addClass('fa-angle-up');
         }
@@ -153,9 +186,9 @@ $(document).on('ready', function () {
     $(document).on('click', '.addMarble', function () {
         $('#tint').fadeIn();
         $('#createPanel').fadeIn();
-        let company = $(this).parents('.innerMarbleWrap').parents('.marblesWrap').attr('company');
-        let username = $(this).parents('.innerMarbleWrap').parents('.marblesWrap').attr('username');
-        let owner_id = $(this).parents('.innerMarbleWrap').parents('.marblesWrap').attr('owner_id');
+        var company = $(this).parents('.innerMarbleWrap').parents('.marblesWrap').attr('company');
+        var username = $(this).parents('.innerMarbleWrap').parents('.marblesWrap').attr('username');
+        var owner_id = $(this).parents('.innerMarbleWrap').parents('.marblesWrap').attr('owner_id');
         $('select[name="user"]').html('<option value="' + username + '">' + toTitleCase(username) + '</option>');
         $('input[name="company"]').val(company);
         $('input[name="owner_id"]').val(owner_id);
@@ -172,7 +205,8 @@ $(document).on('ready', function () {
     $('#notificationHandle').click(function () {
         if ($('#noticeScrollWrap').is(':visible')) {
             closeNoticePanel();
-        } else {
+        }
+        else {
             openNoticePanel();
         }
     });
@@ -205,7 +239,7 @@ $(document).on('ready', function () {
 
     //change size of marble
     $('select[name="size"]').click(function () {
-        let size = $(this).val();
+        var size = $(this).val();
         if (size === '16') $('.createball').animate({'height': 150, 'width': 150}, {duration: 200});
         else $('.createball').animate({'height': 250, 'width': 250}, {duration: 200});
     });
@@ -222,13 +256,11 @@ $(document).on('ready', function () {
     });
 
     function auditMarble(that, open) {
-        //debugger;
-        console.log(that);
-        let marble_id = $(that).attr('id');
+        var marble_id = $(that).attr('id');
         $('.auditingMarble').removeClass('auditingMarble');
 
         if (!auditingMarble || marbles[marble_id].id != auditingMarble.id) {//different marble than before!
-            for (let x in pendingTxDrawing) clearTimeout(pendingTxDrawing[x]);
+            for (var x in pendingTxDrawing) clearTimeout(pendingTxDrawing[x]);
             $('.txHistoryWrap').html('');										//clear
         }
 
@@ -239,14 +271,14 @@ $(document).on('ready', function () {
             $(that).addClass('auditingMarble');
             $('#auditContentWrap').fadeIn();
             $('#marbleId').html(marble_id);
-            let color = marbles[marble_id].color;
-            for (let i in bgcolors) $('.auditMarble').removeClass(bgcolors[i]);	//reset
+            var color = marbles[marble_id].color;
+            for (var i in bgcolors) $('.auditMarble').removeClass(bgcolors[i]);	//reset
             $('.auditMarble').addClass(color.toLowerCase() + 'bg');
 
             $('#rightEverything').addClass('rightEverythingOpened');
             $('#leftEverything').fadeIn();
 
-            let obj2 = {
+            var obj2 = {
                 type: 'audit',
                 marble_id: marble_id
             };
@@ -257,7 +289,7 @@ $(document).on('ready', function () {
     $('#auditClose').click(function () {
         $('#auditContentWrap').slideUp(500);
         $('.auditingMarble').removeClass('auditingMarble');												//reset
-        for (let x in pendingTxDrawing) clearTimeout(pendingTxDrawing[x]);
+        for (var x in pendingTxDrawing) clearTimeout(pendingTxDrawing[x]);
         setTimeout(function () {
             $('.txHistoryWrap').html('<div class="auditHint">Click a Marble to Audit Its Transactions</div>');//clear
         }, 750);
@@ -285,7 +317,7 @@ $(document).on('ready', function () {
 
     // disable the marble owner
     $('#removeOwner').click(function () {
-        let obj = {
+        var obj = {
             type: 'disable_owner',
             owner_id: selectedOwner.attr('owner_id')
         };
@@ -306,7 +338,8 @@ function set_story_mode(setting) {
         $('#disableStoryMode').prop('disabled', false);
         $('#storyStatus').addClass('storyOn').html('on');
         window.localStorage.setItem(lsKey, JSON.stringify(fromLS));		//save
-    } else {
+    }
+    else {
         fromLS.story_mode = false;
         $('#disableStoryMode').prop('disabled', true);
         $('#enableStoryMode').prop('disabled', false);
