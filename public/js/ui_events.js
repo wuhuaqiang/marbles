@@ -745,6 +745,36 @@ $(document).on('click', '#viewElectricityPrice', (e) => {
     q.enqueue("Jennifer");
     q.dequeue();
     console.log(q.toString());
+    const objA = {
+        type: 'initAccount',
+        id: 'A',
+        value: '245',
+    }
+    const objC = {
+        type: 'initAccount',
+        id: 'B',
+        value: '185',
+    }
+    const objB = {
+        type: 'queryAccount',
+        id: 'A',
+    }
+    const objD = {
+        type: 'transferAccounts',
+        from: 'A',
+        to: 'B',
+        value: '100',
+    }
+    const objE = {
+        type: 'queryAccount',
+        id: 'B',
+    }
+    // ws.send(JSON.stringify(objA));
+    // ws.send(JSON.stringify(objC));
+    ws.send(JSON.stringify(objD));
+    ws.send(JSON.stringify(objB));
+
+    ws.send(JSON.stringify(objE));
     // $('#electricityPriceCol .modal-body').html("");
     // require.config({
     //     paths: {
