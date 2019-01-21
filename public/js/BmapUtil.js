@@ -126,8 +126,8 @@ Bmap = {
                 "<li id='getTransactionAllList'><a href='#'　><i class='icon icon-list-ul'></i>交易列表</a></li>" + /*icon-trash*/
                 "<li id='viewElectricityPrice'><a href='#'><i class='icon icon-list-ul'></i>实时电价</a></li>" +
                 "<li id='getRunTaskAllList'><a href='#'><i class='icon icon-list-ul'></i>任务运行日志</a></li>" +
-                "<li class='open'>" +
-                "<a href='#'><i class='icon icon-tasks'></i>btn6</a>" +
+                "<li id='getPowerHistoryEchart'>" +
+                "<a href='#'><i class='icon icon-tasks'></i>获取电量图</a>" +
                 "</li>" +
                 "</ul>" +
                 "</nav>");

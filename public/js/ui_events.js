@@ -950,3 +950,129 @@ $(document).on('click', '#viewElectricityPrice', (e) => {
     });
 
 })
+
+$(document).on('click', '#getPowerHistoryEchart', (e) => {
+    $('#electricityPriceCol').modal('show');
+
+    $.ajax({
+        type: "post",
+        url: "http://localhost:10200/api/tPowerHistory/echarts",
+        data: "",
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8', //contentType很重要
+        success: function (data) {
+            const seriesData = new Array();
+            for (var key in data.powerMap) {
+                const obj = {
+                    name: key,
+                    type: 'line',
+                    stack: '总量',
+                    data: data.powerMap[key]
+                }
+                seriesData.push(obj);
+                // console.log("属性：" + key + ",值：" + map[key]);
+            }
+            /*for (let i = 0; i < data.powerMap.length; i++) {
+                const obj = {
+                    name: '邮件营销',
+                    type: 'line',
+                    stack: '总量',
+                    data: [120, 132, 101, 134, 90, 230, 210]
+                }
+            }*/
+            loadScript("http://echarts.baidu.com/build/dist/echarts.js", function () {
+
+                // 路径配置
+                require.config({
+                    paths: {
+                        echarts: 'http://echarts.baidu.com/build/dist'
+                    }
+                });
+
+                // 使用
+                require(
+                    [
+                        'echarts',
+                        'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
+                    ],
+                    function (ec) {
+                        // 基于准备好的dom，初始化echarts图表
+                        var myChart = ec.init(document.getElementById('echartsMain'));
+                        option = {
+                            title: {
+                                text: '折线图堆叠'
+                            },
+                            tooltip: {
+                                trigger: 'axis'
+                            },
+                            legend: {
+                                // data: ['邮件营销', '联盟广告', '视频广告', '直接访问', '搜索引擎']
+                                data: data.userNameList
+                            },
+                            grid: {
+                                left: '3%',
+                                right: '4%',
+                                bottom: '3%',
+                                containLabel: true
+                            },
+                            toolbox: {
+                                feature: {
+                                    saveAsImage: {}
+                                }
+                            },
+                            xAxis: {
+                                type: 'category',
+                                boundaryGap: false,
+                                // data: ['周一', '周二', '周三', '周四', '周五', '周六', '周日']
+                                data: data.timeList
+                            },
+                            yAxis: {
+                                type: 'value'
+                            },
+                            series: seriesData
+                            /*[
+                                {
+                                    name: '邮件营销',
+                                    type: 'line',
+                                    stack: '总量',
+                                    data: [120, 132, 101, 134, 90, 230, 210]
+                                },
+                                {
+                                    name: '联盟广告',
+                                    type: 'line',
+                                    stack: '总量',
+                                    data: [220, 182, 191, 234, 290, 330, 310]
+                                },
+                                {
+                                    name: '视频广告',
+                                    type: 'line',
+                                    stack: '总量',
+                                    data: [150, 232, 201, 154, 190, 330, 410]
+                                },
+                                {
+                                    name: '直接访问',
+                                    type: 'line',
+                                    stack: '总量',
+                                    data: [320, 332, 301, 334, 390, 330, 320]
+                                },
+                                {
+                                    name: '搜索引擎',
+                                    type: 'line',
+                                    stack: '总量',
+                                    data: [820, 932, 901, 934, 1290, 1330, 1320]
+                                }
+                            ]*/
+                        };
+
+                        // 为echarts对象加载数据
+                        myChart.setOption(option);
+                    }
+                );
+
+            });
+            console.log(data);
+        }
+    });
+
+
+})
