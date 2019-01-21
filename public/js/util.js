@@ -134,9 +134,13 @@ function setSystemTime() {
         clearTimeout(Bmap.systemTimer);
     }
     Bmap.systemTimer = setInterval(function () {
-       // debugger;
+         debugger;
+        // alert(Bmap.systemTime);
         let split = Bmap.systemTime.split(":");
-        if (split[1] == "00" && split[2] == "00") {
+        if (split[1] == "00" && split[2] == "00" || Bmap.systemTime == "23:59:59") {
+            if (Bmap.systemTime == "23:59:59") {
+                clearTimeout(Bmap.systemTimer);
+            }
             const obj = {
                 time: Bmap.systemTime
             }
