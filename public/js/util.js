@@ -134,7 +134,26 @@ function setSystemTime() {
         clearTimeout(Bmap.systemTimer);
     }
     Bmap.systemTimer = setInterval(function () {
+        debugger;
         let split = Bmap.systemTime.split(":");
+        if (split[1] == "00" && split[2] == "00") {
+            const obj = {
+                time: Bmap.systemTime
+            }
+            $.ajax({
+                type: "post",
+                url: "http://localhost:10200/api/tPowerHistory/save",
+                data: JSON.stringify(obj),
+                dataType: "json",
+                contentType: 'application/json;charset=UTF-8', //contentType很重要
+                success: function (data) {
+                    console.log(data);
+                },
+                error: function (data) {
+                    console.log(data);
+                }
+            });
+        }
         let newTime = "";
         if (8 < parseInt(split[2]) && parseInt(split[2]) < 59) {
             newTime = parseInt(split[1]) + ":" + (parseInt(split[2]) + 1);
