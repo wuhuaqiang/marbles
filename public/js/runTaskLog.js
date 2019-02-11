@@ -18,7 +18,7 @@ function runLogStart(carMk, id) {
             label.setContent("当前电量:"+obj.power);*/
             $.ajax({
                 type: "post",
-                url: "http://localhost:10200/api/tRunLog/save",
+                url: "http://10.168.1.235:10200/api/tRunLog/save",
                 data: JSON.stringify(obj),
                 dataType: "json",
                 /*        async: false,*/
@@ -60,7 +60,7 @@ function runLogEnd(carMk, remark, state) {
             label.setContent("当前电量:"+obj.power);*/
             $.ajax({
                 type: "post",
-                url: "http://localhost:10200/api/tRunLog/update",
+                url: "http://10.168.1.235:10200/api/tRunLog/update",
                 data: JSON.stringify(obj),
                 dataType: "json",
                 contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -81,7 +81,7 @@ function runLogEnd(carMk, remark, state) {
 function getRunLogById(id) {
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tRunLog/update",
+        url: "http://10.168.1.235:10200/api/tRunLog/update",
         data: JSON.stringify(id),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -100,7 +100,7 @@ $(document).on("click", "#getRunTaskAllList", function () {
     let param = {page: 1, size: 5};
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tRunLog/page/",
+        url: "http://10.168.1.235:10200/api/tRunLog/page/",
         data: JSON.stringify(param),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -150,7 +150,7 @@ $(document).on('click', '#runTaskListTools li', (e) => {
     let param = {page: parseInt(page), size: 5};
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tRunLog/page/",
+        url: "http://10.168.1.235:10200/api/tRunLog/page/",
         data: JSON.stringify(param),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要

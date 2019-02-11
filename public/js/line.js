@@ -18,7 +18,7 @@ function saveLines(lines) {
         }
         $.ajax({
             type: "post",
-            url: "http://localhost:10200/api/tLine/save",
+            url: "http://10.168.1.235:10200/api/tLine/save",
             data: JSON.stringify(lineObj),
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -149,7 +149,7 @@ function createLine(num) {
 function getAllLine() {
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tLine/list",
+        url: "http://10.168.1.235:10200/api/tLine/list",
         data: '',
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要

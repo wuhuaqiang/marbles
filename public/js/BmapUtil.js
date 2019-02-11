@@ -118,7 +118,7 @@ Bmap = {
             // 创建一个DOM元素
             var $div = $("<nav class='menu' data-ride='menu' style='width: 200px'>" +
                 "<ul id='treeMenu' class='tree tree-menu' data-ride='tree'>" +
-                "<li><a id='evLineMapping' href='#'><i class='icon icon-th'></i>btn1</a></li>" +
+                // "<li><a id='evLineMapping' href='#'><i class='icon icon-th'></i>btn1</a></li>" +
                 "<li><a id='getcurrTasks' href='#'><i class='icon icon-user'></i>获取用户任务</a></li>" +
                 "<li>" +
                 "<a href='#' id='setSimulationTime'><i class='icon icon-time'></i>设置模拟时间</a>" +
@@ -494,7 +494,7 @@ Bmap = {
         // });
         $.ajax({
             type: "post",
-            url: "http://localhost:10200/api/tLine/list",
+            url: "http://10.168.1.235:10200/api/tLine/list",
             data: '',
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要

@@ -22,7 +22,7 @@ function saveChargingStation(chargingStations) {
         // console.log(chargingStationObj)
         $.ajax({
             type: "post",
-            url: "http://localhost:10200/api/tChargingStation/save",
+            url: "http://10.168.1.235:10200/api/tChargingStation/save",
             data: JSON.stringify(chargingStationObj),
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -138,23 +138,50 @@ function createChargingStation(num) {
 function getAllChargingStation() {
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tChargingStation/list",
+        url: "http://10.168.1.235:10200/api/tChargingStation/list",
         data: '',
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
         success: function (data) {
-            if (data.length) {
-                $.each(data, (index, obj) => {
-                    Bmap.myIconInit("../imgs/chargingStation.png", 36, 36, 0, 0, 0, 0);
-                    let strings = obj.positionVal.split(',');
-                    let point = new BMap.Point(strings[0], strings[1]);
-                    Bmap.chargingStationPoints.push(point);
-                    let carMk = new BMap.Marker(point, {icon: Bmap.myIcon, title: obj.name});
-                    carMk.addEventListener("click", showChargingStationDetails);
-                    Bmap.map.addOverlay(carMk);
-                    // console.log(obj.positionVal);
-                })
-            }
+            setTimeout(function () {
+                if (data.length) {
+                    // fromLS = window.localStorage.getItem(lsKey);
+                    // if (fromLS) fromLS = JSON.parse(fromLS);
+                    // else fromLS = {story_mode: false};					//dsh todo remove this
+                    // console.log('from local storage', fromLS);
+                    // connect_to_server();
+                    $.each(data, (index, obj) => {
+                        Bmap.myIconInit("../imgs/chargingStation.png", 36, 36, 0, 0, 0, 0);
+                        let strings = obj.positionVal.split(',');
+                        let point = new BMap.Point(strings[0], strings[1]);
+                        Bmap.chargingStationPoints.push(point);
+                        let carMk = new BMap.Marker(point, {icon: Bmap.myIcon, title: obj.name});
+                        carMk.addEventListener("click", showChargingStationDetails);
+                        Bmap.map.addOverlay(carMk);
+                        // console.log(obj.positionVal);
+                        // debugger;
+                        console.log(obj);
+                        // let param = {
+                        //     type: 'initAccount',
+                        //     id: obj.id,
+                        //     value: parseFloat(obj.account),
+                        // }
+                        const param = {
+                            type: 'initAccount',
+                            id: obj.id,
+                            value: obj.account,
+                        }
+                        const paramQ = {
+                            type: 'queryAccount',
+                            id: obj.id,
+                        }
+                      /*  debugger;
+                        console.log(ws);*/
+                        ws.send(JSON.stringify(param));
+                        ws.send(JSON.stringify(paramQ));
+                    })
+                }
+            }, 500);					//try again one more time, server restarts are quick
         }
     });
 
@@ -166,7 +193,7 @@ function showChargingStationDetails(e) {
     let title = $(e.currentTarget.V.outerHTML).attr("title");
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tChargingStation/getChargingStationByName",
+        url: "http://10.168.1.235:10200/api/tChargingStation/getChargingStationByName",
         data: title,
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要

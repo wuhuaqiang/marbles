@@ -134,7 +134,7 @@ function setSystemTime() {
         clearTimeout(Bmap.systemTimer);
     }
     Bmap.systemTimer = setInterval(function () {
-         debugger;
+         // debugger;
         // alert(Bmap.systemTime);
         let split = Bmap.systemTime.split(":");
         if (split[1] == "00" && split[2] == "00" || Bmap.systemTime == "23:59:59") {
@@ -146,7 +146,7 @@ function setSystemTime() {
             }
             $.ajax({
                 type: "post",
-                url: "http://localhost:10200/api/tPowerHistory/save",
+                url: "http://10.168.1.235:10200/api/tPowerHistory/save",
                 data: JSON.stringify(obj),
                 dataType: "json",
                 contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -197,7 +197,7 @@ function setSystemTime() {
 function getCurrTimeSetSysTime() {
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tSystemsetting/list/",
+        url: "http://10.168.1.235:10200/api/tSystemsetting/list/",
         data: "",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要

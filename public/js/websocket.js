@@ -24,11 +24,17 @@ function connect_to_server() {
         } else {
             wsUri = 'ws://' + document.location.hostname + ':' + document.location.port;
         }*/
+        // if (document.location.protocol === 'https:') {
+        //     wsTxt = '[wss]';
+        //     wsUri = 'wss://' + document.location.hostname + ':' + 3002;
+        // } else {
+        //     wsUri = 'ws://' + document.location.hostname + ':' + 3002;
+        // }
         if (document.location.protocol === 'https:') {
             wsTxt = '[wss]';
-            wsUri = 'wss://' + document.location.hostname + ':' + 3002;
+            wsUri = 'wss://' + "localhost" + ':' + 3002;
         } else {
-            wsUri = 'ws://' + document.location.hostname + ':' + 3002;
+            wsUri = 'ws://' + "localhost" + ':' + 3002;
         }
         console.log(wsTxt + ' Connecting to websocket', wsUri);
 
@@ -72,7 +78,7 @@ function connect_to_server() {
     }
 
     function onMessage(msg) {
-        debugger;
+        // debugger;
         try {
             var msgObj = JSON.parse(msg.data);
 

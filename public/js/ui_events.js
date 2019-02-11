@@ -554,7 +554,7 @@ $(document).on('click', '.delline', (e) => {
     if (lineId) {
         $.ajax({
             type: "post",
-            url: "http://localhost:10200/api/tLine/delbyId",
+            url: "http://10.168.1.235:10200/api/tLine/delbyId",
             data: lineId,
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -627,7 +627,7 @@ $(document).on("click", "#getTransactionAllList", function () {
     let param = {page: 1, size: 5};
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tTransaction/page/",
+        url: "http://10.168.1.235:10200/api/tTransaction/page/",
         data: JSON.stringify(param),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -675,7 +675,7 @@ $(document).on('click', '#transactionListTools li', (e) => {
     let param = {page: parseInt(page), size: 5};
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tTransaction/page/",
+        url: "http://10.168.1.235:10200/api/tTransaction/page/",
         data: JSON.stringify(param),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -738,6 +738,7 @@ function createTable(data) {
 
 $(document).on('click', '#viewElectricityPrice', (e) => {
     $('#electricityPriceCol').modal('show');
+    $('#electricityPriceCol .modal-title').text('实时电价');
     let q = new Queue();
     //debugger;
     q.enqueue("Meredith");
@@ -748,12 +749,12 @@ $(document).on('click', '#viewElectricityPrice', (e) => {
     const objA = {
         type: 'initAccount',
         id: 'A',
-        value: '245',
+        value: '2000',
     }
     const objC = {
         type: 'initAccount',
         id: 'B',
-        value: '185',
+        value: '5000',
     }
     const objB = {
         type: 'queryAccount',
@@ -953,10 +954,11 @@ $(document).on('click', '#viewElectricityPrice', (e) => {
 
 $(document).on('click', '#getPowerHistoryEchart', (e) => {
     $('#electricityPriceCol').modal('show');
+    $('#electricityPriceCol .modal-title').text('电量图');
 
     $.ajax({
         type: "post",
-        url: "http://localhost:10200/api/tPowerHistory/echarts",
+        url: "http://10.168.1.235:10200/api/tPowerHistory/echarts",
         data: "",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -1000,7 +1002,7 @@ $(document).on('click', '#getPowerHistoryEchart', (e) => {
                         var myChart = ec.init(document.getElementById('echartsMain'));
                         option = {
                             title: {
-                                text: '折线图堆叠'
+                                text: ''
                             },
                             tooltip: {
                                 trigger: 'axis'

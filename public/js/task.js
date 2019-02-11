@@ -9,7 +9,7 @@ Task = {
         let result;
         $.ajax({
             type: "post",
-            url: "http://localhost:10200/api/tTask/currTaskList",
+            url: "http://10.168.1.235:10200/api/tTask/currTaskList",
             data: userIds,
             async: false,
             dataType: "json",
@@ -24,7 +24,7 @@ Task = {
         let result;
         $.ajax({
             type: "post",
-            url: "http://localhost:10200/api/tTask/currTaskByOwerId",
+            url: "http://10.168.1.235:10200/api/tTask/currTaskByOwerId",
             data: userId,
             async: false,
             dataType: "json",
@@ -249,7 +249,7 @@ Task = {
     closeTask: (taskId) => {
         $.ajax({
             type: "post",
-            url: "http://localhost:10200/api/tTask/close",
+            url: "http://10.168.1.235:10200/api/tTask/close",
             data: taskId,
             async: false,
             dataType: "json",
@@ -265,7 +265,7 @@ Task = {
     saveTasks: (userId, tasks) => {
         $.ajax({
             type: "post",
-            url: "http://localhost:10200/api/tTask/lastTaskByOwerId",
+            url: "http://10.168.1.235:10200/api/tTask/lastTaskByOwerId",
             data: userId,
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -295,7 +295,7 @@ Task = {
                     // console.log(chargingStationObj)
                     $.ajax({
                         type: "post",
-                        url: "http://localhost:10200/api/tTask/save",
+                        url: "http://10.168.1.235:10200/api/tTask/save",
                         data: JSON.stringify(taskObj),
                         dataType: "json",
                         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -327,7 +327,7 @@ Task = {
                     // console.log(chargingStationObj)
                     $.ajax({
                         type: "post",
-                        url: "http://localhost:10200/api/tTask/save",
+                        url: "http://10.168.1.235:10200/api/tTask/save",
                         data: JSON.stringify(taskObj),
                         dataType: "json",
                         contentType: 'application/json;charset=UTF-8', //contentType很重要
