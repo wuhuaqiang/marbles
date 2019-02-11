@@ -134,7 +134,7 @@ function setSystemTime() {
         clearTimeout(Bmap.systemTimer);
     }
     Bmap.systemTimer = setInterval(function () {
-         // debugger;
+        // debugger;
         // alert(Bmap.systemTime);
         let split = Bmap.systemTime.split(":");
         if (split[1] == "00" && split[2] == "00" || Bmap.systemTime == "23:59:59") {
@@ -256,11 +256,13 @@ function getMinimumTime(results) {
     const currTimeLong = (newHour * 60 + newMin) * 60 * 1000;
     if (Bmap.minTime == -1) {
         Bmap.minTime = currTimeLong;
+        Bmap.currchargingStation = Bmap.chargingStationIndex;
         // Bmap.nearestPoint = Bmap.chargingStationPoints[Bmap.chargingStationIndex];
         Bmap.nearestPoint = pts;
     } else if (Bmap.minTime > currTimeLong) {
         Bmap.minTime = currTimeLong;
         Bmap.nearestPoint = pts;
+        Bmap.currchargingStation = Bmap.chargingStationIndex;
     }
     if (Bmap.chargingStationIndex < Bmap.chargingStationPoints.length - 1) {
         Bmap.chargingStationIndex++;
@@ -321,6 +323,8 @@ function getMinimumTime(results) {
                 let carMk = Bmap.chargingCarQueue.front();
                 let pts = Bmap.nearestPoint;
                 let len = pts.length;
+                debugger;
+                carMk.ba = carMk.ba + "," + Bmap.chargingStationArr[Bmap.currchargingStation].id
                 let timer = setTimeout(function () {
                     Bmap.resetMkPointAll(1, len, pts, carMk, time)
                 }, 1000);

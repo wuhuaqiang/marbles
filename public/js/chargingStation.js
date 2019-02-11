@@ -155,6 +155,7 @@ function getAllChargingStation() {
                         let strings = obj.positionVal.split(',');
                         let point = new BMap.Point(strings[0], strings[1]);
                         Bmap.chargingStationPoints.push(point);
+                        Bmap.chargingStationArr.push(obj);
                         let carMk = new BMap.Marker(point, {icon: Bmap.myIcon, title: obj.name});
                         carMk.addEventListener("click", showChargingStationDetails);
                         Bmap.map.addOverlay(carMk);

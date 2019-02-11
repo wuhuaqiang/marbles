@@ -4,6 +4,8 @@ Bmap = {
     userIdQueue: new Queue(),
     systemTimer: null,
     chargingStationPoints: new Array(),
+    chargingStationArr: new Array(),
+    currchargingStation: 0,
     nearestPoint: null,
     minTime: -1,
     myuuid: new UUID(),
@@ -411,6 +413,36 @@ Bmap = {
             updateElectricVehicleById(tEVInfo);
             Bmap.myIconInit("../imgs/car_val.png", 24, 24, 0, 0, 0, 0);
             carMk.setIcon(Bmap.myIcon);
+            debugger;
+            let index = carMk.ba.split(",").length;
+            let userId = carMk.ba.split(",")[0];
+            let chargingStationId = carMk.ba.split(",")[index-1];
+            const objD = {
+                type: 'transferAccounts',
+                from: userId,
+                to: chargingStationId,
+                value: '50',
+            }
+            const obj = {
+                userId: userId,
+                chargingStationId: chargingStationId,
+                amount: '50',
+            }
+            const objE = {
+                type: 'queryAccount',
+                id: userId,
+            }
+            $.ajax({
+                type: "post",
+                url: "http://10.168.1.235:10200/api/account/transfer",
+                data: JSON.stringify(obj),
+                dataType: "json",
+                contentType: 'application/json;charset=UTF-8', //contentType很重要
+                success: function (data) {
+                    console.log(data)
+                }
+            });
+            ws.send(JSON.stringify(objD));
             console.log(carMk);
             var label = carMk.getLabel();
             console.log(label);
