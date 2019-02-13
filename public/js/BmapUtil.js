@@ -443,6 +443,7 @@ Bmap = {
                 }
             });
             ws.send(JSON.stringify(objD));
+            ws.send(JSON.stringify(objE));
             console.log(carMk);
             var label = carMk.getLabel();
             console.log(label);

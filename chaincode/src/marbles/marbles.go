@@ -58,6 +58,11 @@ type OwnerRelation struct {
 	Username   string `json:"username"`    //this is mostly cosmetic/handy, the real relation is by Id not Username
 	Company    string `json:"company"`     //this is mostly cosmetic/handy, the real relation is by Id not Company
 }
+type Account struct {
+	Id         string `json:"id"`
+	// Value      int    `json:"value"`    //钱
+	Value      float64    `json:"value"`    //钱
+}
 
 // ============================================================================================================================
 // Main
@@ -71,7 +76,7 @@ func main() {
 
 
 // ============================================================================================================================
-// Init - initialize the chaincode 
+// Init - initialize the chaincode
 //
 // Marbles does not require initialization, so let's run a simple test instead.
 //
@@ -81,7 +86,7 @@ func main() {
 //
 // Inputs - Array of strings
 //  ["314"]
-// 
+//
 // Returns - shim.Success or error
 // ============================================================================================================================
 func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
@@ -90,7 +95,7 @@ func (t *SimpleChaincode) Init(stub shim.ChaincodeStubInterface) pb.Response {
 	var number int
 	var err error
 	txId := stub.GetTxID()
-	
+
 	fmt.Println("Init() is running")
 	fmt.Println("Transaction ID:", txId)
 	fmt.Println("  GetFunctionAndParameters() function:", funcName)
@@ -169,7 +174,17 @@ func (t *SimpleChaincode) Invoke(stub shim.ChaincodeStubInterface) pb.Response {
 		return getMarblesByRange(stub, args)
 	} else if function == "disable_owner"{     //disable a marble owner from appearing on the UI
 		return disable_owner(stub, args)
-	}
+	} else if function == "queryAccount"{     //disable a marble owner from appearing on the UI
+        return queryAccount(stub, args)
+    } else if function == "transferAccounts"{     //disable a marble owner from appearing on the UI
+        return transferAccounts(stub, args)
+    } else if function == "initAccount"{     //disable a marble owner from appearing on the UI
+        return initAccount(stub, args)
+    }else if function == "deleteAccount"{     //disable a marble owner from appearing on the UI
+        return deleteAccount(stub, args)
+    }else if function == "getAccountHistory"{     //disable a marble owner from appearing on the UI
+        return getAccountHistory(stub, args)
+    }
 
 	// error out
 	fmt.Println("Received unknown invoke function name - " + function)

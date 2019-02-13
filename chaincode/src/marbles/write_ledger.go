@@ -31,7 +31,7 @@ import (
 
 // ============================================================================================================================
 // write() - genric write variable into ledger
-// 
+//
 // Shows Off PutState() - writting a key/value into the ledger
 //
 // Inputs - Array of strings
@@ -67,7 +67,7 @@ func write(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 
 // ============================================================================================================================
 // delete_marble() - remove a marble from state and from marble index
-// 
+//
 // Shows Off DelState() - "removing"" a key/value from the ledger
 //
 // Inputs - Array of strings
@@ -168,13 +168,13 @@ func init_marble(stub shim.ChaincodeStubInterface, args []string) (pb.Response) 
 
 	//build the marble json string manually
 	str := `{
-		"docType":"marble", 
-		"id": "` + id + `", 
-		"color": "` + color + `", 
-		"size": ` + strconv.Itoa(size) + `, 
+		"docType":"marble",
+		"id": "` + id + `",
+		"color": "` + color + `",
+		"size": ` + strconv.Itoa(size) + `,
 		"owner": {
-			"id": "` + owner_id + `", 
-			"username": "` + owner.Username + `", 
+			"id": "` + owner_id + `",
+			"username": "` + owner.Username + `",
 			"company": "` + owner.Company + `"
 		}
 	}`
@@ -186,7 +186,6 @@ func init_marble(stub shim.ChaincodeStubInterface, args []string) (pb.Response) 
 	fmt.Println("- end init_marble")
 	return shim.Success(nil)
 }
-
 // ============================================================================================================================
 // Init Owner - create a new owner aka end user, store into chaincode state
 //
@@ -246,7 +245,7 @@ func init_owner(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 // Inputs - Array of Strings
 //       0     ,        1      ,        2
 //  marble id  ,  to owner id  , company that auth the transfer
-// "m999999999", "o99999999999", united_mables" 
+// "m999999999", "o99999999999", united_mables"
 // ============================================================================================================================
 func set_owner(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	var err error
@@ -311,7 +310,7 @@ func set_owner(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 // Shows off PutState()
 //
 // Inputs - Array of Strings
-//       0     ,        1      
+//       0     ,        1
 //  owner id       , company that auth the transfer
 // "o9999999999999", "united_mables"
 // ============================================================================================================================
@@ -352,5 +351,112 @@ func disable_owner(stub shim.ChaincodeStubInterface, args []string) pb.Response 
 	}
 
 	fmt.Println("- end disable_owner")
+	return shim.Success(nil)
+}
+// Transaction makes payment of X units from A to B
+func transferAccounts(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	var A, B string    // Entities
+	// var Aval, Bval int // Asset holdings
+	var Aval, Bval float64 // Asset holdings
+	// var X int          // Transaction value
+	var X float64          // Transaction value
+	var err error
+
+	if len(args) != 3 {
+		return shim.Error("Incorrect number of arguments. Expecting 3")
+	}
+
+	A = args[0]
+	B = args[1]
+
+	// Get the state from the ledger
+	// TODO: will be nice to have a GetAllState call to ledger
+	Avalbytes, err := stub.GetState(A)
+	if err != nil {
+		return shim.Error("Failed to get state")
+	}
+	if Avalbytes == nil {
+		return shim.Error("Entity not found")
+	}
+	// Aval, _ = strconv.Atoi(string(Avalbytes))
+	Aval, _ = strconv.ParseFloat(string(Avalbytes),64)
+
+	Bvalbytes, err := stub.GetState(B)
+	if err != nil {
+		return shim.Error("Failed to get state")
+	}
+	if Bvalbytes == nil {
+		return shim.Error("Entity not found")
+	}
+	// Bval, _ = strconv.Atoi(string(Bvalbytes))
+	Bval, _ = strconv.ParseFloat(string(Bvalbytes),64)
+
+	// Perform the execution
+	// X, err = strconv.Atoi(args[2])
+	X, err = strconv.ParseFloat((args[2]),64)
+	if err != nil {
+		return shim.Error("Invalid transaction amount, expecting a integer value")
+	}
+	Aval = Aval - X
+	Bval = Bval + X
+	fmt.Printf("Aval = %d, Bval = %d\n", Aval, Bval)
+
+	// Write the state back to the ledger
+	// err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
+	err = stub.PutState(A, []byte(strconv.FormatFloat(Aval,'E',-1,64)))
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	// err = stub.PutState(B, []byte(strconv.Itoa(Bval)))
+	err = stub.PutState(B, []byte(strconv.FormatFloat(Bval,'E',-1,64)))
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+
+	return shim.Success(nil)
+}
+
+func initAccount(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	var err error
+    fmt.Println("starting initAccount")
+	var A string    // Entities
+	var Aval float64 // Asset holdings
+
+	if len(args) != 2 {
+		return shim.Error("Incorrect number of arguments. Expecting 2")
+	}
+
+	// Initialize the chaincode
+	A = args[0]
+	// Aval, err = strconv.Atoi(args[1])
+	Aval, err = strconv.ParseFloat(args[1],64)
+	if err != nil {
+		return shim.Error("Expecting integer value for asset holding")
+	}
+	fmt.Printf("Aval = %d", Aval)
+
+	// Write the state to the ledger
+	// err = stub.PutState(A, []byte(strconv.Itoa(Aval)))
+	err = stub.PutState(A, []byte(strconv.FormatFloat(Aval,'E',-1,64)))
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	return shim.Success(nil)
+}
+// Deletes an entity from state
+func deleteAccount(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	A := args[0]
+
+	// Delete the key from the state in ledger
+	err := stub.DelState(A)
+	if err != nil {
+		return shim.Error("Failed to delete state")
+	}
+
 	return shim.Success(nil)
 }

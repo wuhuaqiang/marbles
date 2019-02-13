@@ -176,8 +176,8 @@ function getAllChargingStation() {
                             type: 'queryAccount',
                             id: obj.id,
                         }
-                      /*  debugger;
-                        console.log(ws);*/
+                        debugger;
+                        console.log(ws);
                         ws.send(JSON.stringify(param));
                         ws.send(JSON.stringify(paramQ));
                     })

@@ -262,3 +262,76 @@ func getMarblesByRange(stub shim.ChaincodeStubInterface, args []string) pb.Respo
 
 	return shim.Success(buffer.Bytes())
 }
+// query callback representing the query of a chaincode
+func queryAccount(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	var A string // Entities
+	var err error
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting name of the person to query")
+	}
+
+	A = args[0]
+
+	// Get the state from the ledger
+	Avalbytes, err := stub.GetState(A)
+	if err != nil {
+		jsonResp := "{\"Error\":\"Failed to get state for " + A + "\"}"
+		return shim.Error(jsonResp)
+	}
+
+	if Avalbytes == nil {
+		jsonResp := "{\"Error\":\"Nil amount for " + A + "\"}"
+		return shim.Error(jsonResp)
+	}
+
+	jsonResp := "{\"Name\":\"" + A + "\",\"Amount\":\"" + string(Avalbytes) + "\"}"
+	fmt.Printf("Query Response:%s\n", jsonResp)
+	return shim.Success(Avalbytes)
+}
+func getAccountHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
+	type AuditHistory struct {
+		TxId    string   `json:"txId"`
+		Value   Account   `json:"value"`
+	}
+	var history []AuditHistory;
+	var account Account
+
+	if len(args) != 1 {
+		return shim.Error("Incorrect number of arguments. Expecting 1")
+	}
+
+	accountId := args[0]
+	fmt.Printf("- start getAccountHistory: %s\n", accountId)
+
+	// Get History
+	resultsIterator, err := stub.GetHistoryForKey(accountId)
+	if err != nil {
+		return shim.Error(err.Error())
+	}
+	defer resultsIterator.Close()
+
+	for resultsIterator.HasNext() {
+		historyData, err := resultsIterator.Next()
+		if err != nil {
+			return shim.Error(err.Error())
+		}
+
+		var tx AuditHistory
+		tx.TxId = historyData.TxId                     //copy transaction id over
+		json.Unmarshal(historyData.Value, &account)     //un stringify it aka JSON.parse()
+		if historyData.Value == nil {                  //marble has been deleted
+			var emptyAccount Account
+			tx.Value = emptyAccount                 //copy nil marble
+		} else {
+			json.Unmarshal(historyData.Value, &account) //un stringify it aka JSON.parse()
+			tx.Value = account                      //copy marble over
+		}
+		history = append(history, tx)              //add this tx to the list
+	}
+	fmt.Printf("- getHistoryForMarble returning:\n%s", history)
+
+	//change to array of bytes
+	historyAsBytes, _ := json.Marshal(history)     //convert to array of bytes
+	return shim.Success(historyAsBytes)
+}

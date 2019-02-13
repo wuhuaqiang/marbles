@@ -32,9 +32,9 @@ function connect_to_server() {
         // }
         if (document.location.protocol === 'https:') {
             wsTxt = '[wss]';
-            wsUri = 'wss://' + "localhost" + ':' + 3002;
+            wsUri = 'wss://' + "localhost" + ':' + 3001;
         } else {
-            wsUri = 'ws://' + "localhost" + ':' + 3002;
+            wsUri = 'ws://' + "localhost" + ':' + 3001;
         }
         console.log(wsTxt + ' Connecting to websocket', wsUri);
 
