@@ -122,6 +122,21 @@ $(document).on('click', '#runTaskListTools li', (e) => {
     let page = $(e.target).text();
     let currPageObj = '';
     let flag = true;
+    let pageChange = true;
+    if (page == '...') {
+        flag = false;
+        pageChange = false;
+    }
+    if (page == '首页') {
+        flag = false;
+        pageChange = true;
+        page = 1
+    }
+    if (page == '尾页') {
+        flag = false;
+        pageChange = true;
+        page = $('#runTaskListTools').data("pages");
+    }
     if (page == '«') {
         flag = false;
         page = $("#runTaskListTools li.active").text();
@@ -147,24 +162,27 @@ $(document).on('click', '#runTaskListTools li', (e) => {
         $("#runTaskListTools li").removeClass('active');
         $(e.target).parent().addClass('active');
     }
-    let param = {page: parseInt(page), size: 5};
-    $.ajax({
-        type: "post",
-        url: "http://10.168.1.235:10200/api/tRunLog/page/",
-        data: JSON.stringify(param),
-        dataType: "json",
-        contentType: 'application/json;charset=UTF-8', //contentType很重要
-        success: function (data) {
-            createRumTaskTable(data);
-        },
-        error: function (data) {
-            if (data.responseText == 'success') {
+    if (pageChange) {
+        let param = {page: parseInt(page), size: 5};
+        $.ajax({
+            type: "post",
+            url: "http://10.168.1.235:10200/api/tRunLog/page/",
+            data: JSON.stringify(param),
+            dataType: "json",
+            contentType: 'application/json;charset=UTF-8', //contentType很重要
+            success: function (data) {
                 createRumTaskTable(data);
+            },
+            error: function (data) {
+                if (data.responseText == 'success') {
+                    createRumTaskTable(data);
 
+                }
             }
-        }
-    });
-    console.log(page);
+        });
+        console.log(page);
+    }
+
 })
 
 //创建交易表格
@@ -192,21 +210,68 @@ function createRumTaskTable(data) {
     console.log(data);
     const records = data.records;
     for (let i = 0; i < records.length; i++) { //(dateToString(new Date(records[i].txTime))
-        let trStr = "<tr><td>" + records[i].owerId + "</td><td>" + records[i].startTime + "</td><td>" + records[i].endTime + "</td><td>" + records[i].startPoint + "</td><td>....</td><td>" + records[i].endPoint + "</td><td>" + (records[i].state == 1 ? '完成' : '未完成') + "</td><td>" + records[i].remark + "</td></tr>";
+        let trStr = "<tr><td>" + records[i].owerId + "</td><td>" + (records[i].startTime?records[i].startTime:'')+ "</td><td>" + (records[i].endTime?records[i].endTime:'') + "</td><td>" + (records[i].startPoint?records[i].startPoint:'') + "</td><td>....</td><td>" + (records[i].endPoint?records[i].endPoint:'') + "</td><td>" + (records[i].state == 1 ? '完成' : '未完成') + "</td><td>" + (records[i].remark?records[i].remark:'') + "</td></tr>";
         $('#transactionListCol #runTaskList tbody').append($(trStr));
     }
-    const pageStart = "<div id='runTaskListTools'><ul class=\"pager\"><li class=\"previous\"><a>«</a></li>";
+    const pageStart = "<div id='runTaskListTools'><ul class=\"pager\"><li class=\"previous\"><a>首页</a></li><li class=\"previous\"><a>«</a></li>";
     let numberStr = '';
-    for (let i = 1; i <= data.pages; i++) {
+    if (data.pages > 10) {
+        if (data.current + 4 < data.pages) {
+            if (data.current - 4 > 1) {
+                numberStr += "  <li><a>...</a></li>\n";
+                for (let i = data.current - 4; i <= data.current + 4; i++) {
+                    if (data.current == i) {
+                        numberStr += "  <li class=\"active\"><a>" + i + "</a></li>\n";
+                    } else {
+                        numberStr += "  <li><a>" + i + "</a></li>\n";
+                    }
+                }
+                numberStr += "  <li><a>...</a></li>\n";
+            } else {
+                // numberStr += "  <li><a>...</a></li>\n";
+                for (let i = 1; i <= 10; i++) {
+                    if (data.current == i) {
+                        numberStr += "  <li class=\"active\"><a>" + i + "</a></li>\n";
+                    } else {
+                        numberStr += "  <li><a>" + i + "</a></li>\n";
+                    }
+                }
+                numberStr += "  <li><a>...</a></li>\n";
+            }
+        } else {
+            numberStr += "  <li><a>...</a></li>\n";
+            for (let i = data.pages - 9; i <= data.pages; i++) {
+                if (data.current == i) {
+                    numberStr += "  <li class=\"active\"><a>" + i + "</a></li>\n";
+                } else {
+                    numberStr += "  <li><a>" + i + "</a></li>\n";
+                }
+            }
+            // numberStr += "  <li><a>...</a></li>\n";
+        }
+    } else {
+        for (let i = 1; i <= data.pages; i++) {
+            if (data.current == i) {
+                numberStr += "  <li class=\"active\"><a>" + i + "</a></li>\n";
+            } else {
+                numberStr += "  <li><a>" + i + "</a></li>\n";
+            }
+        }
+    }
+
+    /*for (let i = 1; i <= data.pages; i++) {
         if (data.current == i) {
             numberStr += "  <li class=\"active\"><a>" + i + "</a></li>\n";
         } else {
             numberStr += "  <li><a>" + i + "</a></li>\n";
         }
-    }
-    const pageEnd = "  <li class=\"next\"><a>»</a></li></ul></div>";
+    }*/
+    const pageEnd = "  <li class=\"next\"><a>»</a></li><li class=\"previous\"><a>尾页</a></li></ul></div>";
     const page = pageStart + numberStr + pageEnd;
     const $page = $(page);
     $page.data("pages", data.pages);
+    $('#runTaskListTools').data("pages", data.pages);
+// const nav = '<ul class="pager" data-ride="pager" data-page="'+data.pages +'" data-rec-total="'+data.total+'" data-max-nav-count="4" data-elements="prev_icon,nav,next_icon"></ul>'
     $('#transactionListCol .modal-body').append($page);
+    // $('#transactionListCol .modal-body').append($(nav));
 }
