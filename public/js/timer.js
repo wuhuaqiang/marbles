@@ -6,15 +6,19 @@ let taskTimer = setInterval(function () {
         console.log(Bmap.userIdQueue.front());
         console.log(Bmap.currTaskCar);
         console.log("*********************************************************");
-        Task.startTask(Bmap.userIdQueue.front())
-
+        Task.startTask(Bmap.userIdQueue.front());
+        console.error('task定时器执行任务');
     }
+    console.log('task定时器')
 }, 3000);
 let chargingTimer = setInterval(function () {
     if (!Bmap.chargingCarQueue.empty() && Bmap.chargingCarQueue.front() != Bmap.currChargingCar) {
         charging(Bmap.chargingCarQueue.front());
         Bmap.currChargingCar = Bmap.chargingCarQueue.front();
+        console.log(Bmap.currChargingCar);
+        console.error('充电定时器执行充电');
     }
+    console.log('充电定时器')
 }, 1000);
 
 function saveSystemSetting() {
