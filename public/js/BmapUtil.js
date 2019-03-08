@@ -129,7 +129,7 @@ Bmap = {
                 "<li id='viewElectricityPrice'><a href='#'><i class='icon icon-list-ul'></i>实时电价</a></li>" +
                 "<li id='getRunTaskAllList'><a href='#'><i class='icon icon-list-ul'></i>任务运行日志</a></li>" +
                 "<li id='getPowerHistoryEchart'>" +
-                "<a href='#'><i class='icon icon-tasks'></i>获取电量图</a>" +
+                "<a href='#'><i class='icon icon-tasks'></i>获取负荷曲线</a>" +
                 "</li>" +
                 "</ul>" +
                 "</nav>");
