@@ -37,7 +37,7 @@ import (
 //  0
 //  key
 //  "abc"
-// 
+//
 // Returns - string
 // ============================================================================================================================
 func read(stub shim.ChaincodeStubInterface, args []string) pb.Response {
@@ -103,7 +103,7 @@ func read_everything(stub shim.ChaincodeStubInterface) pb.Response {
 		return shim.Error(err.Error())
 	}
 	defer resultsIterator.Close()
-	
+
 	for resultsIterator.HasNext() {
 		aKeyValue, err := resultsIterator.Next()
 		if err != nil {
@@ -159,6 +159,10 @@ func read_everything(stub shim.ChaincodeStubInterface) pb.Response {
 // ============================================================================================================================
 func getHistory(stub shim.ChaincodeStubInterface, args []string) pb.Response {
 	type AuditHistory struct {
+
+
+
+
 		TxId    string   `json:"txId"`
 		Value   Marble   `json:"value"`
 	}
