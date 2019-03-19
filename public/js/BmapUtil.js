@@ -23,6 +23,8 @@ Bmap = {
     chargingStationIndex: 0,
     linemapping: new Array(),
     userCarMapping: {},
+    infoMapping: new Array(),
+    markerMapping: new Array(),
     systemTime: null,
     ffRatio: null,
     simulationId: null,
@@ -416,7 +418,7 @@ Bmap = {
             debugger;
             let index = carMk.ba.split(",").length;
             let userId = carMk.ba.split(",")[0];
-            let chargingStationId = carMk.ba.split(",")[index-1];
+            let chargingStationId = carMk.ba.split(",")[index - 1];
             const objD = {
                 type: 'transferAccounts',
                 from: userId,
