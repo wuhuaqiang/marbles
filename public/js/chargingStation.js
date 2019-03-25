@@ -167,19 +167,19 @@ function getAllChargingStation() {
                         //     id: obj.id,
                         //     value: parseFloat(obj.account),
                         // }
-                        const param = {
-                            type: 'initAccount',
-                            id: obj.id,
-                            value: obj.account,
-                        }
-                        const paramQ = {
-                            type: 'queryAccount',
-                            id: obj.id,
-                        }
-                        debugger;
-                        console.log(ws);
-                        ws.send(JSON.stringify(param));
-                        ws.send(JSON.stringify(paramQ));
+                        // const param = {
+                        //     type: 'initAccount',
+                        //     id: obj.id,
+                        //     value: obj.account,
+                        // }
+                        // const paramQ = {
+                        //     type: 'queryAccount',
+                        //     id: obj.id,
+                        // }
+                        // debugger;
+                        // console.log(ws);
+                        // ws.send(JSON.stringify(param));
+                        // ws.send(JSON.stringify(paramQ));
                     })
                 }
             }, 500);					//try again one more time, server restarts are quick

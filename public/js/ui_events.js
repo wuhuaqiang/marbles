@@ -21,7 +21,7 @@ $(document).on('ready', function () {
     else fromLS = {story_mode: false};					//dsh todo remove this
     console.log('from local storage', fromLS);
 
-    connect_to_server();
+    // connect_to_server();
 
     // =================================================================================
     // jQuery UI Events
@@ -40,36 +40,36 @@ $(document).on('ready', function () {
         console.log('creating marble, sending', obj);
         $('#createPanel').fadeOut();
         $('#tint').fadeOut();
-        const objA = {
-            type: 'initAccount',
-            id: 'A',
-            value: '245',
-        }
-        const objC = {
-            type: 'initAccount',
-            id: 'B',
-            value: '185',
-        }
-        // ws.send(JSON.stringify(objA));
-        // ws.send(JSON.stringify(objC));
-        const objB = {
-            type: 'queryAccount',
-            id: 'A',
-        }
-        const objD = {
-            type: 'transferAccounts',
-            from: 'A',
-            to: 'B',
-            value: '100',
-        }
-        const objE = {
-            type: 'queryAccount',
-            id: 'B',
-        }
-        ws.send(JSON.stringify(objD));
-        ws.send(JSON.stringify(objB));
-
-        ws.send(JSON.stringify(objE));
+        // const objA = {
+        //     type: 'initAccount',
+        //     id: 'A',
+        //     value: '245',
+        // }
+        // const objC = {
+        //     type: 'initAccount',
+        //     id: 'B',
+        //     value: '185',
+        // }
+        // // ws.send(JSON.stringify(objA));
+        // // ws.send(JSON.stringify(objC));
+        // const objB = {
+        //     type: 'queryAccount',
+        //     id: 'A',
+        // }
+        // const objD = {
+        //     type: 'transferAccounts',
+        //     from: 'A',
+        //     to: 'B',
+        //     value: '100',
+        // }
+        // const objE = {
+        //     type: 'queryAccount',
+        //     id: 'B',
+        // }
+        // ws.send(JSON.stringify(objD));
+        // ws.send(JSON.stringify(objB));
+        //
+        // ws.send(JSON.stringify(objE));
         show_tx_step({state: 'building_proposal'}, function () {
             ws.send(JSON.stringify(obj));
 
