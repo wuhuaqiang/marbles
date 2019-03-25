@@ -4,9 +4,9 @@ extends ./template/layout.pug
 block custom_header
     // --------------- Header -------------- //
     script(src='/js/ui_events.js?v=' + bag.jshash)
-    script(src='/js/websocket.js?v=' + bag.jshash)
-    script(src='/js/startup.js?v=' + bag.jshash)
-    script(src='/js/tx_story.js?v=' + bag.jshash)
+    //script(src='/js/websocket.js?v=' + bag.jshash)
+    //script(src='/js/startup.js?v=' + bag.jshash)
+    //script(src='/js/tx_story.js?v=' + bag.jshash)
     link(rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/zui/1.8.1/css/zui.min.css")
     script(src="//cdnjs.cloudflare.com/ajax/libs/zui/1.8.1/js/zui.min.js")
     //script(src="https://cdn.jsdelivr.net/npm/vue/dist/vue.js")
@@ -45,12 +45,12 @@ block custom_header
         //     console.log(Bmap)
         // });
         $(function () {
-            var ws = {};
-            fromLS = window.localStorage.getItem(lsKey);
-            if (fromLS) fromLS = JSON.parse(fromLS);
-            else fromLS = {story_mode: false};					//dsh todo remove this
-            console.log('from local storage', fromLS);
-            connect_to_server();
+            // var ws = {};
+            // fromLS = window.localStorage.getItem(lsKey);
+            // if (fromLS) fromLS = JSON.parse(fromLS);
+            // else fromLS = {story_mode: false};					//dsh todo remove this
+            // console.log('from local storage', fromLS);
+            // connect_to_server();
 
             var centerPoint = [104.0863, 30.656913];
             Bmap.mapInit("mainPanel", centerPoint);

@@ -746,7 +746,7 @@ $(document).on('click', '#viewElectricityPrice', (e) => {
     q.enqueue("Jennifer");
     q.dequeue();
     console.log(q.toString());
-    const objA = {
+    /*const objA = {
         type: 'initAccount',
         id: 'A',
         value: '2000',
@@ -775,7 +775,7 @@ $(document).on('click', '#viewElectricityPrice', (e) => {
     ws.send(JSON.stringify(objD));
     ws.send(JSON.stringify(objB));
 
-    ws.send(JSON.stringify(objE));
+    ws.send(JSON.stringify(objE));*/
     // $('#electricityPriceCol .modal-body').html("");
     // require.config({
     //     paths: {
