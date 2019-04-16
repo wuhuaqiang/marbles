@@ -25,7 +25,7 @@ function saveSystemSetting() {
     let param = {id: Bmap.simulationId, timeStart: Bmap.systemTime, k: Bmap.ffRatio};
     $.ajax({
         type: "post",
-        url: "http://10.168.1.235:10200/api/tSystemsetting/save/",
+        url: BaseUrl+"/api/tSystemsetting/save/",
         data: JSON.stringify(param),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要

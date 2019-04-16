@@ -3,6 +3,7 @@ extends ./template/layout.pug
 
 block custom_header
     // --------------- Header -------------- //
+    script(src='/js/config.js?v=' + bag.jshash)
     script(src='/js/ui_events.js?v=' + bag.jshash)
     //script(src='/js/websocket.js?v=' + bag.jshash)
     //script(src='/js/startup.js?v=' + bag.jshash)
@@ -88,7 +89,7 @@ block custom_header
                                 // const param = {lat:route.zr[i].lat,lag:route.zr[i].lng};
                                 // $.ajax({
                                 //     type: "post",
-                                //     url: "http://10.168.1.235:10200/api/tPoint/save",
+                                //     url: BaseUrl+"/api/tPoint/save",
                                 //     data: JSON.stringify(param),
                                 //     dataType: "json",
                                 //     contentType: 'application/json;charset=UTF-8', //contentType很重要

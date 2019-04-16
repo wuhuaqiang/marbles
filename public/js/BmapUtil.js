@@ -436,7 +436,7 @@ Bmap = {
             }
             $.ajax({
                 type: "post",
-                url: "http://10.168.1.235:10200/api/account/transfer",
+                url: BaseUrl+"/api/account/transfer",
                 data: JSON.stringify(obj),
                 dataType: "json",
                 contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -529,7 +529,7 @@ Bmap = {
         // });
         $.ajax({
             type: "post",
-            url: "http://10.168.1.235:10200/api/tLine/list",
+            url: BaseUrl+"/api/tLine/list",
             data: '',
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要

@@ -3,7 +3,7 @@ User = {
     getUserList: () => {
         $.ajax({
             type: "post",
-            url: "http://10.168.1.235:10200/api//tUser/list",
+            url: BaseUrl+"/api//tUser/list",
             data: "",
             async: false,
             dataType: "json",

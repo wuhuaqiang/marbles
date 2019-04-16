@@ -554,7 +554,7 @@ $(document).on('click', '.delline', (e) => {
     if (lineId) {
         $.ajax({
             type: "post",
-            url: "http://10.168.1.235:10200/api/tLine/delbyId",
+            url: BaseUrl+"/api/tLine/delbyId",
             data: lineId,
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -627,7 +627,7 @@ $(document).on("click", "#getTransactionAllList", function () {
     let param = {page: 1, size: 5};
     $.ajax({
         type: "post",
-        url: "http://10.168.1.235:10200/api/tTransaction/page/",
+        url: BaseUrl+"/api/tTransaction/page/",
         data: JSON.stringify(param),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -675,7 +675,7 @@ $(document).on('click', '#transactionListTools li', (e) => {
     let param = {page: parseInt(page), size: 5};
     $.ajax({
         type: "post",
-        url: "http://10.168.1.235:10200/api/tTransaction/page/",
+        url: BaseUrl+"/api/tTransaction/page/",
         data: JSON.stringify(param),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -958,7 +958,7 @@ $(document).on('click', '#getPowerHistoryEchart', (e) => {
 
     $.ajax({
         type: "post",
-        url: "http://10.168.1.235:10200/api/tPowerHistory/echarts",
+        url: BaseUrl+"/api/tPowerHistory/echarts",
         data: "",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要

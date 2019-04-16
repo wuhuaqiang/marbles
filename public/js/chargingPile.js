@@ -22,7 +22,7 @@ function saveChargingPile(chargingPiles) {
         // console.log(chargingPileObj)
         $.ajax({
             type: "post",
-            url: "http://10.168.1.235:10200/api/tChargingPile/save",
+            url: BaseUrl+"/api/tChargingPile/save",
             data: JSON.stringify(chargingPileObj),
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要

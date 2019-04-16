@@ -146,7 +146,7 @@ function setSystemTime() {
             }
             $.ajax({
                 type: "post",
-                url: "http://10.168.1.235:10200/api/tPowerHistory/save",
+                url: BaseUrl+"/api/tPowerHistory/save",
                 data: JSON.stringify(obj),
                 dataType: "json",
                 contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -197,7 +197,7 @@ function setSystemTime() {
 function getCurrTimeSetSysTime() {
     $.ajax({
         type: "post",
-        url: "http://10.168.1.235:10200/api/tSystemsetting/list/",
+        url: BaseUrl+"/api/tSystemsetting/list/",
         data: "",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要

@@ -1,7 +1,7 @@
 function getPoints() {
     $.ajax({
         type: "post",
-        url: "http://10.168.1.235:10200/api/tDestination/list",
+        url: BaseUrl+"/api/tDestination/list",
         data: "",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -64,7 +64,7 @@ function del(obj) {
     })
     // $.ajax({
     //     type: "post",
-    //     url: "http://10.168.1.235:10200/api/tDestination/delbyId",
+    //     url: BaseUrl+"/api/tDestination/delbyId",
     //     data: id,
     //     dataType: "json",
     //     contentType: 'application/json;charset=UTF-8', //contentType很重要
