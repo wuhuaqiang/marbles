@@ -384,8 +384,15 @@ Bmap = {
                 // var label = new BMap.Label("我正在充电...", {offset: new BMap.Size(20, -10)});
                 let label = carMk.getLabel();
                 carMk.setLabel(label.setContent("我正在充电..."));
+                carMk.hide();
                 // carMk.setLabel(label);
                 Bmap.changePower(carMk);
+                // debugger;
+                let index = carMk.ba.split(",").length;
+                let userId = carMk.ba.split(",")[0];
+                let evId = carMk.ba.split(",")[1];
+                let chargingStationId = carMk.ba.split(",")[index - 1];
+                changePowerMark(userId, chargingStationId, evId);
             } else {
                 runLogEnd(carMk, "执行任务", 1);
                 console.log(carMk.getTitle() + "当前执行的线路结束");
@@ -415,9 +422,10 @@ Bmap = {
             updateElectricVehicleById(tEVInfo);
             Bmap.myIconInit("../imgs/car_val.png", 24, 24, 0, 0, 0, 0);
             carMk.setIcon(Bmap.myIcon);
-            debugger;
+            // debugger;
             let index = carMk.ba.split(",").length;
             let userId = carMk.ba.split(",")[0];
+            let evId = carMk.ba.split(",")[1];
             let chargingStationId = carMk.ba.split(",")[index - 1];
             const objD = {
                 type: 'transferAccounts',
@@ -436,7 +444,7 @@ Bmap = {
             }
             $.ajax({
                 type: "post",
-                url: BaseUrl+"/api/account/transfer",
+                url: BaseUrl + "/api/account/transfer",
                 data: JSON.stringify(obj),
                 dataType: "json",
                 contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -444,8 +452,8 @@ Bmap = {
                     console.log(data)
                 }
             });
-            ws.send(JSON.stringify(objD));
-            ws.send(JSON.stringify(objE));
+            // ws.send(JSON.stringify(objD));
+            // ws.send(JSON.stringify(objE));
             console.log(carMk);
             var label = carMk.getLabel();
             console.log(label);
@@ -453,6 +461,8 @@ Bmap = {
             Bmap.chargingCarMark.remove(carMk);
             carMk.setLabel(label.setContent(carMk.getTitle().split(":")[0]));
             console.log(carMk.getTitle() + "充电结束");
+            carMk.show();
+            updateChangePowerMark(evId);
             Task.currUserId = carMk.ba.split(",")[0];
             //Task.closeTask(Task.userTasklist[Task.currUserId].id);
             Task.getcurrTaskByUserId(carMk.ba.split(",")[0]);
@@ -529,7 +539,7 @@ Bmap = {
         // });
         $.ajax({
             type: "post",
-            url: BaseUrl+"/api/tLine/list",
+            url: BaseUrl + "/api/tLine/list",
             data: '',
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要

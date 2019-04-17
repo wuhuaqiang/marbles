@@ -146,7 +146,7 @@ function setSystemTime() {
             }
             $.ajax({
                 type: "post",
-                url: BaseUrl+"/api/tPowerHistory/save",
+                url: BaseUrl + "/api/tPowerHistory/save",
                 data: JSON.stringify(obj),
                 dataType: "json",
                 contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -197,7 +197,7 @@ function setSystemTime() {
 function getCurrTimeSetSysTime() {
     $.ajax({
         type: "post",
-        url: BaseUrl+"/api/tSystemsetting/list/",
+        url: BaseUrl + "/api/tSystemsetting/list/",
         data: "",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -577,4 +577,33 @@ function getDateStr() {
         day = "0" + day;
     }
     return year + "-" + month + "-" + day;
+}
+
+function changePowerMark(userId, chargingStationId, evId) {
+    const recode = {evId: evId, csId: chargingStationId, state: "1"}
+    $.ajax({
+        type: "post",
+        url: BaseUrl + "/api/tChargingRecode/save",
+        data: JSON.stringify(recode),
+        async: true,
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8', //contentType很重要
+        success: function (data) {
+            console.log(data);
+        }
+    });
+}
+
+function updateChangePowerMark(evId) {
+    $.ajax({
+        type: "post",
+        url: BaseUrl + "/api/tChargingRecode/update",
+        data: evId,
+        async: true,
+        dataType: "json",
+        contentType: 'application/json;charset=UTF-8', //contentType很重要
+        success: function (data) {
+            console.log(data);
+        }
+    });
 }
