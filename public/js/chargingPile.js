@@ -22,7 +22,7 @@ function saveChargingPile(chargingPiles) {
         // console.log(chargingPileObj)
         $.ajax({
             type: "post",
-            url: BaseUrl+"/api/tChargingPile/save",
+            url: BaseUrl + "/api/tChargingPile/save",
             data: JSON.stringify(chargingPileObj),
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -147,6 +147,9 @@ function getPilesHtml(tChargingPiles, info) {
         const tableFooter = "</tbody></table></div>";
         let tbody = "";
         for (let i = 0; i < tChargingPiles.length; i++) {
+            if (i > 4) {
+                continue;
+            }
             const pile = tChargingPiles[i];
             tbody += "<tr><td>" + (i + 1) + "</td><td>" + pile.name + "</td><td>" + pile.capacity + "</td><td>" + pile.chargingEfficiency + "</td><td>" + ((pile.state == 1) ? "正常" : "停运") + "</td></tr>"
         }
@@ -154,4 +157,27 @@ function getPilesHtml(tChargingPiles, info) {
     }
     // console.log(pilesHtml);
     return pilesHtml;
+}
+
+function getParkingsHtml(tChargingParkings, tChargingRecodes) {
+    console.log(tChargingRecodes);
+    let parkingsHtml = "";
+    parkingsHtml += "<div class='parkings-info'><h2>停车场信息</h2><ul><li><a>名称:" + tChargingParkings[0].name + "</a></li><li><a>车位数:" + tChargingParkings[0].number + "</a></li></ul></div>";
+    if (tChargingParkings.length) {
+        for (let i = 0; i < tChargingParkings.length; i++) {
+            parkingsHtml += "<div class='parkings-content'>";
+            // console.log(tChargingParkings[i].number);
+            for (let j = 0; j < tChargingParkings[i].number; j++) {
+                if (tChargingRecodes.length > 0 && j < tChargingRecodes.length) {
+                    parkingsHtml += "<div class='parking'><img src='../imgs/car_zzcd.gif' title='"+tChargingRecodes[j].name+"'></div>";
+                } else {
+                    parkingsHtml += "<div class='parking'>[车位(" + (j + 1) + ")]</div>";
+                }
+
+            }
+            parkingsHtml += "<div class='clear'></div></div>";
+        }
+    }
+    //console.log(parkingsHtml);
+    return parkingsHtml;
 }

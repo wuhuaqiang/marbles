@@ -225,20 +225,22 @@ function showChargingStationDetails(e) {
                     "  </div>\n" +
                     "</div>";
                 const htmlM = getPilesHtml(info.tChargingPiles, info);
-                const html = htmlF + htmlM + htmlE;
+                const htmlME = getParkingsHtml(info.tChargingParkings, info.tChargingRecodeWithNames);
+                 console.log(info.tChargingParkings);
+                const html = htmlF + htmlM +htmlME+ htmlE;
 
                 let infoWindow = new BMap.InfoWindow(html, opts);  // 创建信息窗口对象
                 Bmap.map.openInfoWindow(infoWindow, point); //开启信息窗口
-                $('#pileTable').datagrid({
-                    states: {
-                        pager: {page: 1, recPerPage: 10},
-
-                        fixedLeftUntil: 0,    // 固定左侧第一列
-                        fixedRightFrom: 5,   // 从第12列开始固定到右侧
-                        fixedTopUntil: 0,     // 固定顶部第一行（标题行）
-                        fixedBottomFrom: 5, // 从第100行（在此例中是最后一行）开始固定到底部
-                    }
-                });
+                // $('#pileTable').datagrid({
+                //     states: {
+                //         pager: {page: 1, recPerPage: 10},
+                //
+                //         fixedLeftUntil: 0,    // 固定左侧第一列
+                //         fixedRightFrom: 5,   // 从第12列开始固定到右侧
+                //         fixedTopUntil: 0,     // 固定顶部第一行（标题行）
+                //         fixedBottomFrom: 5, // 从第100行（在此例中是最后一行）开始固定到底部
+                //     }
+                // });
             }
         }
     });
