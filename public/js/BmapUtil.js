@@ -323,6 +323,11 @@ Bmap = {
             /* var label = new BMap.Label("我需要充电...", {offset: new BMap.Size(20, -10)});*/
             let label = carMk.getLabel();
             carMk.setLabel(label.setContent("我需要充电..."));
+            let index = carMk.ba.split(",").length;
+            let userId = carMk.ba.split(",")[0];
+            let evId = carMk.ba.split(",")[1];
+            let chargingStationId = carMk.ba.split(",")[index - 1];
+            carMk.ba = userId + "," + evId + "," + power + "," + chargingStationId;
             Bmap.chargingCar.push(carMk);
             Bmap.chargingCarMark.push(carMk);
             Bmap.chargingCarQueue.enqueue(carMk);
@@ -426,6 +431,7 @@ Bmap = {
             let index = carMk.ba.split(",").length;
             let userId = carMk.ba.split(",")[0];
             let evId = carMk.ba.split(",")[1];
+            let power = 20.0 - parseFloat(carMk.ba.split(",")[3]);
             let chargingStationId = carMk.ba.split(",")[index - 1];
             const objD = {
                 type: 'transferAccounts',
@@ -452,7 +458,10 @@ Bmap = {
                     console.log(data)
                 }
             });
-            const param = {"fcn": "addTRecord", "args": [evId, userId, chargingStationId, "100.45", "12.5"]}
+            let price = power * 0.5;
+            price = price + "";
+            power = power + "";
+            const param = {"fcn": "addTRecord", "args": [evId, userId, chargingStationId, power, price]}
             invokeBlockChain(param);
             // ws.send(JSON.stringify(objD));
             // ws.send(JSON.stringify(objE));
@@ -462,6 +471,7 @@ Bmap = {
             Bmap.chargingCar.remove(carMk);
             Bmap.chargingCarMark.remove(carMk);
             carMk.setLabel(label.setContent(carMk.getTitle().split(":")[0]));
+            carMk.ba = userId + "," + evId + "," + chargingStationId;
             console.log(carMk.getTitle() + "充电结束");
             carMk.show();
             updateChangePowerMark(evId);
