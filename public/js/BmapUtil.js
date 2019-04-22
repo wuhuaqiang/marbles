@@ -452,6 +452,8 @@ Bmap = {
                     console.log(data)
                 }
             });
+            const param = {"fcn": "addTRecord", "args": [evId, userId, chargingStationId, "100.45", "12.5"]}
+            invokeBlockChain(param);
             // ws.send(JSON.stringify(objD));
             // ws.send(JSON.stringify(objE));
             console.log(carMk);
