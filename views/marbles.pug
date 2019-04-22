@@ -58,6 +58,13 @@ block custom_header
             Bmap.mapInit("mainPanel", centerPoint);
             Bmap.ZoomControlInit(Bmap.map);
             Bmap.ZoomControlInitLEFT(Bmap.map);
+            var mapType1 = new BMap.MapTypeControl(
+                {
+                    mapTypes: [BMAP_NORMAL_MAP, BMAP_HYBRID_MAP],
+                    anchor: BMAP_ANCHOR_BOTTOM_RIGHT
+                }
+            );
+            Bmap.map.addControl(mapType1);
             getAllLine();
             getAllChargingStation();
             getAllTElectricVehicleWithLine();
