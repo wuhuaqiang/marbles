@@ -2,6 +2,9 @@ let moverTimer = null;
 Bmap = {
     vue: new Vue(),
     userIdQueue: new Queue(),
+    tRecordArr: null,
+    currPage: 1,
+    pageSize: 5,
     systemTimer: null,
     chargingStationPoints: new Array(),
     chargingStationArr: new Array(),

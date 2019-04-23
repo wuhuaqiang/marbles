@@ -554,7 +554,7 @@ $(document).on('click', '.delline', (e) => {
     if (lineId) {
         $.ajax({
             type: "post",
-            url: BaseUrl+"/api/tLine/delbyId",
+            url: BaseUrl + "/api/tLine/delbyId",
             data: lineId,
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -623,26 +623,40 @@ $(document).on("click", "#saveSystemTime", function () {
 //获取交易列表
 $(document).on("click", "#getTransactionAllList", function () {
     // alert(1);
+    //
+    // let param = {page: 1, size: 5};
+    // $.ajax({
+    //     type: "post",
+    //     url: BaseUrl + "/api/tTransaction/page/",
+    //     data: JSON.stringify(param),
+    //     dataType: "json",
+    //     contentType: 'application/json;charset=UTF-8', //contentType很重要
+    //     success: function (data) {
+    //         createTable(data);
+    //     },
+    //     error: function (data) {
+    //         if (data.responseText == 'success') {
+    //             createTable(data);
+    //
+    //         }
+    //     }
+    // });
 
-    let param = {page: 1, size: 5};
-    $.ajax({
-        type: "post",
-        url: BaseUrl+"/api/tTransaction/page/",
-        data: JSON.stringify(param),
-        dataType: "json",
-        contentType: 'application/json;charset=UTF-8', //contentType很重要
-        success: function (data) {
-            createTable(data);
-        },
-        error: function (data) {
-            if (data.responseText == 'success') {
-                createTable(data);
-
-            }
-        }
-    });
+    // const userIdArr = Bmap.cars;
+    //debugger;
+    Bmap.tRecordArr = new Array();
+    $.each(Bmap.cars, (index, item) => {
+        // console.log(item.id);
+        const task = queryBlockChain(item.id);
+        $.each(task.data, (index, item) => {
+            Bmap.tRecordArr.push(item);
+        })
+    })
+    const records = getCurrPageDates();
+    createTRecordTable(records);
+    // console.log(tRecordArr);
 })
-//交易列表翻页操作
+/*//交易列表翻页操作
 $(document).on('click', '#transactionListTools li', (e) => {
     let page = $(e.target).text();
     let currPageObj = '';
@@ -675,7 +689,7 @@ $(document).on('click', '#transactionListTools li', (e) => {
     let param = {page: parseInt(page), size: 5};
     $.ajax({
         type: "post",
-        url: BaseUrl+"/api/tTransaction/page/",
+        url: BaseUrl + "/api/tTransaction/page/",
         data: JSON.stringify(param),
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -690,6 +704,58 @@ $(document).on('click', '#transactionListTools li', (e) => {
         }
     });
     console.log(page);
+})*/
+//交易列表翻页操作
+$(document).on('click', '#transactionListTools li', (e) => {
+    let page = $(e.target).text();
+    let currPageObj = '';
+    let flag = true;
+    if (page == '«') {
+        flag = false;
+        page = $("#transactionListTools li.active").text();
+        if (page != 1) {
+            currPageObj = $("#transactionListTools li.active").prev();
+            $("#transactionListTools li.active").removeClass('active');
+            currPageObj.addClass('active');
+        }
+        page = currPageObj.text();
+    }
+    if (page == '»') {
+        flag = false;
+        page = $("#transactionListTools li.active").text();
+        const maxPage = $("#transactionListTools").data("pages");
+        if (page != maxPage) {
+            currPageObj = $("#transactionListTools li.active").next();
+            $("#transactionListTools li.active").removeClass('active');
+            currPageObj.addClass('active');
+        }
+        page = currPageObj.text();
+    }
+    if (flag) {
+        $("#transactionListTools li").removeClass('active');
+        $(e.target).parent().addClass('active');
+    }
+    Bmap.currPage = parseInt(page);
+    const records = getCurrPageDates();
+    createTRecordTable(records);
+    // let param = {page: parseInt(page), size: 5};
+    // $.ajax({
+    //     type: "post",
+    //     url: BaseUrl + "/api/tTransaction/page/",
+    //     data: JSON.stringify(param),
+    //     dataType: "json",
+    //     contentType: 'application/json;charset=UTF-8', //contentType很重要
+    //     success: function (data) {
+    //         createTable(data);
+    //     },
+    //     error: function (data) {
+    //         if (data.responseText == 'success') {
+    //             createTable(data);
+    //
+    //         }
+    //     }
+    // });
+    // console.log(page);
 })
 
 //创建交易表格
@@ -734,6 +800,66 @@ function createTable(data) {
     const $page = $(page);
     $page.data("pages", data.pages);
     $('#transactionListCol .modal-body').append($page);
+}
+
+//创建交易表格
+function createTRecordTable(records) {
+    $('#transactionListCol').modal('show');
+    $('#transactionListCol .modal-title').text("交易列表");
+    $('#transactionListCol .modal-body').html("");
+    const htmlStr = "<div class='table-responsive'><table id='transactionList' class=\"table table-bordered\">\n" +
+        "  <thead>\n" +
+        "    <tr>\n" +
+        "      <th>交易ID</th>\n" +
+        /*  "      <th>区块号</th>\n" +*/
+        "      <th style='width: 120px'>时间</th>\n" +
+        "      <th>转出</th>\n" +
+        "      <th><i class=\"icon icon-long-arrow-right\"></i></th>\n" +
+        "      <th>转入</th>\n" +
+        "      <th>金额</th>\n" +
+        "      <th>电量</th>\n" +
+        "    </tr>\n" +
+        "  </thead>\n" +
+        "  <tbody>\n" +
+        "  </tbody>\n" +
+        "</table></div>";
+    $('#transactionListCol .modal-body').html(htmlStr);
+    // const records = Bmap.tRecordArr;
+    // debugger;
+    for (let i = 0; i < records.length; i++) { //(dateToString(new Date(records[i].txTime))<td>" + records[i].blockNumber + "</td>
+        let trStr = "<tr><td><a title='"+records[i].txId+"'>" + records[i].txIds + "</a></td><td style='width: 120px'>" + records[i].value.time + "</td><td>" + records[i].value.userId + "</td><td>....</td><td>" + records[i].value.csId + "</td><td>" + records[i].value.price + "</td><td>" + records[i].value.power + "</td></tr>";
+        $('#transactionListCol #transactionList thead').append($(trStr));
+    }
+    const pageStart = "<div id='transactionListTools'><ul class=\"pager\"><li class=\"previous\"><a>«</a></li>";
+    let numberStr = '';
+    // debugger;
+    const pages = Math.ceil(Bmap.tRecordArr.length / Bmap.pageSize);
+    for (let i = 1; i <= pages; i++) {
+        if (Bmap.currPage == i) {
+            numberStr += "  <li class=\"active\"><a>" + i + "</a></li>\n";
+        } else {
+            numberStr += "  <li><a>" + i + "</a></li>\n";
+        }
+    }
+    const pageEnd = "  <li class=\"next\"><a>»</a></li></ul></div>";
+    const page = pageStart + numberStr + pageEnd;
+    const $page = $(page);
+    $page.data("pages", pages);
+    $('#transactionListCol .modal-body').append($page);
+}
+
+function getCurrPageDates() {
+    const startMark = (Bmap.currPage - 1) * Bmap.pageSize;
+    const endMark = Bmap.currPage * Bmap.pageSize;
+    const pageDatas = new Array();
+    for (let i = startMark; i < endMark; i++) {
+        if (Bmap.tRecordArr[i]) {
+            let item = Bmap.tRecordArr[i];
+            item.txIds = item.txId.substring(0, 33) + "..."
+            pageDatas.push(item);
+        }
+    }
+    return pageDatas;
 }
 
 $(document).on('click', '#viewElectricityPrice', (e) => {
@@ -958,7 +1084,7 @@ $(document).on('click', '#getPowerHistoryEchart', (e) => {
 
     $.ajax({
         type: "post",
-        url: BaseUrl+"/api/tPowerHistory/echarts",
+        url: BaseUrl + "/api/tPowerHistory/echarts",
         data: "",
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要

@@ -1796,6 +1796,18 @@ nav.menu {
     cursor: pointer;
 }
 
+#transactionList td a {
+    cursor: pointer;
+}
+
+/*#transactionList {*/
+/*width: 500px !important;*/
+/*}*/
+
+/*#transactionList .txId {*/
+/*width: 100px !important;*/
+/*}*/
+
 #echartsMain {
     width: 760px;
     height: 400px;
