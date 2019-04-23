@@ -1211,4 +1211,23 @@ $(document).on('click', '#transactionList td a', (e) => {
     console.log(blockInfo);
 })
 
+function initUserAccount() {
+    $.each(User.userList, (index, obj) => {
+            const param = {"fcn": "initAccount", "args": [obj.id+"Account", obj.account]};
+            if (!checkAccountIfExist(obj.id+"Account")) {
+                invokeBlockChain(param);
+            }
+        }
+    );
+}
+
+function initchargingStationAccount() {
+    $.each(User.csList, (index, obj) => {
+            const param = {"fcn": "initAccount", "args": [obj.id+"Account", obj.account]};
+            if (!checkAccountIfExist(obj.id+"Account")) {
+                invokeBlockChain(param);
+            }
+        }
+    );
+}
 

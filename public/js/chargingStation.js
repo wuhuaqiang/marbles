@@ -22,7 +22,7 @@ function saveChargingStation(chargingStations) {
         // console.log(chargingStationObj)
         $.ajax({
             type: "post",
-            url: BaseUrl+"/api/tChargingStation/save",
+            url: BaseUrl + "/api/tChargingStation/save",
             data: JSON.stringify(chargingStationObj),
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -138,11 +138,13 @@ function createChargingStation(num) {
 function getAllChargingStation() {
     $.ajax({
         type: "post",
-        url: BaseUrl+"/api/tChargingStation/list",
+        url: BaseUrl + "/api/tChargingStation/list",
         data: '',
         dataType: "json",
+        async: false,
         contentType: 'application/json;charset=UTF-8', //contentType很重要
         success: function (data) {
+            User.csList = data;
             setTimeout(function () {
                 if (data.length) {
                     // fromLS = window.localStorage.getItem(lsKey);
@@ -194,7 +196,7 @@ function showChargingStationDetails(e) {
     let title = $(e.currentTarget.V.outerHTML).attr("title");
     $.ajax({
         type: "post",
-        url: BaseUrl+"/api/tChargingStation/getChargingStationByName",
+        url: BaseUrl + "/api/tChargingStation/getChargingStationByName",
         data: title,
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
@@ -226,8 +228,8 @@ function showChargingStationDetails(e) {
                     "</div>";
                 const htmlM = getPilesHtml(info.tChargingPiles, info);
                 const htmlME = getParkingsHtml(info.tChargingParkings, info.tChargingRecodeWithNames);
-                 console.log(info.tChargingParkings);
-                const html = htmlF + htmlM +htmlME+ htmlE;
+                console.log(info.tChargingParkings);
+                const html = htmlF + htmlM + htmlME + htmlE;
 
                 let infoWindow = new BMap.InfoWindow(html, opts);  // 创建信息窗口对象
                 Bmap.map.openInfoWindow(infoWindow, point); //开启信息窗口

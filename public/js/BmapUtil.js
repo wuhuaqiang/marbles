@@ -133,6 +133,8 @@ Bmap = {
                 "<li id='getTransactionAllList'><a href='#'　><i class='icon icon-list-ul'></i>交易列表</a></li>" + /*icon-trash*/
                 "<li id='viewElectricityPrice'><a href='#'><i class='icon icon-list-ul'></i>实时电价</a></li>" +
                 "<li id='getRunTaskAllList'><a href='#'><i class='icon icon-list-ul'></i>任务运行日志</a></li>" +
+                // "<li id='initUserAccount'><a href='#'><i class='icon icon-list-ul'></i>用户账户</a></li>" +
+                // "<li id='initTransactionAccount'><a href='#'><i class='icon icon-list-ul'></i>充电站账户</a></li>" +
                 "<li id='getPowerHistoryEchart'>" +
                 "<a href='#'><i class='icon icon-tasks'></i>获取负荷曲线</a>" +
                 "</li>" +
@@ -437,16 +439,19 @@ Bmap = {
             debugger;
             let power = 20.0 - parseFloat(carMk.ba.split(",")[2]);
             let chargingStationId = carMk.ba.split(",")[index - 1];
+            let price = power * 0.5;
+            price = price.toFixed(4) + "";
+            power = power.toFixed(4) + "";
             const objD = {
                 type: 'transferAccounts',
                 from: userId,
                 to: chargingStationId,
-                value: '50',
+                value: price,
             }
             const obj = {
                 userId: userId,
                 chargingStationId: chargingStationId,
-                amount: '50',
+                amount: price,
             }
             const objE = {
                 type: 'queryAccount',
@@ -462,11 +467,13 @@ Bmap = {
                     console.log(data)
                 }
             });
-            let price = power * 0.5;
-            price = price + "";
-            power = power + "";
-            const param = {"fcn": "addTRecord", "args": [evId, userId, chargingStationId, power, price]}
+            const txParam = {
+                "fcn": "transferAccounts",
+                "args": [userId + "Account", chargingStationId + "Account", price]
+            };
+            const param = {"fcn": "addTRecord", "args": [evId, userId, chargingStationId, power, price]};
             invokeBlockChain(param);
+            invokeBlockChain(txParam);
             // ws.send(JSON.stringify(objD));
             // ws.send(JSON.stringify(objE));
             console.log(carMk);

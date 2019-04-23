@@ -96,7 +96,7 @@ function invokeBlockChain(param) {
         success: function (jsonData) {
             console.log(jsonData);
             if (jsonData.status == 200) {
-                alert("执行智能合约成功");
+                // alert("执行智能合约成功");
             }
         }
     });
@@ -142,3 +142,40 @@ function queryBlockByTransactionID(txId) {
     });
     return result;
 }
+
+function checkAccountIfExist(id) {//id为:用户id,电动汽车id,充电站id
+    const param = {"fcn": "queryAccount", "args": [id]};
+    let result = false;
+    $.ajax({
+        url: BlockChainUrl + '/chaincode/query',
+        type: 'POST',
+        dataType: 'json',
+        contentType: 'application/json',
+        async: false,
+        data: JSON.stringify(param),
+        success: function (jsonData) {
+
+            // console.log(jsonData);
+            if (jsonData.status == 200) {
+                result = true;
+            }
+        }
+    });
+    return result;
+}
+
+// function initAccount(param) {
+//     $.ajax({
+//         url: BlockChainUrl + '/chaincode/invoke',
+//         type: 'POST',
+//         dataType: 'json',
+//         contentType: 'application/json',
+//         data: JSON.stringify(param),
+//         success: function (jsonData) {
+//             console.log(jsonData);
+//             if (jsonData.status == 200) {
+//                 alert("执行智能合约成功");
+//             }
+//         }
+//     });
+// }
