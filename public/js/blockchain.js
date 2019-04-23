@@ -122,3 +122,23 @@ function queryBlockChain(id) {//id为:用户id,电动汽车id,充电站id
     });
     return result;
 }
+
+function queryBlockByTransactionID(txId) {
+    const param = {"txId": txId};
+    let result;
+    $.ajax({
+        url: BlockChainUrl + '/chainblock/queryBlockByTransactionID',
+        type: 'POST',
+        dataType: 'json',
+        async: false,
+        contentType: 'application/json',
+        data: JSON.stringify(param),
+        success: function (jsonData) {
+            result = jsonData;
+            if (jsonData.status == 200) {
+                // alert("根据交易Id查询区块数据成功");
+            }
+        }
+    });
+    return result;
+}

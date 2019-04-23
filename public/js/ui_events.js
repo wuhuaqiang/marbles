@@ -827,7 +827,7 @@ function createTRecordTable(records) {
     // const records = Bmap.tRecordArr;
     // debugger;
     for (let i = 0; i < records.length; i++) { //(dateToString(new Date(records[i].txTime))<td>" + records[i].blockNumber + "</td>
-        let trStr = "<tr><td><a title='"+records[i].txId+"'>" + records[i].txIds + "</a></td><td style='width: 120px'>" + records[i].value.time + "</td><td>" + records[i].value.userId + "</td><td>....</td><td>" + records[i].value.csId + "</td><td>" + records[i].value.price + "</td><td>" + records[i].value.power + "</td></tr>";
+        let trStr = "<tr><td><a title='" + records[i].txId + "'>" + records[i].txIds + "</a></td><td style='width: 120px'>" + records[i].value.time + "</td><td>" + records[i].value.userId + "</td><td>....</td><td>" + records[i].value.csId + "</td><td>" + records[i].value.price + "</td><td>" + records[i].value.power + "</td></tr>";
         $('#transactionListCol #transactionList thead').append($(trStr));
     }
     const pageStart = "<div id='transactionListTools'><ul class=\"pager\"><li class=\"previous\"><a>«</a></li>";
@@ -1204,3 +1204,11 @@ $(document).on('click', '#getPowerHistoryEchart', (e) => {
 
 
 })
+$(document).on('click', '#transactionList td a', (e) => {
+    const txId = $(e.target).attr("title");
+    console.log(txId);
+    const blockInfo = queryBlockByTransactionID(txId);
+    console.log(blockInfo);
+})
+
+
