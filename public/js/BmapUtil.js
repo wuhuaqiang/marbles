@@ -431,7 +431,8 @@ Bmap = {
             let index = carMk.ba.split(",").length;
             let userId = carMk.ba.split(",")[0];
             let evId = carMk.ba.split(",")[1];
-            let power = 20.0 - parseFloat(carMk.ba.split(",")[3]);
+            debugger;
+            let power = 20.0 - parseFloat(carMk.ba.split(",")[2]);
             let chargingStationId = carMk.ba.split(",")[index - 1];
             const objD = {
                 type: 'transferAccounts',
