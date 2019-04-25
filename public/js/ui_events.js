@@ -1213,21 +1213,38 @@ $(document).on('click', '#transactionList td a', (e) => {
 
 function initUserAccount() {
     $.each(User.userList, (index, obj) => {
-            const param = {"fcn": "initAccount", "args": [obj.id+"Account", obj.account]};
-            if (!checkAccountIfExist(obj.id+"Account")) {
+            const param = {"fcn": "initAccount", "args": [obj.id + "Account", obj.account]};
+            if (!checkAccountIfExist(obj.id + "Account")) {
                 invokeBlockChain(param);
             }
+            // invokeBlockChain(param);
         }
     );
 }
 
 function initchargingStationAccount() {
     $.each(User.csList, (index, obj) => {
-            const param = {"fcn": "initAccount", "args": [obj.id+"Account", obj.account]};
-            if (!checkAccountIfExist(obj.id+"Account")) {
+            const param = {"fcn": "initAccount", "args": [obj.id + "Account", obj.account]};
+            if (!checkAccountIfExist(obj.id + "Account")) {
                 invokeBlockChain(param);
             }
         }
     );
+}
+
+function queryAllUserAccounts() {
+    let result = new Array();
+    $.each(User.csList, (index, obj) => {
+            const accountInfo = queryAccount(obj.id + "Account");
+            result.push(accountInfo);
+        }
+    );
+    $.each(User.userList, (index, obj) => {
+            const accountInfo = queryAccount(obj.id + "Account");
+            result.push(accountInfo);
+        }
+    );
+    console.log(result);
+    return result;
 }
 
