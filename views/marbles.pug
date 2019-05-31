@@ -73,48 +73,49 @@ block custom_header
             initUserAccount();
             initchargingStationAccount();
             queryAllUserAccounts();
-            var p1 = new BMap.Point(104.130648, 30.57432);
-            var p2 = new BMap.Point(104.130648, 30.57432);
-            var p3 = new BMap.Point(104.088899, 30.790211);
-            var p4 = new BMap.Point(103.940602, 30.715246);
-
-            var options = {
-                renderOptions: {map: Bmap.map, autoViewport: true},
-                onSearchComplete: function (results) {
-                    if (driving.getStatus() == BMAP_STATUS_SUCCESS) {
-                        // 获取第一条方案
-                        var plan = results.getPlan(0);
-                        // 获取方案的驾车线路
-                        var route = plan.getRoute(0);
-                        // 获取每个关键步骤,并输出到页面
-                        var s = [];
-                        for (var j = 0; j < plan.getNumRoutes(); j++) {
-                            var route = plan.getRoute(j);
-
-                            // for (var i = 0; i < route.getNumSteps(); i++) {
-                            //     var step = route.getStep(i);
-                            //     s.push((i + 1) + ". " + step.getDescription());
-                            // }
-                            for (var i = 0; i < route.zr.length; i++) {
-                                // console.log(route.zr[i].lat+","+route.zr[i].lng);
-                                // const param = {lat:route.zr[i].lat,lag:route.zr[i].lng};
-                                // $.ajax({
-                                //     type: "post",
-                                //     url: BaseUrl+"/api/tPoint/save",
-                                //     data: JSON.stringify(param),
-                                //     dataType: "json",
-                                //     contentType: 'application/json;charset=UTF-8', //contentType很重要
-                                //     success: function (data) {
-                                //     }
-                                // });
-                            }
-                        }
-                    }
-                    // debugger;
-                }
-            };
-            var driving = new BMap.DrivingRoute(Bmap.map, options);
-            driving.search(p1, p2, {waypoints: [p3, p4]});//waypoints表示途经
+                // var p1 = new BMap.Point(104.130648, 30.57432);
+                // var p2 = new BMap.Point(104.130648, 30.57432);
+                // var p3 = new BMap.Point(104.088899, 30.790211);
+                // var p4 = new BMap.Point(103.940602, 30.715246);
+                //
+                // var options = {
+                //     renderOptions: {map: Bmap.map, autoViewport: true},
+                //     onSearchComplete: function (results) {
+                //         if (driving.getStatus() == BMAP_STATUS_SUCCESS) {
+                //             // 获取第一条方案
+                //             var plan = results.getPlan(0);
+                //             // 获取方案的驾车线路
+                //             var route = plan.getRoute(0);
+                //             // 获取每个关键步骤,并输出到页面
+                //             var s = [];
+                //             for (var j = 0; j < plan.getNumRoutes(); j++) {
+                //                 var route = plan.getRoute(j);
+                //
+                //                 // for (var i = 0; i < route.getNumSteps(); i++) {
+                //                 //     var step = route.getStep(i);
+                //                 //     s.push((i + 1) + ". " + step.getDescription());
+                //                 // }
+                //                 for (var i = 0; i < route.zr.length; i++) {
+                //                     // console.log(route.zr[i].lat+","+route.zr[i].lng);
+                //                     // const param = {lat:route.zr[i].lat,lag:route.zr[i].lng};
+                //                     // $.ajax({
+                //                     //     type: "post",
+                //                     //     url: BaseUrl+"/api/tPoint/save",
+                //                     //     data: JSON.stringify(param),
+                //                     //     dataType: "json",
+                //                     //     contentType: 'application/json;charset=UTF-8', //contentType很重要
+                //                     //     success: function (data) {
+                //                     //     }
+                //                     // });
+                //                 }
+                //             }
+                //         }
+                //         // debugger;
+                //     }
+                // };
+                // var driving = new BMap.DrivingRoute(Bmap.map, options);
+                // driving.search(p1, p2, {waypoints: [p3, p4]});
+            //waypoints表示途经
             // var mPoint = new BMap.Point(centerPoint[0], centerPoint[1]);
             // var circle = new BMap.Circle(mPoint, 1000, {
             //     fillColor: "blue",
@@ -127,6 +128,17 @@ block custom_header
             // local.searchNearby('充电站', mPoint, 10000);
             // getPoints();
 
+            var pStart = new BMap.Point(103.940118,30.734065);
+            var pEnd = new BMap.Point(104.208116,30.579724);
+            // var bs = new BMap.Bounds(pStart, pEnd);   //自己规定范围
+            var Polyline = new BMap.Polyline([
+            new BMap.Point(pStart.lng,pStart.lat),
+            new BMap.Point(pEnd.lng,pStart.lat),
+            new BMap.Point(pEnd.lng,pEnd.lat),
+            new BMap.Point(pStart.lng,pEnd.lat),
+            new BMap.Point(pStart.lng,pStart.lat)
+            ], {strokeColor:"blue", strokeWeight:6, strokeOpacity:0.5});
+            Bmap.map.addOverlay(Polyline);
         })
 
 

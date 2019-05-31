@@ -59,7 +59,7 @@ Bmap = {
     route: null,
     points: null,
     cars: null,
-    sizeNum: 15,
+    sizeNum: 13,
     mapInit: (el, certerPoint) => {
         Bmap.drivingArr = new Array();
         Bmap.map = new BMap.Map(el);

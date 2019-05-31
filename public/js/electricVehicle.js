@@ -18,6 +18,7 @@ function getAllTElectricVehicleWithLine() {
                     carMk.addEventListener("click", showTElectricVehicleDetails);
                     let label = new BMap.Label(obj.userName, {offset: new BMap.Size(20, -10)});
                     carMk.setLabel(label);
+                    debugger;
                     Bmap.map.addOverlay(carMk);
                     carMk.ba = obj.userId + "," + obj.id;
                     Bmap.userCarMapping[obj.userId] = carMk;
