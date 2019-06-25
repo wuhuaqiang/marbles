@@ -105,6 +105,7 @@ Task = {
         let plan = results.getPlan(0);
         let duration = plan.getDuration(true);
         let distance = plan.getDistance(true);
+        debugger;
         for (let i = 0; i < plan.getNumRoutes(); i++) {
             let route = plan.getRoute(i);
             Task.userTasklist[currUserId].linePoints = getDetailPints(route.getPath(), 0.0001, 0.00001);
@@ -129,6 +130,7 @@ Task = {
         Task.runTask(currUserId);
     },
     getAllLinePoints: (results) => {
+        debugger;
         let plan = results.getPlan(0);
         let duration = plan.getDuration(true);
         let distance = plan.getDistance(true);
@@ -184,6 +186,7 @@ Task = {
         }
     },
     startAllTask: () => {
+        debugger;
         Task.currUserId = Task.taskList[Task.taskIndexMark].owerId;
         Task.userTasklist[Task.userIdList[Task.taskIndexMark]] = Task.taskList[Task.taskIndexMark];
         let position = Bmap.userCarMapping[Task.userIdList[Task.taskIndexMark]].getPosition();

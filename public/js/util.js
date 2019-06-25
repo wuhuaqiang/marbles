@@ -54,6 +54,7 @@ function stringToDate(dateStr, separator) {
 
 //获得详细线路点数组
 function getDetailPints(points, stepLat, stepLng) {
+    debugger;
     const newPoints = new Array();
     let latNew = 0;
     let lngNew = 0;

@@ -6,19 +6,21 @@ function getAllTElectricVehicleWithLine() {
         data: '',
         dataType: "json",
         contentType: 'application/json;charset=UTF-8', //contentType很重要
-        success: function (data) {
+        success: function (result) {
+            const data = result.data;
             Bmap.cars = data;
             if (data.length) {
                 $.each(data, (index, obj) => {
 
                     Bmap.myIconInit("../imgs/car_val.png", 24, 24, 0, 0, 0, 0);
+                    // Bmap.myIconInit("http://10.168.1.130:8088/api/images/car_normal.png", 24, 24, 0, 0, 0, 0);
                     let strings = obj.positionVal.split(',');
                     let point = new BMap.Point(strings[0], strings[1])
                     let carMk = new BMap.Marker(point, {icon: Bmap.myIcon, title: obj.userName + ":Car"});
                     carMk.addEventListener("click", showTElectricVehicleDetails);
                     let label = new BMap.Label(obj.userName, {offset: new BMap.Size(20, -10)});
                     carMk.setLabel(label);
-                    debugger;
+                    // debugger;
                     Bmap.map.addOverlay(carMk);
                     carMk.ba = obj.userId + "," + obj.id;
                     Bmap.userCarMapping[obj.userId] = carMk;

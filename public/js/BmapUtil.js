@@ -362,12 +362,25 @@ Bmap = {
                     let addComp = rs.addressComponents;
                     let nameStr = addComp.district + addComp.street + addComp.streetNumber;
                     if (pts[i]) {
-                        const obj = {
-                            id: carMk.ba.split(",")[1],
-                            positionVal: pts[i].lng + "," + pts[i].lat,
-                            position: nameStr,
-                            power: -0.0000033 * du
+                        let obj = null;
+                        if (i == len - 1) {
+                            obj = {
+                                id: carMk.ba.split(",")[1],
+                                positionVal: pts[i].lng + "," + pts[i].lat,
+                                position: nameStr,
+                                power: -0.0000033 * du,
+                                remark: "mysql"
+                            }
+                        } else {
+                            obj = {
+                                id: carMk.ba.split(",")[1],
+                                positionVal: pts[i].lng + "," + pts[i].lat,
+                                position: nameStr,
+                                power: -0.0000033 * du,
+                                remark: "redis"
+                            }
                         }
+
                         // console.log(obj.power);
                         // console.log(carMk);
                         /*let label = carMk.getLabel();
