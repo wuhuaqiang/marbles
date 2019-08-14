@@ -143,7 +143,8 @@ function getAllChargingStation() {
         dataType: "json",
         async: false,
         contentType: 'application/json;charset=UTF-8', //contentType很重要
-        success: function (data) {
+        success: function (result) {
+            const data = result.data
             User.csList = data;
             setTimeout(function () {
                 if (data.length) {

@@ -872,144 +872,275 @@ $(document).on('click', '#viewElectricityPrice', (e) => {
     q.enqueue("Jennifer");
     q.dequeue();
     console.log(q.toString());
+
+    let xStr = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24";
+    // let yStr = "0.25,0.25,0.21,0.21,0.17,0.17,0.06,0.06,0.06,0.06,0.19,0.19,0.38,0.38,0.46,0.46,0.49,0.49,0.55,0.55,0.56,0.56,0.53,0.53,0.52,0.52,0.51,0.51,0.52,0.52,0.52,0.52,0.48,0.48,0.5,0.5,0.59,0.59,0.69,0.69,0.62,0.62,0.57,0.57,0.49,0.49,0.5,0.5,0.51,0.51";
+    let yStr = "0.25,0.25,0.21,0.17,0.06,0.06,0.19,0.38,0.46,0.49,0.55,0.56,0.53,0.52,0.51,0.52,0.52,0.48,0.5";//,0.59,0.69,0.62,0.57,0.49,0.5,0.51
+    const xStrArr = xStr.split(",");
+    const yStrArr = yStr.split(",");
+    console.log(xStrArr.length)
+    console.log(yStrArr.length)
+    // const xStrArr = result.data.xStr
+    // const yStrArr = result.data.yStr
+    let data = new Array();
+    let xdata = new Array();
+    let ydata = new Array();
+    for (let i = 0; i < xStrArr.length; i++) {
+        let uData = new Array();
+        // if(i%2==0){
+        xdata.push(xStrArr[i]);
+        ydata.push(yStrArr[i]);
+        // }
+
+        uData.push(xStrArr[i]);
+        // uData.push(parseInt(xStrArr[i]));
+        // uData.push(parseFloat(yStrArr[i]));
+        uData.push(yStrArr[i]);
+        data.push(uData);
+    }
+    console.log(xdata)
+    console.log(ydata)
+    // console.log(data);
+    // loadScript("http://echarts.baidu.com/build/dist/echarts.js", function () {
+
+    // 路径配置
+    // require.config({
+    //     paths: {
+    //         echarts: 'http://echarts.baidu.com/build/dist'
+    //     }
+    // });
+
+    // 使用
+    // require(
+    //     [
+    //         'echarts',
+    //         'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
+    //     ],
+    //     function (ec) {
+    // 基于准备好的dom，初始化echarts图表
+    var myChart = echarts.init(document.getElementById('echartsMain'));
+    // option = {
+    //     title: {
+    //         /* text: '实时电量',
+    //          subtext: '实时电量'*/
+    //     },
+    //     tooltip: {
+    //         trigger: 'axis',
+    //         axisPointer: {
+    //             show: true,
+    //             type: 'cross',
+    //             lineStyle: {
+    //                 type: 'dashed',
+    //                 width: 1
+    //             }
+    //         },
+    //         formatter: function (params) {
+    //             console.log(params);
+    //             return params[0].seriesName + ' : [ '
+    //                 // + params.value[0] + ', '
+    //                 + params[0].value + '元/kW.h ]';
+    //         }
+    //     },
+    //     legend: {
+    //         data: ['电价']
+    //     },
+    //     toolbox: {
+    //         show: true,
+    //         feature: {
+    //             mark: {show: true},
+    //             // dataZoom: {show: true},
+    //             // dataView: {show: true, readOnly: false},
+    //             // magicType: {show: true, type: ['line', 'bar']},
+    //             // restore: {show: true},
+    //             saveAsImage: {show: true}
+    //         }
+    //     },
+    //     calculable: true,
+    //     xAxis: [
+    //         {
+    //             type: 'category',
+    //             boundaryGap: false,
+    //             min: 0,
+    //             max: 24,
+    //             splitNumber: 24,
+    //             data: xdata,
+    //             axisLabel: {
+    //                 formatter: '{value}',
+    //                 interval: 1,
+    //             },
+    //             name: '时间:t/h',
+    //         }
+    //     ],
+    //     yAxis: [
+    //         {
+    //             type: 'value',
+    //             // data: ydata,
+    //             splitNumber: 5,
+    //             axisLine: {
+    //                 lineStyle: {
+    //                     color: '#dc143c'
+    //                 }
+    //             },
+    //             name: '电价:元/kW.h',
+    //         }
+    //     ],
+    //     series: [
+    //         {
+    //             name: '电价',
+    //             type:'line',
+    //             step: 'start',
+    //             showSymbol: false,
+    //             hoverAnimation: false,
+    //             data: ydata,
+    //         }
+    //     ]
+    // };
+    //
+    // myChart.setOption(option);
+    //     }
+    // );
+
+    // });
+    // console.log(data)
+    // setInterval(function () {
     setInterval(function () {
-        let param = {"time": "13.2"};
+        // console.log(Bmap.systemTime);
+        const timeArr = Bmap.systemTime.split(":");
+        let h = parseInt(timeArr[0]);
+        let m = parseInt(timeArr[1]);
+        if (m > 30) {
+            m = m - 30
+        } else if (h > 0) {
+            h = h - 1
+            m = m + 30
+        } else {
+            h = 0;
+            m = 0
+        }
+        if (h < 10) {
+            h = "0" + h;
+        } else {
+            h=""+h;
+        }
+        if (m < 10) {
+            m = "0" + m;
+        } else {
+            m=""+m;
+        }
+
+        // if (h < 0) {
+        //     if (h < 10) {
+        //         h = "0" + h;
+        //     } else {
+        //         h = "" + h;
+        //     }
+        // } else {
+        //     h = "00"
+        // }
+        const disTime = h + ":" + m;
+
+        let param = {"time": Bmap.systemTime.substring(0, 5)};
         $.ajax({
             type: "get",
-            url: BaseUrl + "/api//tElectricityPrice/getPrices",
+            url: BaseUrl + "/api/tCurrElectricityPrice/getPrices",
             data: param,
             dataType: "json",
             contentType: 'application/json;charset=UTF-8', //contentType很重要
             success: function (result) {
-                let xStr = "0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24";
-                // let yStr = "0.25,0.25,0.21,0.21,0.17,0.17,0.06,0.06,0.06,0.06,0.19,0.19,0.38,0.38,0.46,0.46,0.49,0.49,0.55,0.55,0.56,0.56,0.53,0.53,0.52,0.52,0.51,0.51,0.52,0.52,0.52,0.52,0.48,0.48,0.5,0.5,0.59,0.59,0.69,0.69,0.62,0.62,0.57,0.57,0.49,0.49,0.5,0.5,0.51,0.51";
-                let yStr = "0.25,0.25,0.21,0.17,0.06,0.06,0.19,0.38,0.46,0.49,0.55,0.56,0.53,0.52,0.51,0.52,0.52,0.48,0.5,0.59,0.69,0.62,0.57,0.49,0.5,0.51";
-                const xStrArr = xStr.split(",");
-                const yStrArr = yStr.split(",");
-                console.log(xStrArr.length)
-                console.log(yStrArr.length)
-                // const xStrArr = result.data.xStr
-                // const yStrArr = result.data.yStr
-                let data = new Array();
-                let xdata = new Array();
-                let ydata = new Array();
-                for (let i = 0; i < xStrArr.length; i++) {
-                    let uData = new Array();
-                    // if(i%2==0){
-                    xdata.push(xStrArr[i]);
-                    ydata.push(yStrArr[i]);
-                    // }
+                option = {
+                    title: {
+                        /* text: '实时电量',
+                         subtext: '实时电量'*/
+                    },
+                    tooltip: {
+                        trigger: 'axis',
+                        axisPointer: {
+                            show: true,
+                            type: 'cross',
+                            lineStyle: {
+                                type: 'dashed',
+                                width: 1
+                            }
+                        },
+                        feature: {
+                            dataZoom: {
+                                yAxisIndex: 'none'
+                            },
+                            restore: {},
+                            saveAsImage: {}
+                        },
+                        formatter: function (params) {
+                            console.log(params);
+                            return params[0].seriesName + ' : [ '
+                                // + params.value[0] + ', '
+                                + params[0].value + '元/kW.h ]';
+                        }
+                    },
+                    legend: {
+                        data: ['电价']
+                    },
+                    toolbox: {
+                        show: true,
+                        feature: {
+                            mark: {show: true},
+                            // dataZoom: {show: true},
+                            // dataView: {show: true, readOnly: false},
+                            // magicType: {show: true, type: ['line', 'bar']},
+                            // restore: {show: true},
+                            saveAsImage: {show: true}
+                        }
+                    },
+                    calculable: true,
+                    xAxis: [
+                        {
+                            type: 'category',
+                            boundaryGap: false,
+                            // min: 0,
+                            // max: 24,
+                            // splitNumber: 24,
+                            data: result.data.xStr,
+                            axisLabel: {
+                                formatter: '{value}',
+                                interval: 1,
+                            },
+                            name: '时间',
+                        }
+                    ],
+                    yAxis: [
+                        {
+                            type: 'value',
+                            // data: ydata,
+                            // splitNumber: 5,
+                            splitLine: {
+                                show: false
+                            },
+                            axisLine: {
+                                lineStyle: {
+                                    color: '#dc143c'
+                                }
+                            },
+                            name: '电价:元/kW.h',
+                        }
+                    ],
+                    dataZoom: [{
+                        startValue: disTime,
+                        endValue: Bmap.systemTime.substring(0, 5)
+                    }, {
+                        type: 'inside'
+                    }],
+                    series: [
+                        {
+                            name: '电价',
+                            type: 'line',
+                            step: 'start',
+                            showSymbol: false,
+                            hoverAnimation: false,
+                            data: result.data.yStr,
+                        }
+                    ]
+                };
 
-                    uData.push(xStrArr[i]);
-                    // uData.push(parseInt(xStrArr[i]));
-                    // uData.push(parseFloat(yStrArr[i]));
-                    uData.push(yStrArr[i]);
-                    data.push(uData);
-                }
-                console.log(xdata)
-                console.log(ydata)
-                // console.log(data);
-                // loadScript("http://echarts.baidu.com/build/dist/echarts.js", function () {
-
-                    // 路径配置
-                    // require.config({
-                    //     paths: {
-                    //         echarts: 'http://echarts.baidu.com/build/dist'
-                    //     }
-                    // });
-
-                    // 使用
-                    // require(
-                    //     [
-                    //         'echarts',
-                    //         'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
-                    //     ],
-                    //     function (ec) {
-                            // 基于准备好的dom，初始化echarts图表
-                            var myChart = echarts.init(document.getElementById('echartsMain'));
-                            option = {
-                                title: {
-                                    /* text: '实时电量',
-                                     subtext: '实时电量'*/
-                                },
-                                tooltip: {
-                                    trigger: 'axis',
-                                    axisPointer: {
-                                        show: true,
-                                        type: 'cross',
-                                        lineStyle: {
-                                            type: 'dashed',
-                                            width: 1
-                                        }
-                                    },
-                                    formatter: function (params) {
-                                        console.log(params);
-                                        return params[0].seriesName + ' : [ '
-                                            // + params.value[0] + ', '
-                                            + params[0].value + '元/kW.h ]';
-                                    }
-                                },
-                                legend: {
-                                    data: ['电价']
-                                },
-                                toolbox: {
-                                    show: true,
-                                    feature: {
-                                        mark: {show: true},
-                                        // dataZoom: {show: true},
-                                        // dataView: {show: true, readOnly: false},
-                                        // magicType: {show: true, type: ['line', 'bar']},
-                                        // restore: {show: true},
-                                        saveAsImage: {show: true}
-                                    }
-                                },
-                                calculable: true,
-                                xAxis: [
-                                    {
-                                        type: 'category',
-                                        boundaryGap: false,
-                                        min: 0,
-                                        max: 24,
-                                        splitNumber: 24,
-                                        data: xdata,
-                                        axisLabel: {
-                                            formatter: '{value}',
-                                            interval: 1,
-                                        },
-                                        name: '时间:t/h',
-                                    }
-                                ],
-                                yAxis: [
-                                    {
-                                        type: 'value',
-                                        // data: ydata,
-                                        splitNumber: 5,
-                                        axisLine: {
-                                            lineStyle: {
-                                                color: '#dc143c'
-                                            }
-                                        },
-                                        name: '电价:元/kW.h',
-                                    }
-                                ],
-                                series: [
-                                    {
-                                        name: '电价',
-                                        type:'line',
-                                        step: 'start',
-                                        showSymbol: false,
-                                        hoverAnimation: false,
-                                        data: ydata,
-                                    }
-                                ]
-                            };
-
-                            myChart.setOption(option);
-                    //     }
-                    // );
-
-                // });
-                // console.log(data)
+                myChart.setOption(option);
             },
             error: function (data) {
                 if (data.responseText == 'success') {
@@ -1053,173 +1184,173 @@ $(document).on('click', '#viewElectricityPrice', (e) => {
     //         echarts: 'http://echarts.baidu.com/build/dist'
     //     }
     // });
- /*   let xStr = "0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,7.2,7.2,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19,20,20,21,21,22,22,23,23,24";
-    let yStr = "0.25,0.25,0.21,0.21,0.17,0.17,0.06,0.06,0.06,0.06,0.19,0.19,0.38,0.38,0.46,0.46,0.49,0.49,0.55,0.55,0.56,0.56,0.53,0.53,0.52,0.52,0.51,0.51,0.52,0.52,0.52,0.52,0.48,0.48,0.5,0.5,0.59,0.59,0.69,0.69,0.62,0.62,0.57,0.57,0.49,0.49,0.5,0.5,0.51,0.51";
-    const xStrArr = xStr.split(",");
-    const yStrArr = yStr.split(",");
-    let data = new Array();
-    let xdata = new Array();
-    let ydata = new Array();
-    for (let i = 0; i < xStrArr.length; i++) {
-        let uData = new Array();
-        // if(i%2==0){
-        xdata.push(xStrArr[i]);
-        ydata.push(yStrArr[i]);
-        // }
+    /*   let xStr = "0,1,1,2,2,3,3,4,4,5,5,6,6,7,7,7.2,7.2,8,8,9,9,10,10,11,11,12,12,13,13,14,14,15,15,16,16,17,17,18,18,19,19,20,20,21,21,22,22,23,23,24";
+       let yStr = "0.25,0.25,0.21,0.21,0.17,0.17,0.06,0.06,0.06,0.06,0.19,0.19,0.38,0.38,0.46,0.46,0.49,0.49,0.55,0.55,0.56,0.56,0.53,0.53,0.52,0.52,0.51,0.51,0.52,0.52,0.52,0.52,0.48,0.48,0.5,0.5,0.59,0.59,0.69,0.69,0.62,0.62,0.57,0.57,0.49,0.49,0.5,0.5,0.51,0.51";
+       const xStrArr = xStr.split(",");
+       const yStrArr = yStr.split(",");
+       let data = new Array();
+       let xdata = new Array();
+       let ydata = new Array();
+       for (let i = 0; i < xStrArr.length; i++) {
+           let uData = new Array();
+           // if(i%2==0){
+           xdata.push(xStrArr[i]);
+           ydata.push(yStrArr[i]);
+           // }
 
-        uData.push(xStrArr[i]);
-        // uData.push(parseInt(xStrArr[i]));
-        // uData.push(parseFloat(yStrArr[i]));
-        uData.push(yStrArr[i]);
-        data.push(uData);
-    }
-    // console.log(data);
-    loadScript("http://echarts.baidu.com/build/dist/echarts.js", function () {
+           uData.push(xStrArr[i]);
+           // uData.push(parseInt(xStrArr[i]));
+           // uData.push(parseFloat(yStrArr[i]));
+           uData.push(yStrArr[i]);
+           data.push(uData);
+       }
+       // console.log(data);
+       loadScript("http://echarts.baidu.com/build/dist/echarts.js", function () {
 
-        // 路径配置
-        require.config({
-            paths: {
-                echarts: 'http://echarts.baidu.com/build/dist'
-            }
-        });
+           // 路径配置
+           require.config({
+               paths: {
+                   echarts: 'http://echarts.baidu.com/build/dist'
+               }
+           });
 
-        // 使用
-        require(
-            [
-                'echarts',
-                'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
-            ],
-            function (ec) {
-                // 基于准备好的dom，初始化echarts图表
-                var myChart = ec.init(document.getElementById('echartsMain'));
-                option = {
-                    title: {
-                        /!* text: '实时电量',
-                         subtext: '实时电量'*!/
-                    },
-                    tooltip: {
-                        trigger: 'axis',
-                        axisPointer: {
-                            show: true,
-                            type: 'cross',
-                            lineStyle: {
-                                type: 'dashed',
-                                width: 1
-                            }
-                        },
-                        formatter: function (params) {
-                            return params.seriesName + ' : [ '
-                                // + params.value[0] + ', '
-                                + params.value[1] + '元/kW.h ]';
-                        }
-                    },
-                    legend: {
-                        data: ['电价']
-                    },
-                    toolbox: {
-                        show: true,
-                        feature: {
-                            mark: {show: true},
-                            // dataZoom: {show: true},
-                            // dataView: {show: true, readOnly: false},
-                            // magicType: {show: true, type: ['line', 'bar']},
-                            // restore: {show: true},
-                            saveAsImage: {show: true}
-                        }
-                    },
-                    calculable: true,
-                    xAxis: [
-                        {
-                            type: 'value',
-                            boundaryGap: false,
-                            min: 0,
-                            max: 24,
-                            splitNumber: 24,
-                            data: xdata,
-                            axisLabel: {
-                                formatter: '{value}',
-                                interval: 1,
-                            },
-                            name: '时间:t/h',
-                        }
-                    ],
-                    yAxis: [
-                        {
-                            type: 'value',
-                            data: ydata,
-                            splitNumber: 5,
-                            axisLine: {
-                                lineStyle: {
-                                    color: '#dc143c'
-                                }
-                            },
-                            name: '电价:元/kW.h',
-                        }
-                    ],
-                    series: [
-                        {
-                            name: '电价',
-                            type: 'line',
-                            data: data,
-                            /!*   markPoint: {
-                                   data: [
-                                       // 纵轴，默认
-                                       {
-                                           type: 'max',
-                                           name: '最大值',
-                                           symbol: 'emptyCircle',
-                                           itemStyle: {normal: {color: '#dc143c', label: {position: 'top'}}}
-                                       },
-                                       {
-                                           type: 'min',
-                                           name: '最小值',
-                                           symbol: 'emptyCircle',
-                                           itemStyle: {normal: {color: '#dc143c', label: {position: 'bottom'}}}
-                                       },
-                                       // 横轴
-                                       {
-                                           type: 'max',
-                                           name: '最大值',
-                                           valueIndex: 0,
-                                           symbol: 'emptyCircle',
-                                           itemStyle: {normal: {color: '#1e90ff', label: {position: 'right'}}}
-                                       },
-                                       {
-                                           type: 'min',
-                                           name: '最小值',
-                                           valueIndex: 0,
-                                           symbol: 'emptyCircle',
-                                           itemStyle: {normal: {color: '#1e90ff', label: {position: 'left'}}}
-                                       }
-                                   ]
-                               },*!/
-                            // markLine: {
-                            //     data: [
-                            //         // 纵轴，默认
-                            //         {type: 'max', name: '最大值', itemStyle: {normal: {color: '#dc143c'}}},
-                            //         {type: 'min', name: '最小值', itemStyle: {normal: {color: '#dc143c'}}},
-                            //         {type: 'average', name: '平均值', itemStyle: {normal: {color: '#dc143c'}}},
-                            //         // 横轴
-                            //         {type: 'max', name: '最大值', valueIndex: 0, itemStyle: {normal: {color: '#1e90ff'}}},
-                            //         {type: 'min', name: '最小值', valueIndex: 0, itemStyle: {normal: {color: '#1e90ff'}}},
-                            //         {
-                            //             type: 'average',
-                            //             name: '平均值',
-                            //             valueIndex: 0,
-                            //             itemStyle: {normal: {color: '#1e90ff'}}
-                            //         }
-                            //     ]
-                            // }
-                        }
-                    ]
-                };
+           // 使用
+           require(
+               [
+                   'echarts',
+                   'echarts/chart/line' // 使用柱状图就加载bar模块，按需加载
+               ],
+               function (ec) {
+                   // 基于准备好的dom，初始化echarts图表
+                   var myChart = ec.init(document.getElementById('echartsMain'));
+                   option = {
+                       title: {
+                           /!* text: '实时电量',
+                            subtext: '实时电量'*!/
+                       },
+                       tooltip: {
+                           trigger: 'axis',
+                           axisPointer: {
+                               show: true,
+                               type: 'cross',
+                               lineStyle: {
+                                   type: 'dashed',
+                                   width: 1
+                               }
+                           },
+                           formatter: function (params) {
+                               return params.seriesName + ' : [ '
+                                   // + params.value[0] + ', '
+                                   + params.value[1] + '元/kW.h ]';
+                           }
+                       },
+                       legend: {
+                           data: ['电价']
+                       },
+                       toolbox: {
+                           show: true,
+                           feature: {
+                               mark: {show: true},
+                               // dataZoom: {show: true},
+                               // dataView: {show: true, readOnly: false},
+                               // magicType: {show: true, type: ['line', 'bar']},
+                               // restore: {show: true},
+                               saveAsImage: {show: true}
+                           }
+                       },
+                       calculable: true,
+                       xAxis: [
+                           {
+                               type: 'value',
+                               boundaryGap: false,
+                               min: 0,
+                               max: 24,
+                               splitNumber: 24,
+                               data: xdata,
+                               axisLabel: {
+                                   formatter: '{value}',
+                                   interval: 1,
+                               },
+                               name: '时间:t/h',
+                           }
+                       ],
+                       yAxis: [
+                           {
+                               type: 'value',
+                               data: ydata,
+                               splitNumber: 5,
+                               axisLine: {
+                                   lineStyle: {
+                                       color: '#dc143c'
+                                   }
+                               },
+                               name: '电价:元/kW.h',
+                           }
+                       ],
+                       series: [
+                           {
+                               name: '电价',
+                               type: 'line',
+                               data: data,
+                               /!*   markPoint: {
+                                      data: [
+                                          // 纵轴，默认
+                                          {
+                                              type: 'max',
+                                              name: '最大值',
+                                              symbol: 'emptyCircle',
+                                              itemStyle: {normal: {color: '#dc143c', label: {position: 'top'}}}
+                                          },
+                                          {
+                                              type: 'min',
+                                              name: '最小值',
+                                              symbol: 'emptyCircle',
+                                              itemStyle: {normal: {color: '#dc143c', label: {position: 'bottom'}}}
+                                          },
+                                          // 横轴
+                                          {
+                                              type: 'max',
+                                              name: '最大值',
+                                              valueIndex: 0,
+                                              symbol: 'emptyCircle',
+                                              itemStyle: {normal: {color: '#1e90ff', label: {position: 'right'}}}
+                                          },
+                                          {
+                                              type: 'min',
+                                              name: '最小值',
+                                              valueIndex: 0,
+                                              symbol: 'emptyCircle',
+                                              itemStyle: {normal: {color: '#1e90ff', label: {position: 'left'}}}
+                                          }
+                                      ]
+                                  },*!/
+                               // markLine: {
+                               //     data: [
+                               //         // 纵轴，默认
+                               //         {type: 'max', name: '最大值', itemStyle: {normal: {color: '#dc143c'}}},
+                               //         {type: 'min', name: '最小值', itemStyle: {normal: {color: '#dc143c'}}},
+                               //         {type: 'average', name: '平均值', itemStyle: {normal: {color: '#dc143c'}}},
+                               //         // 横轴
+                               //         {type: 'max', name: '最大值', valueIndex: 0, itemStyle: {normal: {color: '#1e90ff'}}},
+                               //         {type: 'min', name: '最小值', valueIndex: 0, itemStyle: {normal: {color: '#1e90ff'}}},
+                               //         {
+                               //             type: 'average',
+                               //             name: '平均值',
+                               //             valueIndex: 0,
+                               //             itemStyle: {normal: {color: '#1e90ff'}}
+                               //         }
+                               //     ]
+                               // }
+                           }
+                       ]
+                   };
 
-                // 为echarts对象加载数据
-                myChart.setOption(option);
-            }
-        );
+                   // 为echarts对象加载数据
+                   myChart.setOption(option);
+               }
+           );
 
-    });*/
+       });*/
 
 })
 
@@ -1342,7 +1473,7 @@ $(document).on('click', '#getPowerHistoryEchart', (e) => {
                             },
 
                             legend: {
-                                data:['当前电价']
+                                data: ['当前电价']
                             },
                             grid: {
                                 left: '3%',
@@ -1357,17 +1488,17 @@ $(document).on('click', '#getPowerHistoryEchart', (e) => {
                             },
                             xAxis: {
                                 type: 'category',
-                                data: [0,1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,21,22,23,24]
+                                data: [0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10, 11, 12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23, 24]
                             },
                             yAxis: {
                                 type: 'value'
                             },
                             series: [
                                 {
-                                    name:'当前电价',
-                                    type:'line',
+                                    name: '当前电价',
+                                    type: 'line',
                                     step: 'start',
-                                    data:[0.25,0.21,0.17,0.06,0.06,0.19,0.38,0.46,0.49,0.55,0.56,0.53,0.52,0.51,0.52,0.52,0.48,0.5,0.59,0.69,0.62,0.57,0.49,0.5,0.51]
+                                    data: [0.25, 0.21, 0.17, 0.06, 0.06, 0.19, 0.38, 0.46, 0.49, 0.55, 0.56, 0.53, 0.52, 0.51, 0.52, 0.52, 0.48, 0.5, 0.59, 0.69, 0.62, 0.57, 0.49, 0.5, 0.51]
                                 },
                             ]
                         };
